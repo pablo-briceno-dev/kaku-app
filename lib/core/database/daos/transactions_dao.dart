@@ -43,6 +43,47 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
               .toList(),
         );
   }
+
+  // TOTAL de gastos por categoría en un mes
+  Future<Map<int, double>> getExpensesByCategory(int month, int year) async {
+    final query = customSelect(
+      '''SELECT category_id, SUM(amount) as total
+        FROM transactions_table
+        WHERE type = 'expense'
+          AND strftime('%m', date) = ?
+          AND strftime('%Y', date) = ?
+        GROUP BY category_id''',
+      variables: [
+        Variable(month.toString().padLeft(2, '0')),
+        Variable(year.toString()),
+      ],
+      readsFrom: {transactionsTable},
+    );
+    final rows = await query.get();
+    return {
+      for (final row in rows)
+        row.read<int?>('category_id') ?? 0: row.read<double>('total'),
+    };
+  }
+
+  // INSERTAR transacción
+  Future<int> insertTransaction(TransactionsTableCompanion tx) =>
+      into(transactionsTable).insert(tx);
+
+  // ELIMINAR transacción
+  Future<int> deleteTransaction(int id) =>
+      (delete(transactionsTable)..where((t) => t.id.equals(id))).go();
+
+  // SUMA de ingresos del mes
+  Future<double> getTotalIncome(int month, int year) async {
+    final result =
+        await (selectOnly(transactionsTable)
+              ..addColumns([transactionsTable.amount.sum()])
+              ..where(transactionsTable.type.equals('income')))
+            .getSingleOrNull();
+
+    return result?.read(transactionsTable.amount.sum()) ?? 0.0;
+  }
 }
 
 // Clase de resultado typesafe para JOIN ──

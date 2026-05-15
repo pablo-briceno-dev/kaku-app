@@ -1,5 +1,7 @@
 import 'package:drift/drift.dart';
 
+// Genera: Account (data class) + AccountsTableCompanion
+@DataClassName('Account')
 class AccountsTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 1, max: 50)();

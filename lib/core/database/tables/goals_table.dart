@@ -1,5 +1,7 @@
 import 'package:drift/drift.dart';
 
+// genera: Goal + GoalsTableCompanion
+@DataClassName('Goal')
 class GoalsTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();

@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:kaku/core/database/daos/accounts_dao.dart';
 import 'package:kaku/core/database/daos/budgets_dao.dart';
+import 'package:kaku/core/database/daos/goals_dao.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/database/tables/accounts_table.dart';
 import 'package:kaku/core/database/tables/budgets_table.dart';
@@ -22,7 +24,13 @@ part 'app_database.g.dart';
     GoalsTable,
     TransactionsTable,
   ],
-  daos: [AccountsDao, TransactionsDao, BudgetsDao, GoalsDao],
+  daos: [
+    AccountsDao, // CRUD de cuentas + balance
+    TransactionsDao, // CRUD de transacciones + queries por mes
+    BudgetsDao, // CRUD de presupuestos mensuales
+    GoalsDao, // CRUD de metas + lógica de aportes
+    CategoriesDao, // CRUD de categorías personalizadas
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());

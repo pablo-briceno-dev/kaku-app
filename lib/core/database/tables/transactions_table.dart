@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:kaku/core/database/tables/accounts_table.dart';
 import 'package:kaku/core/database/tables/categories_table.dart';
 
+// genera: Transaction + TransactionsTableCompanion
+@DataClassName('Transaction')
 class TransactionsTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   RealColumn get amount => real()(); // siempre positivo

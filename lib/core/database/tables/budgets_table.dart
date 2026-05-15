@@ -1,6 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:kaku/core/database/tables/categories_table.dart';
 
+// genera: Budget + BudgetsTableCompanion
+@DataClassName('Budget')
 class BudgetsTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get categoryId => integer().references(CategoriesTable, #id)();

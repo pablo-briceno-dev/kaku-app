@@ -1,5 +1,7 @@
 import 'package:drift/drift.dart';
 
+// genera: Category + CategoriesTableCompanion
+@DataClassName('Category')
 class CategoriesTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();
