@@ -4,6 +4,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:kaku/core/database/daos/accounts_dao.dart';
 import 'package:kaku/core/database/daos/budgets_dao.dart';
+import 'package:kaku/core/database/daos/categories_dao.dart';
 import 'package:kaku/core/database/daos/goals_dao.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/database/tables/accounts_table.dart';
@@ -11,8 +12,8 @@ import 'package:kaku/core/database/tables/budgets_table.dart';
 import 'package:kaku/core/database/tables/categories_table.dart';
 import 'package:kaku/core/database/tables/goals_table.dart';
 import 'package:kaku/core/database/tables/transactions_table.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
 
