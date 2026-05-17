@@ -1,0 +1,35 @@
+abstract class AppRoutes {
+  // Tabs principales (dentro del ShellRoute)
+  static const String dashboard = '/';
+  static const String stats = '/stats';
+  static const String goals = '/goals';
+  static const String accounts = '/accounts';
+  static const String settings = '/settings';
+
+  // Sub-rutas de detalle (también dentro del ShellRoutes)
+  static const String transactionDetail = '/transaction/:id';
+  static const String categoryDetail = '/category/:id';
+  static const String accountDetail = '/accounts/:id';
+
+  // Pantallas completas (fuera del ShellRoutes -> sin bottom nav)
+  static const String addTransaction = '/add-transaction';
+
+  // Helpers para construir rutas con parámetros ---
+  // Uso: context.go(AppRoutes.toTransaction(42))
+  static String toTransaction(int id) => '/transaction/$id';
+  static String toCategory(int id, int month, int year) =>
+      '/category/$id?month=$month&year=$year';
+  static String toAccountDetail(int id) => '/accounts/$id';
+  static String toAddTransaction({int? accountId}) => accountId != null
+      ? '/add-transaction?accountId=$accountId'
+      : '/add-transaction';
+
+  // Lista de tabs del bottom nav (mismo orden que los BottomNavigationBarItems)
+  static const List<String> shellTabs = [
+    dashboard,
+    stats,
+    goals,
+    accounts,
+    settings,
+  ];
+}
