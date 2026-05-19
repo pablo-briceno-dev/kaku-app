@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/router/app_router.dart';
+import 'package:kaku/core/theme/app_theme.dart';
+import 'package:kaku/shared/providers/theme_provider.dart';
 
 class KakuApp extends ConsumerWidget {
   const KakuApp({super.key});
@@ -8,17 +10,15 @@ class KakuApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
+    final themePref = ref.watch(themeProvider);
 
     return MaterialApp.router(
       title: 'Kaku',
       debugShowCheckedModeBanner: false,
       routerConfig: router,
-      theme: ThemeData.dark().copyWith(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF7CFFD4),
-          brightness: Brightness.dark,
-        ),
-      ),
+      themeMode: themePref.flutterThemeMode,
+      theme: AppTheme.light(themePref.accent),
+      darkTheme: AppTheme.dark(themePref.accent),
     );
   }
 }

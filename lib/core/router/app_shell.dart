@@ -20,49 +20,111 @@ class AppShell extends ConsumerWidget {
     // active '/accounts' en lugar del tab correcto
     int currentIndex = _tabs.lastIndexWhere((t) => location.startsWith(t));
     if (currentIndex < 0) currentIndex = 0; // fallback al Dashboard
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
       body: child,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
-        onDestinationSelected: (index) {
-          // go() en lugar de push() para que el back button funcione bien entre tabs
-          context.go(_tabs[index]);
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            label: 'Inicio',
-            selectedIcon: Icon(Icons.home),
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bar_chart_outlined),
-            label: 'Stats',
-            selectedIcon: Icon(Icons.bar_chart),
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.flag_outlined),
-            label: 'Metas',
-            selectedIcon: Icon(Icons.flag),
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.account_balance_wallet_outlined),
-            label: 'Cuentas',
-            selectedIcon: Icon(Icons.account_balance_wallet),
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings_outlined),
-            label: 'Ajustes',
-            selectedIcon: Icon(Icons.settings),
-          ),
-        ],
+      bottomNavigationBar: BottomAppBar(
+        color: cs.surface,
+        elevation: 8,
+        notchMargin: 8,
+        shape: const CircularNotchedRectangle(),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            // 2 tabs a la izquierda
+            _NavItem(
+              icon: Icons.home_outlined,
+              selectedIcon: Icons.home,
+              label: 'Inicio',
+              index: 0,
+              current: currentIndex,
+              onTap: () => context.go(_tabs[0]),
+            ),
+            _NavItem(
+              icon: Icons.bar_chart_outlined,
+              selectedIcon: Icons.bar_chart,
+              label: 'Stats',
+              index: 1,
+              current: currentIndex,
+              onTap: () => context.go(_tabs[1]),
+            ),
+
+            const SizedBox(width: 60), // hueco para el FAB
+            // 2 tabs a la derecha
+            _NavItem(
+              icon: Icons.flag_outlined,
+              selectedIcon: Icons.flag,
+              label: 'Metas',
+              index: 2,
+              current: currentIndex,
+              onTap: () => context.go(_tabs[2]),
+            ),
+            _NavItem(
+              icon: Icons.account_balance_wallet_outlined,
+              selectedIcon: Icons.account_balance_wallet,
+              label: 'Cuentas',
+              index: 3,
+              current: currentIndex,
+              onTap: () => context.go(_tabs[3]),
+            ),
+          ],
+        ),
       ),
       // FAB central para agregar gasto rápido desde cualquier tab
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.push(AppRoutes.addTransaction),
-        child: const Icon(Icons.add),
+        tooltip: 'Agregar gasto',
+        child: const Icon(Icons.add, size: 28),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
+}
+
+// Widget auxiliar para cada ítem del BottomAppBar
+class _NavItem extends StatelessWidget {
+  final IconData icon, selectedIcon;
+  final String label;
+  final int index, current;
+  final VoidCallback onTap;
+
+  const _NavItem({
+    required this.icon,
+    required this.selectedIcon,
+    required this.label,
+    required this.index,
+    required this.current,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final active = index == current;
+    final color = active
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.onSurfaceVariant;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(active ? selectedIcon : icon, color: color, size: 22),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                color: color,
+                fontWeight: active ? FontWeight.w700 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

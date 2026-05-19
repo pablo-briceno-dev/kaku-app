@@ -40,10 +40,6 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: AppRoutes.accounts,
             builder: (context, state) => const AccountsScreen(),
           ),
-          GoRoute(
-            path: AppRoutes.settings,
-            builder: (context, state) => const SettingsScreen(),
-          ),
 
           // Sub-routas de detalle (mantiene el bottom nav)
           GoRoute(
@@ -83,6 +79,10 @@ final routerProvider = Provider<GoRouter>((ref) {
               : null;
           return AddTransactionScreen(accountId: accountId);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.settings,
+        builder: (context, state) => const SettingsScreen(),
       ),
     ],
   );

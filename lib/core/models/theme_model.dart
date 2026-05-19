@@ -1,0 +1,81 @@
+import 'package:flutter/material.dart';
+
+enum AppAccent {
+  aurora, // Verde esmeralda #7CFFD4
+  dusk, // Naranja cálido #FF9F7C
+  violet, // Púrpura #C87CFF
+  mono, // Gris plateado #B0B0C8
+  ocean, // Azul celeste #7CB8FF
+}
+
+enum AppThemeMode { dark, light, system }
+
+class ThemePreference {
+  final AppAccent accent;
+  final AppThemeMode mode;
+
+  const ThemePreference({
+    this.accent = AppAccent.aurora,
+    this.mode = AppThemeMode.dark,
+  });
+
+  ThemePreference copyWith({AppAccent? accent, AppThemeMode? mode}) =>
+      ThemePreference(accent: accent ?? this.accent, mode: mode ?? this.mode);
+
+  // Color principal del acento (para botones, barras de progreso, FAB)
+  Color get accentColor => const {
+    AppAccent.aurora: Color(0xFF7CFFD4),
+    AppAccent.dusk: Color(0xFFFF9F7C),
+    AppAccent.violet: Color(0xFFC87CFF),
+    AppAccent.mono: Color(0xFFB0B0C8),
+    AppAccent.ocean: Color(0xFF7CB8FF),
+  }[accent]!;
+
+  // Color de fondo principal (modo oscuro)
+  Color get darkBackground => const {
+    AppAccent.aurora: Color(0xFF0A1814),
+    AppAccent.dusk: Color(0xFF120C07),
+    AppAccent.violet: Color(0xFF0E0818),
+    AppAccent.mono: Color(0xFF0F0F0F),
+    AppAccent.ocean: Color(0xFF060E1C),
+  }[accent]!;
+
+  // Nombre legible para mostrar en la UI de Settings
+  String get accentLabel => const {
+    AppAccent.aurora: 'Aurora',
+    AppAccent.dusk: 'Dusk',
+    AppAccent.violet: 'Violet',
+    AppAccent.mono: 'Mono',
+    AppAccent.ocean: 'Ocean',
+  }[accent]!;
+
+  String get modeLabel => const {
+    AppThemeMode.dark: 'Oscuro',
+    AppThemeMode.light: 'Claro',
+    AppThemeMode.system: 'Sistema',
+  }[mode]!;
+
+  // Convierte al ThemeMode de Flutter (para MaterialApp.themeMode)
+  ThemeMode get flutterThemeMode => const {
+    AppThemeMode.dark: ThemeMode.dark,
+    AppThemeMode.light: ThemeMode.light,
+    AppThemeMode.system: ThemeMode.system,
+  }[mode]!;
+
+  // Serialización para SharedPreferences
+  Map<String, String> toMap() => {
+    'accent': accent.name, // 'aurora', etc
+    'mode': mode.name,
+  };
+
+  factory ThemePreference.fromMap(Map<String, String?> map) => ThemePreference(
+    accent: AppAccent.values.firstWhere(
+      (e) => e.name == map['accent'],
+      orElse: () => AppAccent.aurora,
+    ),
+    mode: AppThemeMode.values.firstWhere(
+      (e) => e.name == map['mode'],
+      orElse: () => AppThemeMode.dark,
+    ),
+  );
+}

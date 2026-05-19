@@ -30,6 +30,6 @@ abstract class AppRoutes {
     stats,
     goals,
     accounts,
-    settings,
+    // settings,
   ];
 }
