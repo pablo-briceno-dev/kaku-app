@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/router/app_router.dart';
 import 'package:kaku/core/theme/app_theme.dart';
@@ -19,6 +20,16 @@ class KakuApp extends ConsumerWidget {
       themeMode: themePref.flutterThemeMode,
       theme: AppTheme.light(themePref.accent),
       darkTheme: AppTheme.dark(themePref.accent),
+      localizationsDelegates: const [
+        // AppLocalizations.delegate, // tus traducciones
+        GlobalMaterialLocalizations.delegate, // widgets Material en español
+        GlobalWidgetsLocalizations.delegate, // dirección de texto, etc.
+        GlobalCupertinoLocalizations.delegate, // widgets iOS en español
+      ],
+      supportedLocales: const [
+        Locale('es'), // español — idioma base
+        Locale('en'), // inglés
+      ],
     );
   }
 }
