@@ -11,6 +11,7 @@ import 'package:kaku/features/settings/settings_screen.dart';
 import 'package:kaku/features/stats/stats_screen.dart';
 import 'package:kaku/features/transactions/add_transaction_screen.dart';
 import 'package:kaku/features/transactions/transaction_detail_screen.dart';
+import 'package:kaku/features/transactions/transactions_screen.dart';
 
 // Provider que expone el router a toda la app
 // Se consume en main.dart con: router: ref.watch(routerProvider)
@@ -39,6 +40,11 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.accounts,
             builder: (context, state) => const AccountsScreen(),
+          ),
+
+          GoRoute(
+            path: AppRoutes.transactions,
+            builder: (context, state) => const TransactionsScreen(),
           ),
 
           // Sub-routas de detalle (mantiene el bottom nav)
