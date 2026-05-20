@@ -14,15 +14,10 @@ class AppBarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
       alignment: Alignment.center,
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: colorScheme.primary.withValues(alpha: 0.15),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
       child: IconButton(
         icon: Icon(icon),
         onPressed: onPressed,

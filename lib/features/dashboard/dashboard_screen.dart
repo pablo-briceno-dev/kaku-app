@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kaku/features/dashboard/card_balance.dart';
+import 'package:kaku/features/dashboard/card_balance_dashboard.dart';
 import 'package:kaku/features/dashboard/horizontal_progress_bars.dart';
 import 'package:kaku/features/dashboard/month_navigator.dart';
 import 'package:kaku/features/dashboard/projection_banner.dart';
@@ -38,7 +38,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           children: [
             MonthNavigator(),
             const SizedBox(height: 16),
-            CardBalance(), // Tarjeta de balance
+            CardBalanceDashboard(), // Tarjeta de balance
             const SizedBox(height: 16),
             HorizontalProgressBars(), // Barras de progreso horizontales
             const SizedBox(height: 16),

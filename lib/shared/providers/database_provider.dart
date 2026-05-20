@@ -85,3 +85,16 @@ final totalBalanceProvider = StreamProvider<double>(
 final activeGoalsProvider = StreamProvider<List<Goal>>(
   (ref) => ref.watch(goalsDaoProvider).watchActiveGoals(),
 );
+
+// Accounts (reactivo)
+final activeAccountsProvider = StreamProvider<List<Account>>(
+  (ref) => ref.watch(accountsDaoProvider).watchActiveAccounts(),
+);
+
+// Para la pantalla de detalle de una cuenta específica
+final accountByIdProvider = FutureProvider.family<Account?, int>((
+  ref,
+  id,
+) async {
+  return ref.watch(accountsDaoProvider).getAccountById(id);
+});

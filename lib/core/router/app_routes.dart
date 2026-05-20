@@ -13,6 +13,9 @@ abstract class AppRoutes {
   static const String categoryDetail = '/category/:id';
   static const String accountDetail = '/accounts/:id';
 
+  // Accounts
+  static const String newAccount = '$accounts/new';
+
   // Pantallas completas (fuera del ShellRoutes -> sin bottom nav)
   static const String addTransaction = '/add-transaction';
 

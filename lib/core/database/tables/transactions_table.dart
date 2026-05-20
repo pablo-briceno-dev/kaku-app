@@ -16,5 +16,5 @@ class TransactionsTable extends Table {
   BoolColumn get isRecurring => boolean().withDefault(const Constant(false))();
   TextColumn get tags =>
       text().nullable()(); // JSON: '["vacaciones","trabajo"]'
-  DateTimeColumn get cr4eatedAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }

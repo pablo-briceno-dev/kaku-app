@@ -33,7 +33,6 @@ class ChipItem extends ConsumerWidget {
             title,
             style: ts.titleSmall?.copyWith(color: cs.onSurfaceVariant),
           ),
-          const SizedBox(height: 8),
           Text(
             subtitle,
             style: ts.titleLarge?.copyWith(
