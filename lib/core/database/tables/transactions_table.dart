@@ -11,7 +11,8 @@ class TransactionsTable extends Table {
   TextColumn get description => text().nullable()();
   DateTimeColumn get date => dateTime()();
   IntColumn get accountId => integer().references(AccountsTable, #id)();
-  IntColumn get categoryId => integer().references(CategoriesTable, #id)();
+  IntColumn get categoryId =>
+      integer().nullable().references(CategoriesTable, #id)();
   TextColumn get receiptPath => text().nullable()(); // path local de la foto
   BoolColumn get isRecurring => boolean().withDefault(const Constant(false))();
   TextColumn get tags =>

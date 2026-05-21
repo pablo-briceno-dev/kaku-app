@@ -8,7 +8,7 @@ class AccountsTable extends Table {
   // cash, debit, credit, savings - Se insertará el index
   IntColumn get type => integer().withDefault(const Constant(1))();
   // COP, USD, EUR
-  TextColumn get currency => text().withDefault(const Constant('USD'))();
+  TextColumn get currency => text().withDefault(const Constant('COP'))();
   RealColumn get balance => real().withDefault(const Constant(0.0))();
   TextColumn get colorHex => text().withDefault(const Constant('#7cffd4'))();
   //? Talvéz se pueda añadir el nombre del icono

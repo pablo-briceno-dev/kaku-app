@@ -136,6 +136,7 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
           TextFormField(
             controller: controllers['name'],
             keyboardType: TextInputType.text,
+            maxLength: 50,
             validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
             decoration: const InputDecoration(labelText: 'Nombre*'),
           ),

@@ -1,5 +1,6 @@
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -59,8 +60,8 @@ final currencyProvider = StateNotifierProvider<CurrencyNotifier, CurrencyType>(
 
 //  Qué hace: el toggle Gasto / Ingreso en AddTransactionScreen.
 //  Solo vive mientras la pantalla está abierta.
-final addTransactionTypeProvider = StateProvider.autoDispose<String>(
-  (_) => 'expense',
+final addTransactionTypeProvider = StateProvider.autoDispose<TransactionType>(
+  (_) => TransactionType.expense,
 );
 
 //  Qué hace: la cuenta seleccionada en el formulario de

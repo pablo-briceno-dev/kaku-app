@@ -55,7 +55,7 @@ class $AccountsTableTable extends AccountsTable
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
-    defaultValue: const Constant('USD'),
+    defaultValue: const Constant('COP'),
   );
   static const VerificationMeta _balanceMeta = const VerificationMeta(
     'balance',
@@ -1928,9 +1928,9 @@ class $TransactionsTableTable extends TransactionsTable
   late final GeneratedColumn<int> categoryId = GeneratedColumn<int>(
     'category_id',
     aliasedName,
-    false,
+    true,
     type: DriftSqlType.int,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
       'REFERENCES categories_table (id)',
     ),
@@ -2057,8 +2057,6 @@ class $TransactionsTableTable extends TransactionsTable
         _categoryIdMeta,
         categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
       );
-    } else if (isInserting) {
-      context.missing(_categoryIdMeta);
     }
     if (data.containsKey('receipt_path')) {
       context.handle(
@@ -2126,7 +2124,7 @@ class $TransactionsTableTable extends TransactionsTable
       categoryId: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}category_id'],
-      )!,
+      ),
       receiptPath: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}receipt_path'],
@@ -2159,7 +2157,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final String? description;
   final DateTime date;
   final int accountId;
-  final int categoryId;
+  final int? categoryId;
   final String? receiptPath;
   final bool isRecurring;
   final String? tags;
@@ -2171,7 +2169,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     this.description,
     required this.date,
     required this.accountId,
-    required this.categoryId,
+    this.categoryId,
     this.receiptPath,
     required this.isRecurring,
     this.tags,
@@ -2188,7 +2186,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     }
     map['date'] = Variable<DateTime>(date);
     map['account_id'] = Variable<int>(accountId);
-    map['category_id'] = Variable<int>(categoryId);
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<int>(categoryId);
+    }
     if (!nullToAbsent || receiptPath != null) {
       map['receipt_path'] = Variable<String>(receiptPath);
     }
@@ -2210,7 +2210,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           : Value(description),
       date: Value(date),
       accountId: Value(accountId),
-      categoryId: Value(categoryId),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
       receiptPath: receiptPath == null && nullToAbsent
           ? const Value.absent()
           : Value(receiptPath),
@@ -2232,7 +2234,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       description: serializer.fromJson<String?>(json['description']),
       date: serializer.fromJson<DateTime>(json['date']),
       accountId: serializer.fromJson<int>(json['accountId']),
-      categoryId: serializer.fromJson<int>(json['categoryId']),
+      categoryId: serializer.fromJson<int?>(json['categoryId']),
       receiptPath: serializer.fromJson<String?>(json['receiptPath']),
       isRecurring: serializer.fromJson<bool>(json['isRecurring']),
       tags: serializer.fromJson<String?>(json['tags']),
@@ -2249,7 +2251,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'description': serializer.toJson<String?>(description),
       'date': serializer.toJson<DateTime>(date),
       'accountId': serializer.toJson<int>(accountId),
-      'categoryId': serializer.toJson<int>(categoryId),
+      'categoryId': serializer.toJson<int?>(categoryId),
       'receiptPath': serializer.toJson<String?>(receiptPath),
       'isRecurring': serializer.toJson<bool>(isRecurring),
       'tags': serializer.toJson<String?>(tags),
@@ -2264,7 +2266,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     Value<String?> description = const Value.absent(),
     DateTime? date,
     int? accountId,
-    int? categoryId,
+    Value<int?> categoryId = const Value.absent(),
     Value<String?> receiptPath = const Value.absent(),
     bool? isRecurring,
     Value<String?> tags = const Value.absent(),
@@ -2276,7 +2278,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     description: description.present ? description.value : this.description,
     date: date ?? this.date,
     accountId: accountId ?? this.accountId,
-    categoryId: categoryId ?? this.categoryId,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
     receiptPath: receiptPath.present ? receiptPath.value : this.receiptPath,
     isRecurring: isRecurring ?? this.isRecurring,
     tags: tags.present ? tags.value : this.tags,
@@ -2362,7 +2364,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
   final Value<String?> description;
   final Value<DateTime> date;
   final Value<int> accountId;
-  final Value<int> categoryId;
+  final Value<int?> categoryId;
   final Value<String?> receiptPath;
   final Value<bool> isRecurring;
   final Value<String?> tags;
@@ -2387,7 +2389,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     this.description = const Value.absent(),
     required DateTime date,
     required int accountId,
-    required int categoryId,
+    this.categoryId = const Value.absent(),
     this.receiptPath = const Value.absent(),
     this.isRecurring = const Value.absent(),
     this.tags = const Value.absent(),
@@ -2395,8 +2397,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
   }) : amount = Value(amount),
        type = Value(type),
        date = Value(date),
-       accountId = Value(accountId),
-       categoryId = Value(categoryId);
+       accountId = Value(accountId);
   static Insertable<Transaction> custom({
     Expression<int>? id,
     Expression<double>? amount,
@@ -2432,7 +2433,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     Value<String?>? description,
     Value<DateTime>? date,
     Value<int>? accountId,
-    Value<int>? categoryId,
+    Value<int?>? categoryId,
     Value<String?>? receiptPath,
     Value<bool>? isRecurring,
     Value<String?>? tags,
@@ -3950,7 +3951,7 @@ typedef $$TransactionsTableTableCreateCompanionBuilder =
       Value<String?> description,
       required DateTime date,
       required int accountId,
-      required int categoryId,
+      Value<int?> categoryId,
       Value<String?> receiptPath,
       Value<bool> isRecurring,
       Value<String?> tags,
@@ -3964,7 +3965,7 @@ typedef $$TransactionsTableTableUpdateCompanionBuilder =
       Value<String?> description,
       Value<DateTime> date,
       Value<int> accountId,
-      Value<int> categoryId,
+      Value<int?> categoryId,
       Value<String?> receiptPath,
       Value<bool> isRecurring,
       Value<String?> tags,
@@ -4010,9 +4011,9 @@ final class $$TransactionsTableTableReferences
         ),
       );
 
-  $$CategoriesTableTableProcessedTableManager get categoryId {
-    final $_column = $_itemColumn<int>('category_id')!;
-
+  $$CategoriesTableTableProcessedTableManager? get categoryId {
+    final $_column = $_itemColumn<int>('category_id');
+    if ($_column == null) return null;
     final manager = $$CategoriesTableTableTableManager(
       $_db,
       $_db.categoriesTable,
@@ -4355,7 +4356,7 @@ class $$TransactionsTableTableTableManager
                 Value<String?> description = const Value.absent(),
                 Value<DateTime> date = const Value.absent(),
                 Value<int> accountId = const Value.absent(),
-                Value<int> categoryId = const Value.absent(),
+                Value<int?> categoryId = const Value.absent(),
                 Value<String?> receiptPath = const Value.absent(),
                 Value<bool> isRecurring = const Value.absent(),
                 Value<String?> tags = const Value.absent(),
@@ -4381,7 +4382,7 @@ class $$TransactionsTableTableTableManager
                 Value<String?> description = const Value.absent(),
                 required DateTime date,
                 required int accountId,
-                required int categoryId,
+                Value<int?> categoryId = const Value.absent(),
                 Value<String?> receiptPath = const Value.absent(),
                 Value<bool> isRecurring = const Value.absent(),
                 Value<String?> tags = const Value.absent(),
