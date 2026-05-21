@@ -84,6 +84,33 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
 
     return result?.read(transactionsTable.amount.sum()) ?? 0.0;
   }
+
+  // Stream de transacciones por cuenta
+  Stream<List<TransactionWithCategory>> watchTransactionsByAccount(
+    int accountId,
+  ) {
+    final query =
+        (select(transactionsTable)..where((t) => t.accountId.equals(accountId)))
+          ..orderBy([(t) => OrderingTerm.desc(t.date)]);
+    return query
+        .join([
+          leftOuterJoin(
+            categoriesTable,
+            categoriesTable.id.equalsExp(transactionsTable.categoryId),
+          ),
+        ])
+        .watch()
+        .map(
+          (rows) => rows
+              .map(
+                (row) => TransactionWithCategory(
+                  transaction: row.readTable(transactionsTable),
+                  category: row.readTableOrNull(categoriesTable),
+                ),
+              )
+              .toList(),
+        );
+  }
 }
 
 // Clase de resultado typesafe para JOIN ──

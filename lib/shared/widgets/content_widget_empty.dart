@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
-class AccountEmpty extends StatelessWidget {
-  const AccountEmpty({super.key});
+class ContentWidgetEmpty extends StatelessWidget {
+  final String title;
+  final String message;
+
+  const ContentWidgetEmpty({
+    super.key,
+    required this.title,
+    required this.message,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -10,10 +17,10 @@ class AccountEmpty extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 32),
       child: Column(
         children: [
-          const Text('💸​', style: TextStyle(fontSize: 36)),
+          Text(title, style: TextStyle(fontSize: 36)),
           const SizedBox(height: 10),
           Text(
-            'Sin cuentas creadas',
+            message,
             style: TextStyle(
               fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
               color: Theme.of(context).colorScheme.onSurfaceVariant,

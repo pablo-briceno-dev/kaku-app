@@ -24,8 +24,9 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   }
 
   // Obtener una cuenta por ID (para mostrar detalle)
-  Future<Account?> getAccountById(int id) =>
-      (select(accountsTable)..where((a) => a.id.equals(id))).getSingleOrNull();
+  Stream<Account?> watchAccountById(int id) => (select(
+    accountsTable,
+  )..where((a) => a.id.equals(id))).watchSingleOrNull();
 
   // Insertar cuenta nueva
   Future<int> insertAccount(AccountsTableCompanion account) =>

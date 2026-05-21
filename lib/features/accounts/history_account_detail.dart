@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/router/app_routes.dart';
-import 'package:kaku/shared/widgets/transaction_item.dart';
 import 'package:kaku/features/dashboard/widgets/transactions_list_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
-import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
+import 'package:kaku/shared/widgets/transaction_item.dart';
 
-class TransactionsList extends ConsumerWidget {
-  const TransactionsList({super.key});
+class HistoryAccountDetail extends ConsumerWidget {
+  final Account account;
+
+  const HistoryAccountDetail({super.key, required this.account});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
-    final selectedMonth = ref.watch(selectedMonthProvider);
-    final txAsync = ref.watch(monthTransactionsProvider(selectedMonth));
+    final txAsync = ref.watch(transactionsByAccountProvider(account.id));
 
     return txAsync.when(
       loading: () => const TransactionsListSkeleton(),
@@ -27,7 +28,7 @@ class TransactionsList extends ConsumerWidget {
         if (transactions.isEmpty) {
           return const ContentWidgetEmpty(
             title: '🫙',
-            message: 'Sin transacciones este mes',
+            message: 'Historial de transacciones vacío',
           );
         }
         // Agrupar por día usando groupKey como clave
@@ -46,14 +47,10 @@ class TransactionsList extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Transacciones',
+                    'Historial',
                     style: ts.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
-                  ),
-                  TextButton(
-                    onPressed: () => context.push(AppRoutes.transactions),
-                    child: const Text('Ver todas'),
                   ),
                 ],
               ),

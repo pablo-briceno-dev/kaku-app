@@ -92,9 +92,14 @@ final activeAccountsProvider = StreamProvider<List<Account>>(
 );
 
 // Para la pantalla de detalle de una cuenta específica
-final accountByIdProvider = FutureProvider.family<Account?, int>((
-  ref,
-  id,
-) async {
-  return ref.watch(accountsDaoProvider).getAccountById(id);
-});
+final accountByIdProvider = StreamProvider.family<Account?, int>(
+  (ref, id) => ref.watch(accountsDaoProvider).watchAccountById(id),
+);
+
+// Transacciones por accountId
+final transactionsByAccountProvider =
+    StreamProvider.family<List<TransactionWithCategory>, int>(
+      (ref, accountId) => ref
+          .watch(transactionsDaoProvider)
+          .watchTransactionsByAccount(accountId),
+    );

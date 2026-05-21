@@ -3,14 +3,13 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/colors_plates.dart';
-import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/models/account_type.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/router/app_routes.dart';
-import 'package:kaku/features/accounts/widgets/account_empty.dart';
 import 'package:kaku/features/accounts/widgets/account_item.dart';
 import 'package:kaku/features/accounts/widgets/account_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/widgets/content_widget_empty.dart';
 
 class AccountsList extends ConsumerWidget {
   const AccountsList({super.key});
@@ -42,7 +41,12 @@ class AccountsList extends ConsumerWidget {
         ),
       ),
       data: (accounts) {
-        if (accounts.isEmpty) return const AccountEmpty();
+        if (accounts.isEmpty) {
+          return const ContentWidgetEmpty(
+            title: '💸​',
+            message: 'Sin cuentas creadas',
+          );
+        }
 
         return SizedBox(
           height: 120,
@@ -97,19 +101,7 @@ class AccountsList extends ConsumerWidget {
                             break;
                           case 'archive':
                             final dao = ref.read(accountsDaoProvider);
-                            dao.updateAccount(
-                              Account(
-                                id: accountData.id,
-                                name: accountData.name,
-                                type: accountData.type,
-                                currency: accountData.currency,
-                                balance: accountData.balance,
-                                colorHex: accountData.colorHex,
-                                icon: accountData.icon,
-                                isActive: !accountData.isActive,
-                                createdAt: accountData.createdAt,
-                              ),
-                            );
+                            dao.archiveAccount(accountData.id);
                             break;
                         }
                       },

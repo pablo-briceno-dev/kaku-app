@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart' as Drift;
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/colors_plates.dart';
@@ -13,7 +13,9 @@ import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 
 class AccountFormSheet extends ConsumerStatefulWidget {
-  const AccountFormSheet({super.key});
+  final Account? account;
+
+  const AccountFormSheet({super.key, this.account});
 
   @override
   ConsumerState<AccountFormSheet> createState() => _AccountFormSheetState();
@@ -32,11 +34,25 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
   @override
   void initState() {
     super.initState();
-    controllers['name']?.text = 'Mi Cuenta';
-    controllers['type']?.text = '1';
-    controllers['currency']?.text = ref.read(currencyProvider).label;
-    controllers['icon']?.text = AccountType.values[1].icon;
-    controllers['colorHex']?.text = '#7cffd4';
+    if (widget.account != null) {
+      controllers['name']?.text = widget.account!.name;
+      controllers['type']?.text = widget.account!.type.toString();
+      controllers['currency']?.text = widget.account!.currency;
+      controllers['icon']?.text = widget.account!.icon;
+      controllers['colorHex']?.text = widget.account!.colorHex;
+      controllers['balance']?.text = CurrencyFormatter.format(
+        widget.account!.balance,
+        CurrencyType.values.firstWhere(
+          (e) => e.label == widget.account!.currency,
+        ),
+      );
+    } else {
+      controllers['name']?.text = 'Mi Cuenta';
+      controllers['type']?.text = '1';
+      controllers['currency']?.text = ref.read(currencyProvider).label;
+      controllers['icon']?.text = AccountType.values[1].icon;
+      controllers['colorHex']?.text = '#7cffd4';
+    }
 
     controllers['name']?.addListener(_refresh);
     controllers['balance']?.addListener(_refresh);
@@ -146,9 +162,10 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
                   color: hexToColor(controllers['colorHex']?.text ?? '#7cffd4'),
                 ),
                 isSelected: isSelected,
-                onTap: () => setState(
-                  () => controllers['type']?.text = index.toString(),
-                ),
+                onTap: () => setState(() {
+                  controllers['type']?.text = index.toString();
+                  controllers['icon']?.text = accountType.icon;
+                }),
               );
             },
           ),
@@ -232,29 +249,58 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
                   ? null
                   : () async {
                       final dao = ref.read(accountsDaoProvider);
-                      await dao.insertAccount(
-                        AccountsTableCompanion.insert(
-                          name: controllers['name']!.text,
-                          type: Drift.Value(
-                            int.tryParse(controllers['type']!.text) ?? 0,
-                          ),
-                          currency: Drift.Value(controllers['currency']!.text),
-                          balance: Drift.Value(
-                            CurrencyFormatter.parse(
+                      if (widget.account != null) {
+                        await dao.updateAccount(
+                          Account(
+                            id: widget.account!.id,
+                            name: controllers['name']!.text,
+                            type: int.tryParse(controllers['type']!.text) ?? 0,
+                            currency: controllers['currency']!.text,
+                            balance: CurrencyFormatter.parse(
                               controllers['balance']!.text,
                             ),
+                            colorHex: controllers['colorHex']!.text,
+                            icon: controllers['icon']!.text,
+                            isActive: widget.account!.isActive,
+                            createdAt: widget.account!.createdAt,
                           ),
-                          colorHex: Drift.Value(controllers['colorHex']!.text),
-                          icon: Drift.Value(controllers['icon']!.text),
-                        ),
-                      );
+                        );
+                      } else {
+                        await dao.insertAccount(
+                          AccountsTableCompanion.insert(
+                            name: controllers['name']!.text,
+                            type: drift.Value(
+                              int.tryParse(controllers['type']!.text) ?? 0,
+                            ),
+                            currency: drift.Value(
+                              controllers['currency']!.text,
+                            ),
+                            balance: drift.Value(
+                              CurrencyFormatter.parse(
+                                controllers['balance']!.text,
+                              ),
+                            ),
+                            colorHex: drift.Value(
+                              controllers['colorHex']!.text,
+                            ),
+                            icon: drift.Value(controllers['icon']!.text),
+                          ),
+                        );
+                      }
 
                       if (context.mounted) {
-                        AppSnackbar.success(context, 'Cuenta creada');
+                        AppSnackbar.success(
+                          context,
+                          widget.account != null
+                              ? 'Cuenta actualizada'
+                              : 'Cuenta creada',
+                        );
                         Navigator.pop(context);
                       }
                     },
-              child: const Text('Crear Cuenta'),
+              child: widget.account != null
+                  ? const Text('Actualizar')
+                  : const Text('Crear Cuenta'),
             ),
           ),
 
