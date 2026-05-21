@@ -1,20 +1,24 @@
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:kaku/core/models/currency_type.dart';
 
 class CurrencyFormatter {
   // Formateadores base por moneda
   // Se crean una sola vez (son caros de instanciar) y se reutilizan
   static final Map<String, NumberFormat> _formatters = {};
 
-  static NumberFormat _fmt(String currency) => _formatters.putIfAbsent(
-    currency,
+  static NumberFormat _fmt(CurrencyType currency) => _formatters.putIfAbsent(
+    currency.label,
     () =>
         NumberFormat.decimalPattern(_localeFor(currency))
           ..maximumFractionDigits = 0,
   );
 
   // Formato completo con separadores de miles
-  static String format(double amount, [String currency = 'COP']) {
+  static String format(
+    double amount, [
+    CurrencyType currency = CurrencyType.cop,
+  ]) {
     final symbol = _symbolFor(currency);
     final sign = amount < 0 ? '-' : '';
     // Formateamos el valor absoluto y pegamos el símbolo al frente
@@ -23,7 +27,10 @@ class CurrencyFormatter {
   }
 
   // Formato corto para listas y chips
-  static String compact(double amount, [String currency = 'COP']) {
+  static String compact(
+    double amount, [
+    CurrencyType currency = CurrencyType.cop,
+  ]) {
     final symbol = _symbolFor(currency);
     final sign = amount < 0 ? '-' : '';
     final abs = amount.abs();
@@ -43,7 +50,7 @@ class CurrencyFormatter {
   // Formato completo con signo explícito + / -
   static String withSign(
     double amount, {
-    String currency = 'COP',
+    CurrencyType currency = CurrencyType.cop,
     String? type, // 'income' | 'expense'
     bool isPercentage = false,
     bool compact = false,
@@ -61,7 +68,7 @@ class CurrencyFormatter {
   }
 
   // Convierte un String formateado de vuelta a double
-  static double parse(String text, [String currency = 'COP']) {
+  static double parse(String text) {
     if (text.trim().isEmpty) return 0.0;
     final clean = text
         .replaceAll(RegExp(r'[^\d,\.]'), '') // quita $, letras, espacios
@@ -71,31 +78,32 @@ class CurrencyFormatter {
   }
 
   // TextInputFormatter para el campo de monto
-  static TextInputFormatter inputFormatter([String currency = 'COP']) =>
-      _CurrencyInputFormatter(currency);
+  static TextInputFormatter inputFormatter([
+    CurrencyType currency = CurrencyType.cop,
+  ]) => _CurrencyInputFormatter(currency);
 
   // Formatea un porcentaje con decimales opcionales
   static String percentage(double value, {int decimals = 0}) =>
       '${value.toStringAsFixed(decimals)}%';
 
   // Helpers
-  static String _symbolFor(String currency) =>
+  static String _symbolFor(CurrencyType currency) =>
       const {
-        'COP': r'$',
-        'USD': r'US$',
-        'EUR': '€',
-        'MXN': r'MX$',
-        'ARS': r'AR$',
+        CurrencyType.cop: r'$',
+        CurrencyType.usd: r'US$',
+        CurrencyType.eur: '€',
+        CurrencyType.mxn: r'MX$',
+        CurrencyType.ars: r'AR$',
       }[currency] ??
       r'$';
 
-  static String _localeFor(String currency) =>
+  static String _localeFor(CurrencyType currency) =>
       const {
-        'COP': 'es_CO', // punto como sep de miles: $2.480.500
-        'USD': 'en_US', // coma: $2,480,500
-        'EUR': 'de_DE', // punto como sep, coma decimal: €2.480.500
-        'MXN': 'es_MX',
-        'ARS': 'es_AR',
+        CurrencyType.cop: 'es_CO', // punto como sep de miles: $2.480.500
+        CurrencyType.usd: 'en_US', // coma: $2,480,500
+        CurrencyType.eur: 'de_DE', // punto como sep, coma decimal: €2.480.500
+        CurrencyType.mxn: 'es_MX',
+        CurrencyType.ars: 'es_AR',
       }[currency] ??
       'es_CO';
 
@@ -108,7 +116,7 @@ class CurrencyFormatter {
 }
 
 class _CurrencyInputFormatter extends TextInputFormatter {
-  final String currency;
+  final CurrencyType currency;
 
   const _CurrencyInputFormatter(this.currency);
 

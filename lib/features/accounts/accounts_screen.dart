@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/features/accounts/account_form_sheet.dart';
 import 'package:kaku/features/accounts/card_balance_accounts.dart';
+import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
 
 class AccountsScreen extends StatelessWidget {
@@ -14,7 +14,12 @@ class AccountsScreen extends StatelessWidget {
         title: Text('Mis Cuentas'),
         actions: [
           TextButton.icon(
-            onPressed: () => context.push(AppRoutes.newAccount),
+            onPressed: () => AppBottomSheet.show(
+              context,
+              title: 'Nueva Cuenta',
+              isFullScreen: true,
+              child: SingleChildScrollView(child: AccountFormSheet()),
+            ),
             icon: Icon(Icons.add),
             label: Text('Nueva'),
           ),

@@ -37,7 +37,7 @@ class CardBalanceAccounts extends ConsumerWidget {
     return CardBalance(
       title: 'balance total',
       amount: totalBalance.value ?? 0,
-      subtitle: '${activeAccounts ?? 0} cuentas activas - $currency',
+      subtitle: '${activeAccounts ?? 0} cuentas activas - ${currency.label}',
       chipItems: [
         ChipItemConfig(
           title: 'este mes',

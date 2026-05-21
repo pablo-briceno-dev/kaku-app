@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/core/router/app_shell.dart';
 import 'package:kaku/features/accounts/account_detail_screen.dart';
-import 'package:kaku/features/accounts/account_form_screen.dart';
 import 'package:kaku/features/accounts/accounts_screen.dart';
 import 'package:kaku/features/categories/category_detail_screen.dart';
 import 'package:kaku/features/dashboard/dashboard_screen.dart';
@@ -46,12 +45,6 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: AppRoutes.transactions,
             builder: (context, state) => const TransactionsScreen(),
-          ),
-
-          // Accounts
-          GoRoute(
-            path: AppRoutes.newAccount,
-            builder: (_, state) => const AccountFormScreen(),
           ),
 
           // Sub-routas de detalle (mantiene el bottom nav)

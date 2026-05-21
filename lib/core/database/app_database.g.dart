@@ -37,13 +37,13 @@ class $AccountsTableTable extends AccountsTable
   );
   static const VerificationMeta _typeMeta = const VerificationMeta('type');
   @override
-  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+  late final GeneratedColumn<int> type = GeneratedColumn<int>(
     'type',
     aliasedName,
     false,
-    type: DriftSqlType.string,
+    type: DriftSqlType.int,
     requiredDuringInsert: false,
-    defaultValue: const Constant('cash'),
+    defaultValue: const Constant(1),
   );
   static const VerificationMeta _currencyMeta = const VerificationMeta(
     'currency',
@@ -213,7 +213,7 @@ class $AccountsTableTable extends AccountsTable
         data['${effectivePrefix}name'],
       )!,
       type: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
+        DriftSqlType.int,
         data['${effectivePrefix}type'],
       )!,
       currency: attachedDatabase.typeMapping.read(
@@ -252,7 +252,7 @@ class $AccountsTableTable extends AccountsTable
 class Account extends DataClass implements Insertable<Account> {
   final int id;
   final String name;
-  final String type;
+  final int type;
   final String currency;
   final double balance;
   final String colorHex;
@@ -275,7 +275,7 @@ class Account extends DataClass implements Insertable<Account> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
-    map['type'] = Variable<String>(type);
+    map['type'] = Variable<int>(type);
     map['currency'] = Variable<String>(currency);
     map['balance'] = Variable<double>(balance);
     map['color_hex'] = Variable<String>(colorHex);
@@ -307,7 +307,7 @@ class Account extends DataClass implements Insertable<Account> {
     return Account(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      type: serializer.fromJson<String>(json['type']),
+      type: serializer.fromJson<int>(json['type']),
       currency: serializer.fromJson<String>(json['currency']),
       balance: serializer.fromJson<double>(json['balance']),
       colorHex: serializer.fromJson<String>(json['colorHex']),
@@ -322,7 +322,7 @@ class Account extends DataClass implements Insertable<Account> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
-      'type': serializer.toJson<String>(type),
+      'type': serializer.toJson<int>(type),
       'currency': serializer.toJson<String>(currency),
       'balance': serializer.toJson<double>(balance),
       'colorHex': serializer.toJson<String>(colorHex),
@@ -335,7 +335,7 @@ class Account extends DataClass implements Insertable<Account> {
   Account copyWith({
     int? id,
     String? name,
-    String? type,
+    int? type,
     String? currency,
     double? balance,
     String? colorHex,
@@ -413,7 +413,7 @@ class Account extends DataClass implements Insertable<Account> {
 class AccountsTableCompanion extends UpdateCompanion<Account> {
   final Value<int> id;
   final Value<String> name;
-  final Value<String> type;
+  final Value<int> type;
   final Value<String> currency;
   final Value<double> balance;
   final Value<String> colorHex;
@@ -445,7 +445,7 @@ class AccountsTableCompanion extends UpdateCompanion<Account> {
   static Insertable<Account> custom({
     Expression<int>? id,
     Expression<String>? name,
-    Expression<String>? type,
+    Expression<int>? type,
     Expression<String>? currency,
     Expression<double>? balance,
     Expression<String>? colorHex,
@@ -469,7 +469,7 @@ class AccountsTableCompanion extends UpdateCompanion<Account> {
   AccountsTableCompanion copyWith({
     Value<int>? id,
     Value<String>? name,
-    Value<String>? type,
+    Value<int>? type,
     Value<String>? currency,
     Value<double>? balance,
     Value<String>? colorHex,
@@ -500,7 +500,7 @@ class AccountsTableCompanion extends UpdateCompanion<Account> {
       map['name'] = Variable<String>(name.value);
     }
     if (type.present) {
-      map['type'] = Variable<String>(type.value);
+      map['type'] = Variable<int>(type.value);
     }
     if (currency.present) {
       map['currency'] = Variable<String>(currency.value);
@@ -2546,7 +2546,7 @@ typedef $$AccountsTableTableCreateCompanionBuilder =
     AccountsTableCompanion Function({
       Value<int> id,
       required String name,
-      Value<String> type,
+      Value<int> type,
       Value<String> currency,
       Value<double> balance,
       Value<String> colorHex,
@@ -2558,7 +2558,7 @@ typedef $$AccountsTableTableUpdateCompanionBuilder =
     AccountsTableCompanion Function({
       Value<int> id,
       Value<String> name,
-      Value<String> type,
+      Value<int> type,
       Value<String> currency,
       Value<double> balance,
       Value<String> colorHex,
@@ -2619,7 +2619,7 @@ class $$AccountsTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get type => $composableBuilder(
+  ColumnFilters<int> get type => $composableBuilder(
     column: $table.type,
     builder: (column) => ColumnFilters(column),
   );
@@ -2699,7 +2699,7 @@ class $$AccountsTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get type => $composableBuilder(
+  ColumnOrderings<int> get type => $composableBuilder(
     column: $table.type,
     builder: (column) => ColumnOrderings(column),
   );
@@ -2750,7 +2750,7 @@ class $$AccountsTableTableAnnotationComposer
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
-  GeneratedColumn<String> get type =>
+  GeneratedColumn<int> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
   GeneratedColumn<String> get currency =>
@@ -2828,7 +2828,7 @@ class $$AccountsTableTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
-                Value<String> type = const Value.absent(),
+                Value<int> type = const Value.absent(),
                 Value<String> currency = const Value.absent(),
                 Value<double> balance = const Value.absent(),
                 Value<String> colorHex = const Value.absent(),
@@ -2850,7 +2850,7 @@ class $$AccountsTableTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required String name,
-                Value<String> type = const Value.absent(),
+                Value<int> type = const Value.absent(),
                 Value<String> currency = const Value.absent(),
                 Value<double> balance = const Value.absent(),
                 Value<String> colorHex = const Value.absent(),
