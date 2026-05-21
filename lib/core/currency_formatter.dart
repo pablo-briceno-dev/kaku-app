@@ -125,13 +125,43 @@ class _CurrencyInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    final digits = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
-    if (digits.isEmpty) return newValue.copyWith(text: '');
-    final amount = double.parse(digits);
+    final newDigits = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
+    if (newDigits.isEmpty) {
+      return newValue.copyWith(
+        text: '',
+        selection: const TextSelection.collapsed(offset: 0),
+      );
+    }
+    final amount = double.parse(newDigits);
     final formatted = CurrencyFormatter.format(amount, currency);
-    return newValue.copyWith(
+    final cursorPos = newValue.selection.end.clamp(0, newValue.text.length);
+    final textBeforeCursor = newValue.text.substring(0, cursorPos);
+    final digitsBeforeCursor = textBeforeCursor
+        .replaceAll(RegExp(r'[^\d]'), '')
+        .length;
+    var newCursorPos = 0;
+    var digitCount = 0;
+    for (var i = 0; i < formatted.length; i++) {
+      if (RegExp(r'\d').hasMatch(formatted[i])) {
+        digitCount++;
+        if (digitCount == digitsBeforeCursor) {
+          newCursorPos = i + 1;
+          break;
+        }
+      }
+      newCursorPos = i + 1;
+    }
+
+    if (digitsBeforeCursor == 0) {
+      final firstDigit = formatted.indexOf(RegExp(r'\d'));
+      newCursorPos = firstDigit >= 0 ? firstDigit : formatted.length;
+    }
+
+    return TextEditingValue(
       text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
+      selection: TextSelection.collapsed(
+        offset: newCursorPos.clamp(0, formatted.length),
+      ),
     );
   }
 }

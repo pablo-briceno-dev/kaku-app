@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kaku/features/accounts/account_form_sheet.dart';
+import 'package:kaku/features/accounts/accounts_list.dart';
 import 'package:kaku/features/accounts/card_balance_accounts.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
@@ -27,7 +28,13 @@ class AccountsScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(children: [CardBalanceAccounts()]),
+        child: Column(
+          children: [
+            CardBalanceAccounts(),
+            const SizedBox(height: 16),
+            Expanded(child: AccountsList()),
+          ],
+        ),
       ),
     );
   }

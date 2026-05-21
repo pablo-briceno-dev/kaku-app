@@ -37,6 +37,26 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
     controllers['currency']?.text = ref.read(currencyProvider).label;
     controllers['icon']?.text = AccountType.values[1].icon;
     controllers['colorHex']?.text = '#7cffd4';
+
+    controllers['name']?.addListener(_refresh);
+    controllers['balance']?.addListener(_refresh);
+  }
+
+  void _refresh() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  void dispose() {
+    controllers['name']?.removeListener(_refresh);
+    controllers['balance']?.removeListener(_refresh);
+
+    for (final c in controllers.values) {
+      c.dispose();
+    }
+    super.dispose();
   }
 
   @override
