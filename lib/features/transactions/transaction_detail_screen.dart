@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/shared/widgets/custom_app_bar.dart';
 
 class TransactionDetailScreen extends StatelessWidget {
   final int id;
@@ -7,6 +8,9 @@ class TransactionDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text('TransactionDetailScreen')));
+    return Scaffold(
+      appBar: CustomAppBar(title: Text('Transacción')),
+      body: Center(child: Text('TransactionDetailScreen')),
+    );
   }
 }

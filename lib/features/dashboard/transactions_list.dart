@@ -82,7 +82,7 @@ class TransactionsList extends ConsumerWidget {
                   ...dayTxs.map(
                     (txWithCat) => TransactionItem(
                       txWithCat: txWithCat,
-                      onTap: () => context.go(
+                      onTap: () => context.push(
                         AppRoutes.toTransaction(txWithCat.transaction.id),
                       ),
                     ),
