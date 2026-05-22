@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
@@ -34,9 +35,30 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   void initState() {
     super.initState();
     _amountController.text = CurrencyFormatter.format(
-      100,
+      0,
       ref.read(currencyProvider),
     );
+  }
+
+  bool _validatedButton(
+    double amount,
+    double accountBalance,
+    TransactionType type,
+    int? selectedAccount,
+  ) {
+    if (amount == 0) {
+      debugPrint('amount == 0');
+      return true;
+    }
+    if (selectedAccount == null) {
+      debugPrint('selectedAccount == null');
+      return true;
+    }
+    if (type == TransactionType.expense && amount > accountBalance) {
+      debugPrint('type == TransactionType.expense && amount < accountBalance');
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -71,6 +93,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             ),
           );
         }
+        final account = activeAccounts
+            .where((ac) => selectedAccount != null && ac.id == selectedAccount)
+            .firstOrNull;
 
         return Scaffold(
           appBar: CustomAppBar(
@@ -151,8 +176,12 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed:
-                        _amountController.text.isEmpty &&
-                            selectedAccount == null
+                        _validatedButton(
+                          CurrencyFormatter.parse(_amountController.text),
+                          account?.balance ?? 0.0,
+                          selectedType,
+                          selectedAccount,
+                        )
                         ? null
                         : () async {
                             final dao = ref.read(transactionsDaoProvider);
@@ -162,12 +191,25 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                                 amount: CurrencyFormatter.parse(
                                   _amountController.text,
                                 ),
-                                description: drift.Value(_descriptionController.text),
+                                description: drift.Value(
+                                  _descriptionController.text,
+                                ),
                                 categoryId: drift.Value(selectedCategory),
                                 accountId: selectedAccount!,
                                 receiptPath: drift.Value(_receiptPath),
                                 date: _selectedDate,
                               ),
+                            );
+                            final accountDao = ref.read(accountsDaoProvider);
+                            await accountDao.updateBalance(
+                              account!.id,
+                              account.balance +
+                                  BudgetCalculator.balanceDelta(
+                                    selectedType,
+                                    CurrencyFormatter.parse(
+                                      _amountController.text,
+                                    ),
+                                  ),
                             );
 
                             if (context.mounted) {

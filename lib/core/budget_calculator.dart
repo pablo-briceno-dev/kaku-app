@@ -1,4 +1,5 @@
 import 'package:kaku/core/models/budget_progress.dart';
+import 'package:kaku/core/models/transaction_type.dart';
 
 class BudgetCalculator {
   // ════════════════════════════════════════════════════
@@ -38,13 +39,13 @@ class BudgetCalculator {
   ///
   /// Ejemplo: balanceDelta('expense', 32_000) → -32_000
   /// Ejemplo: balanceDelta('income',  4_200_000) → +4_200_000
-  static double balanceDelta(String type, double amount) {
+  static double balanceDelta(TransactionType type, double amount) {
     switch (type) {
-      case 'income':
+      case TransactionType.income:
         return amount;
-      case 'expense':
+      case TransactionType.expense:
         return -amount;
-      default:
+      case TransactionType.transfer:
         return 0; // transfer: se maneja en los dos lados por separado
     }
   }
