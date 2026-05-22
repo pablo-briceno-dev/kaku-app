@@ -3,7 +3,7 @@ import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/models/account_type.dart';
 import 'package:kaku/core/models/currency_type.dart';
 
-class AccountItem extends StatelessWidget {
+class CardAccountItem extends StatelessWidget {
   final String emoji;
   final String name;
   final AccountType type;
@@ -14,7 +14,7 @@ class AccountItem extends StatelessWidget {
   final VoidCallback? onTap;
   final Function(LongPressStartDetails)? onLongPressStart;
 
-  const AccountItem({
+  const CardAccountItem({
     super.key,
     required this.emoji,
     required this.name,

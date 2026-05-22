@@ -103,3 +103,8 @@ final transactionsByAccountProvider =
           .watch(transactionsDaoProvider)
           .watchTransactionsByAccount(accountId),
     );
+
+// Categorías
+final getExpenseCategoriesProvider = FutureProvider<List<Category>>(
+  (ref) => ref.watch(categoriesDaoProvider).getExpenseCategories(),
+);

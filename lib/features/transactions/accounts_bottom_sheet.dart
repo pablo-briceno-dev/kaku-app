@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kaku/core/colors_plates.dart';
 import 'package:kaku/core/models/account_type.dart';
 import 'package:kaku/core/models/currency_type.dart';
-import 'package:kaku/core/router/app_routes.dart';
-import 'package:kaku/shared/widgets/card_account_item.dart';
 import 'package:kaku/features/accounts/widgets/account_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/providers/ui_provider.dart';
+import 'package:kaku/shared/widgets/card_account_item.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
 
-class AccountsList extends ConsumerWidget {
-  const AccountsList({super.key});
+class AccountsBottomSheet extends ConsumerWidget {
+  const AccountsBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,7 +48,7 @@ class AccountsList extends ConsumerWidget {
         }
 
         return SizedBox(
-          height: 120,
+          height: MediaQuery.of(context).size.height * 0.5,
           child: ListView.builder(
             scrollDirection: Axis.vertical,
             padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -67,43 +66,10 @@ class AccountsList extends ConsumerWidget {
                       currencyType: CurrencyType.values.firstWhere(
                         (e) => e.label == accountData.currency,
                       ),
-                      onTap: () => context.push(
-                        AppRoutes.toAccountDetail(accountData.id),
-                      ),
-                      onLongPressStart: (details) async {
-                        final result = await showMenu<String>(
-                          context: context,
-                          position: RelativeRect.fromLTRB(
-                            details.globalPosition.dx,
-                            details.globalPosition.dy,
-                            details.globalPosition.dx,
-                            details.globalPosition.dy,
-                          ),
-                          items: [
-                            const PopupMenuItem(
-                              value: 'edit',
-                              child: Text('Editar'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'archive',
-                              child: Text('Archivar o Inactivar'),
-                            ),
-                          ],
-                        );
-
-                        switch (result) {
-                          case 'edit':
-                            if (context.mounted) {
-                              context.push(
-                                AppRoutes.toAccountDetail(accountData.id),
-                              );
-                            }
-                            break;
-                          case 'archive':
-                            final dao = ref.read(accountsDaoProvider);
-                            dao.archiveAccount(accountData.id);
-                            break;
-                        }
+                      onTap: () {
+                        ref.read(selectedAccountProvider.notifier).state =
+                            accountData.id;
+                        Navigator.pop(context);
                       },
                     ),
                   )
