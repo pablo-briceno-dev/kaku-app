@@ -32,4 +32,8 @@ class CategoriesDao extends DatabaseAccessor<AppDatabase>
   // Eliminar solo si no tiene transacciones asociadas (verificar antes en el UI)
   Future<int> deleteCategory(int id) =>
       (delete(categoriesTable)..where((c) => c.id.equals(id))).go();
+
+  Stream<Category?> watchCategoryById(int id) => (select(
+    categoriesTable,
+  )..where((c) => c.id.equals(id))).watchSingleOrNull();
 }

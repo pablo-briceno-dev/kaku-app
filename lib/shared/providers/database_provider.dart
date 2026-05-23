@@ -104,7 +104,18 @@ final transactionsByAccountProvider =
           .watchTransactionsByAccount(accountId),
     );
 
+final transactionByIdProvider = StreamProvider.family<Transaction?, int>(
+  (ref, id) => ref.watch(transactionsDaoProvider).watchTransactionById(id),
+);
+
 // Categorías
 final getExpenseCategoriesProvider = FutureProvider<List<Category>>(
   (ref) => ref.watch(categoriesDaoProvider).getExpenseCategories(),
+);
+
+final categoryByIdProvider = StreamProvider.family<Category?, int?>(
+  (ref, id) {
+    if (id == null) return Stream.value(null);
+    return ref.watch(categoriesDaoProvider).watchCategoryById(id);
+  },
 );

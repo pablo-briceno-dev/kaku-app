@@ -2,9 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:kaku/core/receipt_storage.dart';
 
 class ReceiptPicker extends StatefulWidget {
-  final String?              initialPath;
+  final String?               initialPath;
   final ValueChanged<String?> onChanged;
 
   const ReceiptPicker({
@@ -24,7 +25,6 @@ class _ReceiptPickerState extends State<ReceiptPicker>
 
   late final AnimationController _animCtrl;
   late final Animation<double>   _fadeAnim;
-
   final _picker = ImagePicker();
 
   @override
@@ -45,39 +45,22 @@ class _ReceiptPickerState extends State<ReceiptPicker>
     super.dispose();
   }
 
-  // ════════════════════════════════════════════════════════
-  //  Solicitar permiso antes de abrir galería o cámara
-  // ════════════════════════════════════════════════════════
   Future<bool> _requestPermission(ImageSource source) async {
-    // En iOS siempre pedimos photos + camera según la fuente.
-    // En Android el permiso depende de la versión del SO:
-    //   ≥ Android 13 (API 33) → READ_MEDIA_IMAGES / CAMERA
-    //   <  Android 13          → READ_EXTERNAL_STORAGE / CAMERA
-    // permission_handler detecta la versión automáticamente.
-    final Permission permission = source == ImageSource.camera
+    final permission = source == ImageSource.camera
         ? Permission.camera
-        : Permission.photos;         // cubre galería en iOS y Android
-
+        : Permission.photos;
     final status = await permission.request();
-
     if (status.isGranted) return true;
-
-    // Permiso denegado permanentemente → el usuario debe ir
-    // a Ajustes del sistema para habilitarlo manualmente
-    if (status.isPermanentlyDenied && mounted) {
-      _showSettingsDialog(source);
-    }
-
+    if (status.isPermanentlyDenied && mounted) _showSettingsDialog(source);
     return false;
   }
 
-  // ── Diálogo cuando el permiso fue denegado permanentemente ──
   void _showSettingsDialog(ImageSource source) {
     final resource = source == ImageSource.camera ? 'cámara' : 'galería';
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Permiso de $resource'),
+        title:   Text('Permiso de $resource'),
         content: Text(
           'Kaku necesita acceso a tu $resource para adjuntar recibos. '
           'Habilítalo en los Ajustes del dispositivo.',
@@ -88,7 +71,6 @@ class _ReceiptPickerState extends State<ReceiptPicker>
             child: const Text('Cancelar'),
           ),
           FilledButton(
-            // openAppSettings abre la pantalla de permisos de la app
             onPressed: () {
               Navigator.pop(context);
               openAppSettings();
@@ -100,13 +82,10 @@ class _ReceiptPickerState extends State<ReceiptPicker>
     );
   }
 
-  // ── Flujo completo: pedir permiso → abrir picker ─────────
   Future<void> _pick(ImageSource source) async {
-    // 1. Pedir permiso — si no lo otorga, detenemos
     final granted = await _requestPermission(source);
     if (!granted) return;
 
-    // 2. Abrir galería o cámara
     setState(() => _isLoading = true);
 
     try {
@@ -121,13 +100,18 @@ class _ReceiptPickerState extends State<ReceiptPicker>
         return;
       }
 
+      // ✅ CAMBIO CLAVE: copiar al almacenamiento persistente
+      // antes de guardar la ruta en el estado.
+      // file.path es temporal — savedPath es permanente.
+      final savedPath = await ReceiptStorage.save(file.path);
+
       setState(() {
-        _currentPath = file.path;
+        _currentPath = savedPath;   // ← ruta permanente, no la temporal
         _isLoading   = false;
       });
 
       _animCtrl.forward();
-      widget.onChanged(file.path);
+      widget.onChanged(savedPath);  // ← le pasas la ruta permanente al padre
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
@@ -145,16 +129,23 @@ class _ReceiptPickerState extends State<ReceiptPicker>
   }
 
   void _remove() {
+    final pathToDelete = _currentPath;
     _animCtrl.reverse().then((_) {
       setState(() => _currentPath = null);
       widget.onChanged(null);
+
+      // Elimina el archivo del disco en segundo plano.
+      // No esperamos el Future porque no afecta la UI.
+      if (pathToDelete != null) {
+        ReceiptStorage.delete(pathToDelete);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 300),
+      duration:       const Duration(milliseconds: 300),
       switchInCurve:  Curves.easeOut,
       switchOutCurve: Curves.easeIn,
       child: _currentPath != null
@@ -174,9 +165,11 @@ class _ReceiptPickerState extends State<ReceiptPicker>
   }
 }
 
-// ── Botones de selección ─────────────────────────────────────
+// ── El resto de widgets (_PickerButtons, _PreviewCard, etc.)
+//    son idénticos a la versión anterior — no cambian ──────────
+
 class _PickerButtons extends StatelessWidget {
-  final bool         isLoading;
+  final bool isLoading;
   final VoidCallback onGallery;
   final VoidCallback onCamera;
 
@@ -190,7 +183,6 @@ class _PickerButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
@@ -241,10 +233,10 @@ class _PickerButtons extends StatelessWidget {
 }
 
 class _PickerButton extends StatelessWidget {
-  final IconData     icon;
-  final String       label;
+  final IconData icon;
+  final String label;
   final VoidCallback onTap;
-  final bool         isLeft;
+  final bool isLeft;
 
   const _PickerButton({
     required this.icon,
@@ -284,11 +276,10 @@ class _PickerButton extends StatelessWidget {
   }
 }
 
-// ── Preview de la foto ───────────────────────────────────────
 class _PreviewCard extends StatelessWidget {
-  final String            path;
+  final String path;
   final Animation<double> fadeAnim;
-  final VoidCallback      onRemove;
+  final VoidCallback onRemove;
 
   const _PreviewCard({
     super.key,
@@ -317,7 +308,7 @@ class _PreviewCard extends StatelessWidget {
             SizedBox(
               width:  double.infinity,
               height: 160,
-              child: file.existsSync()
+              child:  file.existsSync()
                   ? Image.file(file, fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => _BrokenImage(cs: cs))
                   : _BrokenImage(cs: cs),
@@ -341,11 +332,11 @@ class _PreviewCard extends StatelessWidget {
             Positioned(
               left: 12, bottom: 10,
               child: Row(
-                children: [
-                  const Icon(Icons.receipt_long_rounded,
+                children: const [
+                  Icon(Icons.receipt_long_rounded,
                       size: 12, color: Colors.white70),
-                  const SizedBox(width: 4),
-                  const Text(
+                  SizedBox(width: 4),
+                  Text(
                     'Recibo adjunto',
                     style: TextStyle(
                       fontSize: 11, color: Colors.white70,

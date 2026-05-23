@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/core/models/transaction_type.dart';
 
 class CurrencyFormatter {
   // Formateadores base por moneda
@@ -51,11 +52,11 @@ class CurrencyFormatter {
   static String withSign(
     double amount, {
     CurrencyType currency = CurrencyType.cop,
-    String? type, // 'income' | 'expense'
+    TransactionType? type, // 'income' | 'expense'
     bool isPercentage = false,
     bool compact = false,
   }) {
-    final isNegative = type == 'expense' || amount < 0;
+    final isNegative = type == TransactionType.expense || amount < 0;
     final sign = isNegative ? '-' : '+';
     final abs = amount.abs();
 
