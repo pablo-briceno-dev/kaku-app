@@ -12,7 +12,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.title,
     this.actions,
-    this.defaultActions = true,
+    this.defaultActions = false,
   });
 
   @override

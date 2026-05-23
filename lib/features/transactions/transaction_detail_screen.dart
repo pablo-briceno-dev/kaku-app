@@ -154,13 +154,11 @@ class TransactionDetailScreen extends ConsumerWidget {
                     title: 'Categoría',
                     subtitle:
                         '${category?.emoji ?? ''} ${category?.name ?? ' - '}',
-                    isImage: true,
                   ),
                   TransactionDetailListConfig(
                     title: 'Cuenta',
                     subtitle:
                         '${account?.icon ?? ''} ${account?.name ?? ' - '}',
-                    isImage: true,
                   ),
                   TransactionDetailListConfig(
                     title: 'Fecha y hora',
@@ -172,13 +170,32 @@ class TransactionDetailScreen extends ConsumerWidget {
                   ),
                   TransactionDetailListConfig(
                     title: 'Foto de recibo',
-                    subtitle: transaction.receiptPath ?? ' - ',
+                    subtitle: transaction.receiptPath,
+                    isImage: true,
                   ),
                 ],
               ),
-
               const SizedBox(height: 16),
-              const Divider(height: 1),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: ElevatedButton(
+                      onPressed: null,
+                      child: const Text('Editar'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  SizedBox(
+                    width: 200,
+                    child: ElevatedButton(
+                      onPressed: null,
+                      child: const Text('Eliminar'),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         );

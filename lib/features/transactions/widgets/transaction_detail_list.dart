@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/shared/widgets/receipt_viewer.dart';
 
 class TransactionDetailListConfig {
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final bool isImage;
 
   const TransactionDetailListConfig({
     required this.title,
-    required this.subtitle,
+    this.subtitle,
     this.isImage = false,
   });
 }
@@ -21,7 +22,7 @@ class TransactionDetailList extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.5,
+      height: MediaQuery.of(context).size.height * 0.4,
       child: ListView.builder(
         scrollDirection: Axis.vertical,
         padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -45,16 +46,36 @@ class TransactionDetailList extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                // const Spacer(),
-                Expanded(
-                  child: Text(
-                    item.subtitle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                    textAlign: TextAlign.right,
+                if (item.subtitle != null && !item.isImage)
+                  Expanded(
+                    child: Text(
+                      item.subtitle!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
                   ),
-                ),
+                if (item.isImage)
+                  Expanded(
+                    child: TextButton.icon(
+                      onPressed: item.subtitle != null
+                          ? () => ReceiptViewer.open(
+                              context,
+                              filePath: item.subtitle!,
+                            )
+                          : null,
+                      icon: Icon(Icons.image),
+                      label: Text(
+                        item.subtitle != null ? 'Ver recibo' : 'Sin recibo',
+                        textAlign: TextAlign.right,
+                      ),
+                      style: ButtonStyle(alignment: Alignment.centerRight),
+                    ),
+                  ),
               ],
             ),
           );

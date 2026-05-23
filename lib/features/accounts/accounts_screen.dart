@@ -13,6 +13,7 @@ class AccountsScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar(
         title: Text('Mis Cuentas'),
+        defaultActions: true,
         actions: [
           TextButton.icon(
             onPressed: () => AppBottomSheet.show(
