@@ -115,6 +115,9 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
   Stream<Transaction?> watchTransactionById(int id) => (select(
     transactionsTable,
   )..where((a) => a.id.equals(id))).watchSingleOrNull();
+
+  Future<bool> updateTransaction(Transaction transaction) =>
+      update(transactionsTable).replace(transaction);
 }
 
 // Clase de resultado typesafe para JOIN ──

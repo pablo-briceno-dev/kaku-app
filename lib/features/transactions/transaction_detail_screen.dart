@@ -238,15 +238,19 @@ class TransactionDetailScreen extends ConsumerWidget {
                         foregroundColor: cs.primary,
                         side: BorderSide(color: cs.primary),
                       ),
-                      onPressed: () => AppBottomSheet.show(
-                        context,
-                        title: 'Editar',
-                        isFullScreen: true,
-                        useRootNavigator: true,
-                        child: SingleChildScrollView(
+                      onPressed: () {
+                        ref.watch(selectedAccountProvider.notifier).state =
+                            transaction.accountId;
+                        ref.watch(selectedCategoryProvider.notifier).state =
+                            transaction.categoryId;
+                        AppBottomSheet.show(
+                          context,
+                          title: 'Editar transacción #${transaction.id}',
+                          isFullScreen: true,
+                          useRootNavigator: true,
                           child: EditTransactionSheet(transaction: transaction),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(width: 16),

@@ -19,9 +19,7 @@ class ToggleAppBar extends ConsumerWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: ToggleButtons(
-        fillColor: selectedType == TransactionType.expense
-            ? Colors.red.withValues(alpha: 0.15)
-            : Colors.green.withValues(alpha: 0.15),
+        fillColor: selectedType.color.withValues(alpha: 0.15),
         isSelected: [
           selectedType == TransactionType.expense,
           selectedType == TransactionType.income,
@@ -39,7 +37,7 @@ class ToggleAppBar extends ConsumerWidget {
               'Gasto',
               style: ts.titleMedium?.copyWith(
                 color: selectedType == TransactionType.expense
-                    ? Colors.red
+                    ? selectedType.color
                     : cs.onSurfaceVariant,
               ),
             ),
@@ -51,7 +49,7 @@ class ToggleAppBar extends ConsumerWidget {
               style: ts.titleMedium?.copyWith(
                 color: selectedType == TransactionType.expense
                     ? cs.onSurfaceVariant
-                    : Colors.green,
+                    : selectedType.color,
               ),
             ),
           ),

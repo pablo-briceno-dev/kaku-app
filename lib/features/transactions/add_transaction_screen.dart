@@ -108,40 +108,43 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'MONTO · COP',
-                      style: ts.titleLarge?.copyWith(
-                        color: cs.onSurfaceVariant,
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _amountController,
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [CurrencyFormatter.inputFormatter(currency)],
+                  decoration: InputDecoration(
+                    labelText: 'MONTO · ${currency.label}',
+                    hintText: r'$0',
+                    labelStyle: ts.titleLarge?.copyWith(
+                      color: cs.onSurfaceVariant,
+                    ),
+                  ),
+                  style: TextStyle(fontSize: 45),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  decoration: BoxDecoration(
+                    border: Border.symmetric(
+                      horizontal: BorderSide(color: cs.outline),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'CATEGORÍA',
+                        style: ts.titleMedium?.copyWith(
+                          color: cs.onSurfaceVariant,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _amountController,
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        CurrencyFormatter.inputFormatter(currency),
-                      ],
-                      decoration: const InputDecoration(hintText: r'$0'),
-                      style: TextStyle(fontSize: 45),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      HorizontalChipsCategories(),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 16),
-                const Divider(height: 2),
-                const SizedBox(height: 16),
-                Text(
-                  'CATEGORÍA',
-                  style: ts.titleMedium?.copyWith(color: cs.onSurfaceVariant),
-                ),
-                const SizedBox(height: 8),
-                HorizontalChipsCategories(),
-                const SizedBox(height: 16),
-                const Divider(height: 2),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _descriptionController,
@@ -215,16 +218,12 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                             if (context.mounted) {
                               AppSnackbar.success(
                                 context,
-                                selectedType == TransactionType.expense
-                                    ? 'Gasto guardado'
-                                    : 'Ingreso guardado',
+                                '${selectedType.label} guardado',
                               );
                               Navigator.pop(context);
                             }
                           },
-                    child: selectedType == TransactionType.expense
-                        ? const Text('Guardar Gasto')
-                        : const Text('Guardar Ingreso'),
+                    child: Text('Guardar ${selectedType.label}'),
                   ),
                 ),
                 const SizedBox(height: 20),
