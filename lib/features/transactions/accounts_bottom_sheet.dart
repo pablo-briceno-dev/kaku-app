@@ -17,6 +17,7 @@ class AccountsBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final activeAccountsAsync = ref.watch(activeAccountsProvider);
+    final selectedAccount = ref.watch(selectedAccountProvider);
 
     return activeAccountsAsync.when(
       loading: () => SizedBox(
@@ -63,6 +64,9 @@ class AccountsBottomSheet extends ConsumerWidget {
                       type: AccountType.values[accountData.type],
                       color: hexToColor(accountData.colorHex),
                       balance: accountData.balance,
+                      isSelected:
+                          selectedAccount != null &&
+                          accountData.id == selectedAccount,
                       currencyType: CurrencyType.values.firstWhere(
                         (e) => e.label == accountData.currency,
                       ),

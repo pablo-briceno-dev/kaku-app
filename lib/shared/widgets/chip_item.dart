@@ -38,7 +38,7 @@ class ChipItem extends ConsumerWidget {
             style: ts.titleLarge?.copyWith(
               color: color ?? cs.onSurface,
               fontWeight: FontWeight.w800,
-              fontSize: (ts.titleLarge?.fontSize ?? 12) * 1.2,
+              fontSize: 24,
             ),
           ),
         ],

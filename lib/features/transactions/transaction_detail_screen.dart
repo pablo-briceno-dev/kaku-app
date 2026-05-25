@@ -6,6 +6,7 @@ import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/core/receipt_storage.dart';
 import 'package:kaku/features/transactions/edit_transaction_sheet.dart';
 import 'package:kaku/features/transactions/widgets/transaction_detail_list.dart';
 import 'package:kaku/features/transactions/widgets/transaction_detail_skeleton.dart';
@@ -45,6 +46,7 @@ class TransactionDetailScreen extends ConsumerWidget {
     );
 
     if (confirm == true) {
+      await ReceiptStorage.delete(transaction.receiptPath);
       ref.read(transactionsDaoProvider).deleteTransaction(id);
       final reversedDelta = BudgetCalculator.balanceDelta(
         TransactionType.values.firstWhere((e) => e.name == transaction.type),

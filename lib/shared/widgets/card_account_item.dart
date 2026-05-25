@@ -11,6 +11,7 @@ class CardAccountItem extends StatelessWidget {
   final double balance;
   final CurrencyType currencyType;
   final bool isActive;
+  final bool isSelected;
   final VoidCallback? onTap;
   final Function(LongPressStartDetails)? onLongPressStart;
 
@@ -23,6 +24,7 @@ class CardAccountItem extends StatelessWidget {
     required this.balance,
     required this.currencyType,
     this.isActive = true,
+    this.isSelected = false,
     this.onTap,
     this.onLongPressStart,
   });
@@ -44,7 +46,7 @@ class CardAccountItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           color: cs.surfaceContainer,
           border: Border.all(
-            color: cs.primary.withValues(alpha: 0.15),
+            color: isSelected ? cs.primary : cs.primary.withValues(alpha: 0.15),
             width: 2,
           ),
         ),

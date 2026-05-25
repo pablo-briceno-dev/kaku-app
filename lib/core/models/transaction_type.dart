@@ -16,12 +16,23 @@ enum TransactionType {
     }
   }
 
+  String get labelPlural {
+    switch (this) {
+      case TransactionType.expense:
+        return 'Gastos';
+      case TransactionType.income:
+        return 'Ingresos';
+      case TransactionType.transfer:
+        return 'Transferencias';
+    }
+  }
+
   Color get color {
     switch (this) {
       case TransactionType.expense:
         return Colors.red;
       case TransactionType.income:
-        return Colors.green;
+        return Color(0xFF6ADF9A);
       case TransactionType.transfer:
         return Colors.blue;
     }

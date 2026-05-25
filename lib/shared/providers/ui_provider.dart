@@ -1,6 +1,7 @@
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/core/models/transaction_type_filter.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,3 +71,9 @@ final selectedAccountProvider = StateProvider.autoDispose<int?>((_) => null);
 
 //  Qué hace: la categoría seleccionada en AddTransactionScreen.
 final selectedCategoryProvider = StateProvider.autoDispose<int?>((_) => null);
+
+// Qué hace: maneja el filtro de tipo de transacción en TransactionsScreen.
+final transactionTypeFilterProvider =
+    StateProvider.autoDispose<TransactionTypeFilter>(
+      (_) => TransactionTypeFilter.all,
+    );

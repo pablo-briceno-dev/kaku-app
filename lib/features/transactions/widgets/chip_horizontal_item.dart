@@ -18,7 +18,7 @@ class ChipHorizontalItem extends StatelessWidget {
     final ts = Theme.of(context).textTheme;
 
     return Container(
-      width: 120,
+      // width: 120,
       height: 40,
       decoration: BoxDecoration(
         color: (isSelected ? cs.primaryContainer : cs.surfaceContainerLow)
