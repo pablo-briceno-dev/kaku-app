@@ -81,8 +81,8 @@ class AccountsList extends ConsumerWidget {
                           ),
                           items: [
                             const PopupMenuItem(
-                              value: 'edit',
-                              child: Text('Editar'),
+                              value: 'view-detail',
+                              child: Text('Ver detalle'),
                             ),
                             const PopupMenuItem(
                               value: 'archive',
@@ -92,7 +92,7 @@ class AccountsList extends ConsumerWidget {
                         );
 
                         switch (result) {
-                          case 'edit':
+                          case 'view-detail':
                             if (context.mounted) {
                               context.push(
                                 AppRoutes.toAccountDetail(accountData.id),

@@ -19,6 +19,7 @@ class AccountsScreen extends StatelessWidget {
             onPressed: () => AppBottomSheet.show(
               context,
               title: 'Nueva Cuenta',
+              useRootNavigator: true,
               isFullScreen: true,
               child: SingleChildScrollView(child: AccountFormSheet()),
             ),

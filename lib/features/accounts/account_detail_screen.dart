@@ -43,6 +43,7 @@ class AccountDetailScreen extends ConsumerWidget {
                   context,
                   title: 'Editar',
                   isFullScreen: true,
+                  useRootNavigator: true,
                   child: SingleChildScrollView(
                     child: AccountFormSheet(account: account),
                   ),

@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
+import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/date_formatter.dart';
+import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/features/transactions/edit_transaction_sheet.dart';
 import 'package:kaku/features/transactions/widgets/transaction_detail_list.dart';
 import 'package:kaku/features/transactions/widgets/transaction_detail_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
+import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
 
@@ -14,6 +19,50 @@ class TransactionDetailScreen extends ConsumerWidget {
   final int id;
 
   const TransactionDetailScreen({super.key, required this.id});
+
+  void _onDelete(
+    BuildContext context,
+    WidgetRef ref,
+    Transaction transaction,
+    double balanced,
+  ) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Eliminar transacción'),
+        content: const Text('Esta acción no se puede deshacer. ¿Eliminar?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Eliminar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      ref.read(transactionsDaoProvider).deleteTransaction(id);
+      final reversedDelta = BudgetCalculator.balanceDelta(
+        TransactionType.values.firstWhere((e) => e.name == transaction.type),
+        transaction.amount,
+      );
+      ref
+          .read(accountsDaoProvider)
+          .updateBalance(
+            transaction.accountId,
+            balanced + (reversedDelta * -1),
+          );
+
+      if (context.mounted) {
+        AppSnackbar.success(context, 'Transacción eliminada');
+        Navigator.pop(context);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -181,17 +230,42 @@ class TransactionDetailScreen extends ConsumerWidget {
                 children: [
                   SizedBox(
                     width: 200,
-                    child: ElevatedButton(
-                      onPressed: null,
-                      child: const Text('Editar'),
+                    child: OutlinedButton.icon(
+                      icon: Icon(Icons.edit, color: cs.primary),
+                      label: const Text('Editar'),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: cs.primary.withValues(alpha: 0.1),
+                        foregroundColor: cs.primary,
+                        side: BorderSide(color: cs.primary),
+                      ),
+                      onPressed: () => AppBottomSheet.show(
+                        context,
+                        title: 'Editar',
+                        isFullScreen: true,
+                        useRootNavigator: true,
+                        child: SingleChildScrollView(
+                          child: EditTransactionSheet(transaction: transaction),
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
                   SizedBox(
                     width: 200,
-                    child: ElevatedButton(
-                      onPressed: null,
-                      child: const Text('Eliminar'),
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      label: const Text('Eliminar'),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.red.withValues(alpha: 0.1),
+                        foregroundColor: Colors.red,
+                        side: BorderSide(color: Colors.red),
+                      ),
+                      onPressed: () => _onDelete(
+                        context,
+                        ref,
+                        transaction,
+                        account?.balance ?? 0.0,
+                      ),
                     ),
                   ),
                 ],
