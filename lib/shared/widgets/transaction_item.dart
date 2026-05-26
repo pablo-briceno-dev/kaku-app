@@ -153,7 +153,7 @@ class TransactionItem extends StatelessWidget {
         }).toList(),
       ),
 
-      child: item,
+      child: InkWell(onTap: onTap, child: item),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/core/models/transaction_type_filter.dart';
 import 'package:kaku/features/transactions/card_transactions.dart';
 import 'package:kaku/features/transactions/horizontal_transaction_type_filter.dart';
+import 'package:kaku/features/transactions/transactions_list_filter.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
@@ -17,7 +18,7 @@ class TransactionsScreen extends ConsumerWidget {
     final selectedMonth = ref.watch(selectedMonthProvider);
     final categorySelected = ref.watch(selectedCategoryProvider);
     final selectedFilter = ref.watch(transactionTypeFilterProvider);
-    final monthTransactions = ref
+    var monthTransactions = ref
         .watch(
           monthTransactionsProvider((
             month: selectedMonth.month,
@@ -30,25 +31,22 @@ class TransactionsScreen extends ConsumerWidget {
               selectedFilter != TransactionTypeFilter.byCategory ||
               (selectedFilter == TransactionTypeFilter.byCategory &&
                   tx.category?.id == categorySelected),
-        )
-        .where((tx) {
-          if (selectedFilter == TransactionTypeFilter.all) {
-            return true;
-          }
-          if (selectedFilter == TransactionTypeFilter.income &&
-              tx.transaction.type == 'income') {
-            return true;
-          }
-          if (selectedFilter == TransactionTypeFilter.expense &&
-              tx.transaction.type == 'expense') {
-            return true;
-          }
-          if (selectedFilter == TransactionTypeFilter.transfer &&
-              tx.transaction.type == 'transfer') {
-            return true;
-          }
-          return false;
-        });
+        );
+    if (selectedFilter == TransactionTypeFilter.income) {
+      monthTransactions = monthTransactions?.where(
+        (tx) => tx.transaction.type == 'income',
+      );
+    }
+    if (selectedFilter == TransactionTypeFilter.expense) {
+      monthTransactions = monthTransactions?.where(
+        (tx) => tx.transaction.type == 'expense',
+      );
+    }
+    if (selectedFilter == TransactionTypeFilter.transfer) {
+      monthTransactions = monthTransactions?.where(
+        (tx) => tx.transaction.type == 'transfer',
+      );
+    }
     final income =
         monthTransactions
             ?.where((tx) => tx.transaction.type == 'income')
@@ -81,6 +79,8 @@ class TransactionsScreen extends ConsumerWidget {
               ),
               total: monthTransactions?.length.toString() ?? '0',
             ),
+            const SizedBox(height: 16),
+            TransactionsListFilter(),
           ],
         ),
       ),

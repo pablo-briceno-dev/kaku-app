@@ -14,11 +14,11 @@ import 'package:flutter/material.dart';
 //  [seconds]    : duración del timer antes del delete (default: 4)
 // ════════════════════════════════════════════════════════
 Future<void> showUndoDelete({
-  required BuildContext  context,
-  required String        label,
+  required BuildContext context,
+  required String label,
   required Future<void> Function() onDelete,
-  VoidCallback?          onUndo,
-  int                    seconds = 4,
+  VoidCallback? onUndo,
+  int seconds = 4,
 }) async {
   // Timer que ejecutará el delete cuando expire
   Timer? deleteTimer;
@@ -31,18 +31,15 @@ Future<void> showUndoDelete({
   // ── Crea el SnackBar ──────────────────────────────────
   final snackBar = SnackBar(
     // Duración total visible del SnackBar
-    duration: Duration(seconds: seconds),
+    duration: Duration(seconds: seconds + 10),
     behavior: SnackBarBehavior.floating,
     // Sin padding extra — el contenido lo manejamos nosotros
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
 
-    content: _UndoContent(
-      label:   label,
-      seconds: seconds,
-    ),
+    content: _UndoContent(label: label, seconds: seconds),
 
     action: SnackBarAction(
-      label:   'Deshacer',
+      label: 'Deshacer',
       onPressed: () {
         undone = true;
         deleteTimer?.cancel();
@@ -54,13 +51,14 @@ Future<void> showUndoDelete({
   );
 
   // ── Muestra el SnackBar ───────────────────────────────
-  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  final controller = ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
   // ── Inicia el timer del delete ────────────────────────
   // Se ejecuta después de [seconds] segundos si no se deshizo
   deleteTimer = Timer(Duration(seconds: seconds), () async {
     if (!undone) {
       await onDelete();
+      controller.close();
     }
   });
 }
@@ -70,7 +68,7 @@ Future<void> showUndoDelete({
 // ════════════════════════════════════════════════════════
 class _UndoContent extends StatefulWidget {
   final String label;
-  final int    seconds;
+  final int seconds;
 
   const _UndoContent({required this.label, required this.seconds});
 
@@ -88,9 +86,9 @@ class _UndoContentState extends State<_UndoContent>
     // Anima de 1.0 → 0.0 durante [seconds] segundos
     // La barra va vaciándose visualmente como un timer
     _progressCtrl = AnimationController(
-      vsync:    this,
+      vsync: this,
       duration: Duration(seconds: widget.seconds),
-      value:    1.0,
+      value: 1.0,
     )..animateTo(0.0, curve: Curves.linear);
   }
 
@@ -107,16 +105,13 @@ class _UndoContentState extends State<_UndoContent>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 6),
-        Text(
-          widget.label,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
+        Text(widget.label, style: const TextStyle(fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         // Barra de progreso que se vacía con el timer
         AnimatedBuilder(
           animation: _progressCtrl,
-          builder:   (_, __) => LinearProgressIndicator(
-            value:           _progressCtrl.value,
+          builder: (_, __) => LinearProgressIndicator(
+            value: _progressCtrl.value,
             backgroundColor: Colors.white.withValues(alpha: 0.15),
             valueColor: const AlwaysStoppedAnimation(Colors.white),
             minHeight: 2,

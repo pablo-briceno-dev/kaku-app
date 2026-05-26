@@ -50,7 +50,12 @@ class AppShell extends ConsumerWidget {
               onTap: () => context.go(_tabs[1]),
             ),
 
-            const SizedBox(width: 60), // hueco para el FAB
+            // Centro
+            _NavCenterItem(
+              icon: Icons.add,
+              onTap: () => context.push(AppRoutes.addTransaction),
+            ),
+
             // 2 tabs a la derecha
             _NavItem(
               icon: Icons.flag_outlined,
@@ -72,12 +77,12 @@ class AppShell extends ConsumerWidget {
         ),
       ),
       // FAB central para agregar gasto rápido desde cualquier tab
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push(AppRoutes.addTransaction),
-        tooltip: 'Agregar gasto',
-        child: const Icon(Icons.add, size: 28),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () => context.push(AppRoutes.addTransaction),
+      //   tooltip: 'Agregar gasto',
+      //   child: const Icon(Icons.add, size: 28),
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
@@ -124,6 +129,40 @@ class _NavItem extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _NavCenterItem extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _NavCenterItem({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(30),
+      child: Container(
+        width: 55,
+        height: 55,
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.circular(20),
+          color: cs.primary,
+          boxShadow: [
+            BoxShadow(
+              color: cs.shadow.withValues(alpha: 0.18),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Icon(icon, color: cs.onPrimary, size: 35),
       ),
     );
   }
