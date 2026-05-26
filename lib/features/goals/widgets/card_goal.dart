@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/core/colors_plates.dart';
 import 'package:kaku/core/currency_formatter.dart';
 
 class CardGoal extends StatelessWidget {
@@ -26,9 +27,11 @@ class CardGoal extends StatelessWidget {
   });
 
   Color _obtainColor(double progress, ColorScheme cs) {
-    if (progress >= 0.9) {
+    if (progress == 100) {
+      return hexToColor('#FFD700');
+    } else if (progress >= 90) {
       return Colors.green;
-    } else if (progress < 0.9) {
+    } else if (progress < 90) {
       return cs.primary;
     } else {
       return cs.primaryContainer;
@@ -41,7 +44,7 @@ class CardGoal extends StatelessWidget {
     final ts = Theme.of(context).textTheme;
 
     return InkWell(
-      onTap: onTap,
+      onTap: progress == 100 ? null : onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
         decoration: BoxDecoration(
@@ -101,47 +104,48 @@ class CardGoal extends StatelessWidget {
             const SizedBox(height: 8),
             LinearProgressIndicator(
               minHeight: 8.0,
-              value: progress,
+              value: progress / 100,
               color: _obtainColor(progress, cs),
               backgroundColor: cs.onPrimaryContainer.withAlpha(60),
               borderRadius: BorderRadius.circular(20),
             ),
             const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                OutlinedButton.icon(
-                  icon: Icon(Icons.add, color: _obtainColor(progress, cs)),
-                  label: const Text(
-                    'Aportar',
-                    style: TextStyle(fontWeight: FontWeight.w800),
+            if (progress < 100)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  OutlinedButton.icon(
+                    icon: Icon(Icons.add, color: _obtainColor(progress, cs)),
+                    label: const Text(
+                      'Aportar',
+                      style: TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: _obtainColor(
+                        progress,
+                        cs,
+                      ).withValues(alpha: 0.1),
+                      foregroundColor: _obtainColor(progress, cs),
+                      side: BorderSide(color: _obtainColor(progress, cs)),
+                    ),
+                    onPressed: onContribute,
                   ),
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: _obtainColor(
-                      progress,
-                      cs,
-                    ).withValues(alpha: 0.1),
-                    foregroundColor: _obtainColor(progress, cs),
-                    side: BorderSide(color: _obtainColor(progress, cs)),
+                  const SizedBox(width: 16),
+                  OutlinedButton.icon(
+                    icon: Icon(Icons.delete, color: cs.error),
+                    label: const Text(
+                      'Eliminar',
+                      style: TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: cs.error.withAlpha(10),
+                      foregroundColor: cs.error,
+                      side: BorderSide(color: cs.error, width: 1),
+                    ),
+                    onPressed: onDelete,
                   ),
-                  onPressed: onContribute,
-                ),
-                const SizedBox(width: 16),
-                OutlinedButton.icon(
-                  icon: Icon(Icons.delete, color: cs.error),
-                  label: const Text(
-                    'Eliminar',
-                    style: TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: cs.error.withAlpha(10),
-                    foregroundColor: cs.error,
-                    side: BorderSide(color: cs.error, width: 1),
-                  ),
-                  onPressed: onDelete,
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
         ),
       ),

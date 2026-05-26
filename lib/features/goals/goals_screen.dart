@@ -13,9 +13,11 @@ class GoalsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final goalsActiveAsync = ref.watch(activeGoalsProvider);
+    final cs = Theme.of(context).colorScheme;
+    final ts = Theme.of(context).textTheme;
+    final allGoalsAsync = ref.watch(allGoalsProvider);
 
-    return goalsActiveAsync.when(
+    return allGoalsAsync.when(
       loading: () => Scaffold(
         appBar: CustomAppBar(
           title: Text('Metas'),
@@ -85,10 +87,21 @@ class GoalsScreen extends ConsumerWidget {
             ),
           );
         }
+        final activeGoals = ref.watch(activeGoalsProvider).value;
+        final completedGoals = ref.watch(completedGoalsProvider).value;
 
         return Scaffold(
           appBar: CustomAppBar(
-            title: Text('Metas'),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Metas'),
+                Text(
+                  '${activeGoals?.length ?? 0} activas · ${completedGoals?.length ?? 0} completadas',
+                  style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                ),
+              ],
+            ),
             defaultActions: true,
             actions: [
               TextButton.icon(

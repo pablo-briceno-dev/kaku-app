@@ -110,15 +110,14 @@ class GoalsList extends ConsumerWidget {
                 goal.savedAmount,
                 currency,
               ),
-              progress: BudgetCalculator.goalProgress(
-                goal.savedAmount,
-                goal.targetAmount,
-              ),
-              estimate: BudgetCalculator.getEstimatedSavingTime(
-                goalRemaining,
-                avgMonthlySavings,
-                deadline: goal.deadline,
-              ),
+              progress: (goal.savedAmount / goal.targetAmount) * 100,
+              estimate: (goal.savedAmount / goal.targetAmount) * 100 == 100
+                  ? 'Completada'
+                  : BudgetCalculator.getEstimatedSavingTime(
+                      goalRemaining,
+                      avgMonthlySavings,
+                      deadline: goal.deadline,
+                    ),
               onTap: () {},
               onContribute: () => AppBottomSheet.show(
                 context,
@@ -128,7 +127,13 @@ class GoalsList extends ConsumerWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      ContributeGoalSheet(),
+                      ContributeGoalSheet(
+                        goalId: goal.id,
+                        targetAmount: goal.targetAmount,
+                        savedAmount: goal.savedAmount,
+                        emoji: goal.emoji,
+                        name: goal.name,
+                      ),
                       SizedBox(
                         height: MediaQuery.of(context).viewPadding.bottom + 30,
                       ),

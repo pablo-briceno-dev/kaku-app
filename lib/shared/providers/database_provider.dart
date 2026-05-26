@@ -86,6 +86,11 @@ final activeGoalsProvider = StreamProvider<List<Goal>>(
   (ref) => ref.watch(goalsDaoProvider).watchActiveGoals(),
 );
 
+// Metas completadas (reactivo)
+final completedGoalsProvider = StreamProvider<List<Goal>>(
+  (ref) => ref.watch(goalsDaoProvider).watchCompletedGoals(),
+);
+
 // Accounts (reactivo)
 final activeAccountsProvider = StreamProvider<List<Account>>(
   (ref) => ref.watch(accountsDaoProvider).watchActiveAccounts(),
@@ -113,9 +118,12 @@ final getExpenseCategoriesProvider = FutureProvider<List<Category>>(
   (ref) => ref.watch(categoriesDaoProvider).getExpenseCategories(),
 );
 
-final categoryByIdProvider = StreamProvider.family<Category?, int?>(
-  (ref, id) {
-    if (id == null) return Stream.value(null);
-    return ref.watch(categoriesDaoProvider).watchCategoryById(id);
-  },
+final categoryByIdProvider = StreamProvider.family<Category?, int?>((ref, id) {
+  if (id == null) return Stream.value(null);
+  return ref.watch(categoriesDaoProvider).watchCategoryById(id);
+});
+
+// Metas
+final allGoalsProvider = StreamProvider<List<Goal>>(
+  (ref) => ref.watch(goalsDaoProvider).watchAllGoals(),
 );

@@ -37,7 +37,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   // Aquí irán las migraciones cuando actualice el schema
   @override
@@ -52,6 +52,16 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from == 2 && to == 3) {
         await m.addColumn(goalsTable, goalsTable.type);
+      }
+      if (from == 3 && to == 4) {
+        await into(categoriesTable).insert(
+          CategoriesTableCompanion.insert(
+            id: const Value(999),
+            name: 'Ahorro',
+            emoji: Value('🎯'),
+            colorHex: Value('#A89AAD'),
+          ),
+        );
       }
     },
   );
@@ -74,6 +84,14 @@ class AppDatabase extends _$AppDatabase {
         ),
       );
     }
+    await into(categoriesTable).insert(
+      CategoriesTableCompanion.insert(
+        id: const Value(999),
+        name: 'Ahorro',
+        emoji: Value('🎯'),
+        colorHex: Value('#A89AAD'),
+      ),
+    );
   }
 }
 
