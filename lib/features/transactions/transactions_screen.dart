@@ -34,27 +34,27 @@ class TransactionsScreen extends ConsumerWidget {
         );
     if (selectedFilter == TransactionTypeFilter.income) {
       monthTransactions = monthTransactions?.where(
-        (tx) => tx.transaction.type == 'income',
+        (tx) => tx.transaction.type == TransactionType.income.name,
       );
     }
     if (selectedFilter == TransactionTypeFilter.expense) {
       monthTransactions = monthTransactions?.where(
-        (tx) => tx.transaction.type == 'expense',
+        (tx) => tx.transaction.type == TransactionType.expense.name,
       );
     }
     if (selectedFilter == TransactionTypeFilter.transfer) {
       monthTransactions = monthTransactions?.where(
-        (tx) => tx.transaction.type == 'transfer',
+        (tx) => tx.transaction.type == TransactionType.transfer.name,
       );
     }
     final income =
         monthTransactions
-            ?.where((tx) => tx.transaction.type == 'income')
+            ?.where((tx) => tx.transaction.type == TransactionType.income.name)
             .fold<double>(0, (sum, tx) => sum + tx.transaction.amount) ??
         0;
     final expense =
         monthTransactions
-            ?.where((tx) => tx.transaction.type == 'expense')
+            ?.where((tx) => tx.transaction.type == TransactionType.expense.name)
             .fold<double>(0, (sum, tx) => sum + tx.transaction.amount) ??
         0;
 

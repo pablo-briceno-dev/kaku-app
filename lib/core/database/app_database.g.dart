@@ -1402,6 +1402,16 @@ class $GoalsTableTable extends GoalsTable
     requiredDuringInsert: false,
     defaultValue: const Constant(0.0),
   );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('normal'),
+  );
   static const VerificationMeta _deadlineMeta = const VerificationMeta(
     'deadline',
   );
@@ -1447,6 +1457,7 @@ class $GoalsTableTable extends GoalsTable
     emoji,
     targetAmount,
     savedAmount,
+    type,
     deadline,
     isCompleted,
     createdAt,
@@ -1500,6 +1511,12 @@ class $GoalsTableTable extends GoalsTable
         ),
       );
     }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    }
     if (data.containsKey('deadline')) {
       context.handle(
         _deadlineMeta,
@@ -1550,6 +1567,10 @@ class $GoalsTableTable extends GoalsTable
         DriftSqlType.double,
         data['${effectivePrefix}saved_amount'],
       )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
       deadline: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}deadline'],
@@ -1577,6 +1598,7 @@ class Goal extends DataClass implements Insertable<Goal> {
   final String emoji;
   final double targetAmount;
   final double savedAmount;
+  final String type;
   final DateTime? deadline;
   final bool isCompleted;
   final DateTime createdAt;
@@ -1586,6 +1608,7 @@ class Goal extends DataClass implements Insertable<Goal> {
     required this.emoji,
     required this.targetAmount,
     required this.savedAmount,
+    required this.type,
     this.deadline,
     required this.isCompleted,
     required this.createdAt,
@@ -1598,6 +1621,7 @@ class Goal extends DataClass implements Insertable<Goal> {
     map['emoji'] = Variable<String>(emoji);
     map['target_amount'] = Variable<double>(targetAmount);
     map['saved_amount'] = Variable<double>(savedAmount);
+    map['type'] = Variable<String>(type);
     if (!nullToAbsent || deadline != null) {
       map['deadline'] = Variable<DateTime>(deadline);
     }
@@ -1613,6 +1637,7 @@ class Goal extends DataClass implements Insertable<Goal> {
       emoji: Value(emoji),
       targetAmount: Value(targetAmount),
       savedAmount: Value(savedAmount),
+      type: Value(type),
       deadline: deadline == null && nullToAbsent
           ? const Value.absent()
           : Value(deadline),
@@ -1632,6 +1657,7 @@ class Goal extends DataClass implements Insertable<Goal> {
       emoji: serializer.fromJson<String>(json['emoji']),
       targetAmount: serializer.fromJson<double>(json['targetAmount']),
       savedAmount: serializer.fromJson<double>(json['savedAmount']),
+      type: serializer.fromJson<String>(json['type']),
       deadline: serializer.fromJson<DateTime?>(json['deadline']),
       isCompleted: serializer.fromJson<bool>(json['isCompleted']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -1646,6 +1672,7 @@ class Goal extends DataClass implements Insertable<Goal> {
       'emoji': serializer.toJson<String>(emoji),
       'targetAmount': serializer.toJson<double>(targetAmount),
       'savedAmount': serializer.toJson<double>(savedAmount),
+      'type': serializer.toJson<String>(type),
       'deadline': serializer.toJson<DateTime?>(deadline),
       'isCompleted': serializer.toJson<bool>(isCompleted),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -1658,6 +1685,7 @@ class Goal extends DataClass implements Insertable<Goal> {
     String? emoji,
     double? targetAmount,
     double? savedAmount,
+    String? type,
     Value<DateTime?> deadline = const Value.absent(),
     bool? isCompleted,
     DateTime? createdAt,
@@ -1667,6 +1695,7 @@ class Goal extends DataClass implements Insertable<Goal> {
     emoji: emoji ?? this.emoji,
     targetAmount: targetAmount ?? this.targetAmount,
     savedAmount: savedAmount ?? this.savedAmount,
+    type: type ?? this.type,
     deadline: deadline.present ? deadline.value : this.deadline,
     isCompleted: isCompleted ?? this.isCompleted,
     createdAt: createdAt ?? this.createdAt,
@@ -1682,6 +1711,7 @@ class Goal extends DataClass implements Insertable<Goal> {
       savedAmount: data.savedAmount.present
           ? data.savedAmount.value
           : this.savedAmount,
+      type: data.type.present ? data.type.value : this.type,
       deadline: data.deadline.present ? data.deadline.value : this.deadline,
       isCompleted: data.isCompleted.present
           ? data.isCompleted.value
@@ -1698,6 +1728,7 @@ class Goal extends DataClass implements Insertable<Goal> {
           ..write('emoji: $emoji, ')
           ..write('targetAmount: $targetAmount, ')
           ..write('savedAmount: $savedAmount, ')
+          ..write('type: $type, ')
           ..write('deadline: $deadline, ')
           ..write('isCompleted: $isCompleted, ')
           ..write('createdAt: $createdAt')
@@ -1712,6 +1743,7 @@ class Goal extends DataClass implements Insertable<Goal> {
     emoji,
     targetAmount,
     savedAmount,
+    type,
     deadline,
     isCompleted,
     createdAt,
@@ -1725,6 +1757,7 @@ class Goal extends DataClass implements Insertable<Goal> {
           other.emoji == this.emoji &&
           other.targetAmount == this.targetAmount &&
           other.savedAmount == this.savedAmount &&
+          other.type == this.type &&
           other.deadline == this.deadline &&
           other.isCompleted == this.isCompleted &&
           other.createdAt == this.createdAt);
@@ -1736,6 +1769,7 @@ class GoalsTableCompanion extends UpdateCompanion<Goal> {
   final Value<String> emoji;
   final Value<double> targetAmount;
   final Value<double> savedAmount;
+  final Value<String> type;
   final Value<DateTime?> deadline;
   final Value<bool> isCompleted;
   final Value<DateTime> createdAt;
@@ -1745,6 +1779,7 @@ class GoalsTableCompanion extends UpdateCompanion<Goal> {
     this.emoji = const Value.absent(),
     this.targetAmount = const Value.absent(),
     this.savedAmount = const Value.absent(),
+    this.type = const Value.absent(),
     this.deadline = const Value.absent(),
     this.isCompleted = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1755,6 +1790,7 @@ class GoalsTableCompanion extends UpdateCompanion<Goal> {
     this.emoji = const Value.absent(),
     required double targetAmount,
     this.savedAmount = const Value.absent(),
+    this.type = const Value.absent(),
     this.deadline = const Value.absent(),
     this.isCompleted = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1766,6 +1802,7 @@ class GoalsTableCompanion extends UpdateCompanion<Goal> {
     Expression<String>? emoji,
     Expression<double>? targetAmount,
     Expression<double>? savedAmount,
+    Expression<String>? type,
     Expression<DateTime>? deadline,
     Expression<bool>? isCompleted,
     Expression<DateTime>? createdAt,
@@ -1776,6 +1813,7 @@ class GoalsTableCompanion extends UpdateCompanion<Goal> {
       if (emoji != null) 'emoji': emoji,
       if (targetAmount != null) 'target_amount': targetAmount,
       if (savedAmount != null) 'saved_amount': savedAmount,
+      if (type != null) 'type': type,
       if (deadline != null) 'deadline': deadline,
       if (isCompleted != null) 'is_completed': isCompleted,
       if (createdAt != null) 'created_at': createdAt,
@@ -1788,6 +1826,7 @@ class GoalsTableCompanion extends UpdateCompanion<Goal> {
     Value<String>? emoji,
     Value<double>? targetAmount,
     Value<double>? savedAmount,
+    Value<String>? type,
     Value<DateTime?>? deadline,
     Value<bool>? isCompleted,
     Value<DateTime>? createdAt,
@@ -1798,6 +1837,7 @@ class GoalsTableCompanion extends UpdateCompanion<Goal> {
       emoji: emoji ?? this.emoji,
       targetAmount: targetAmount ?? this.targetAmount,
       savedAmount: savedAmount ?? this.savedAmount,
+      type: type ?? this.type,
       deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,
       createdAt: createdAt ?? this.createdAt,
@@ -1822,6 +1862,9 @@ class GoalsTableCompanion extends UpdateCompanion<Goal> {
     if (savedAmount.present) {
       map['saved_amount'] = Variable<double>(savedAmount.value);
     }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
     if (deadline.present) {
       map['deadline'] = Variable<DateTime>(deadline.value);
     }
@@ -1842,6 +1885,7 @@ class GoalsTableCompanion extends UpdateCompanion<Goal> {
           ..write('emoji: $emoji, ')
           ..write('targetAmount: $targetAmount, ')
           ..write('savedAmount: $savedAmount, ')
+          ..write('type: $type, ')
           ..write('deadline: $deadline, ')
           ..write('isCompleted: $isCompleted, ')
           ..write('createdAt: $createdAt')
@@ -1935,6 +1979,18 @@ class $TransactionsTableTable extends TransactionsTable
       'REFERENCES categories_table (id)',
     ),
   );
+  static const VerificationMeta _goalIdMeta = const VerificationMeta('goalId');
+  @override
+  late final GeneratedColumn<int> goalId = GeneratedColumn<int>(
+    'goal_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES goals_table (id)',
+    ),
+  );
   static const VerificationMeta _receiptPathMeta = const VerificationMeta(
     'receiptPath',
   );
@@ -1991,6 +2047,7 @@ class $TransactionsTableTable extends TransactionsTable
     date,
     accountId,
     categoryId,
+    goalId,
     receiptPath,
     isRecurring,
     tags,
@@ -2056,6 +2113,12 @@ class $TransactionsTableTable extends TransactionsTable
       context.handle(
         _categoryIdMeta,
         categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    }
+    if (data.containsKey('goal_id')) {
+      context.handle(
+        _goalIdMeta,
+        goalId.isAcceptableOrUnknown(data['goal_id']!, _goalIdMeta),
       );
     }
     if (data.containsKey('receipt_path')) {
@@ -2125,6 +2188,10 @@ class $TransactionsTableTable extends TransactionsTable
         DriftSqlType.int,
         data['${effectivePrefix}category_id'],
       ),
+      goalId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}goal_id'],
+      ),
       receiptPath: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}receipt_path'],
@@ -2158,6 +2225,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final DateTime date;
   final int accountId;
   final int? categoryId;
+  final int? goalId;
   final String? receiptPath;
   final bool isRecurring;
   final String? tags;
@@ -2170,6 +2238,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     required this.date,
     required this.accountId,
     this.categoryId,
+    this.goalId,
     this.receiptPath,
     required this.isRecurring,
     this.tags,
@@ -2188,6 +2257,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     map['account_id'] = Variable<int>(accountId);
     if (!nullToAbsent || categoryId != null) {
       map['category_id'] = Variable<int>(categoryId);
+    }
+    if (!nullToAbsent || goalId != null) {
+      map['goal_id'] = Variable<int>(goalId);
     }
     if (!nullToAbsent || receiptPath != null) {
       map['receipt_path'] = Variable<String>(receiptPath);
@@ -2213,6 +2285,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       categoryId: categoryId == null && nullToAbsent
           ? const Value.absent()
           : Value(categoryId),
+      goalId: goalId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(goalId),
       receiptPath: receiptPath == null && nullToAbsent
           ? const Value.absent()
           : Value(receiptPath),
@@ -2235,6 +2310,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       date: serializer.fromJson<DateTime>(json['date']),
       accountId: serializer.fromJson<int>(json['accountId']),
       categoryId: serializer.fromJson<int?>(json['categoryId']),
+      goalId: serializer.fromJson<int?>(json['goalId']),
       receiptPath: serializer.fromJson<String?>(json['receiptPath']),
       isRecurring: serializer.fromJson<bool>(json['isRecurring']),
       tags: serializer.fromJson<String?>(json['tags']),
@@ -2252,6 +2328,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'date': serializer.toJson<DateTime>(date),
       'accountId': serializer.toJson<int>(accountId),
       'categoryId': serializer.toJson<int?>(categoryId),
+      'goalId': serializer.toJson<int?>(goalId),
       'receiptPath': serializer.toJson<String?>(receiptPath),
       'isRecurring': serializer.toJson<bool>(isRecurring),
       'tags': serializer.toJson<String?>(tags),
@@ -2267,6 +2344,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     DateTime? date,
     int? accountId,
     Value<int?> categoryId = const Value.absent(),
+    Value<int?> goalId = const Value.absent(),
     Value<String?> receiptPath = const Value.absent(),
     bool? isRecurring,
     Value<String?> tags = const Value.absent(),
@@ -2279,6 +2357,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     date: date ?? this.date,
     accountId: accountId ?? this.accountId,
     categoryId: categoryId.present ? categoryId.value : this.categoryId,
+    goalId: goalId.present ? goalId.value : this.goalId,
     receiptPath: receiptPath.present ? receiptPath.value : this.receiptPath,
     isRecurring: isRecurring ?? this.isRecurring,
     tags: tags.present ? tags.value : this.tags,
@@ -2297,6 +2376,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       categoryId: data.categoryId.present
           ? data.categoryId.value
           : this.categoryId,
+      goalId: data.goalId.present ? data.goalId.value : this.goalId,
       receiptPath: data.receiptPath.present
           ? data.receiptPath.value
           : this.receiptPath,
@@ -2318,6 +2398,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('date: $date, ')
           ..write('accountId: $accountId, ')
           ..write('categoryId: $categoryId, ')
+          ..write('goalId: $goalId, ')
           ..write('receiptPath: $receiptPath, ')
           ..write('isRecurring: $isRecurring, ')
           ..write('tags: $tags, ')
@@ -2335,6 +2416,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     date,
     accountId,
     categoryId,
+    goalId,
     receiptPath,
     isRecurring,
     tags,
@@ -2351,6 +2433,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.date == this.date &&
           other.accountId == this.accountId &&
           other.categoryId == this.categoryId &&
+          other.goalId == this.goalId &&
           other.receiptPath == this.receiptPath &&
           other.isRecurring == this.isRecurring &&
           other.tags == this.tags &&
@@ -2365,6 +2448,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
   final Value<DateTime> date;
   final Value<int> accountId;
   final Value<int?> categoryId;
+  final Value<int?> goalId;
   final Value<String?> receiptPath;
   final Value<bool> isRecurring;
   final Value<String?> tags;
@@ -2377,6 +2461,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     this.date = const Value.absent(),
     this.accountId = const Value.absent(),
     this.categoryId = const Value.absent(),
+    this.goalId = const Value.absent(),
     this.receiptPath = const Value.absent(),
     this.isRecurring = const Value.absent(),
     this.tags = const Value.absent(),
@@ -2390,6 +2475,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     required DateTime date,
     required int accountId,
     this.categoryId = const Value.absent(),
+    this.goalId = const Value.absent(),
     this.receiptPath = const Value.absent(),
     this.isRecurring = const Value.absent(),
     this.tags = const Value.absent(),
@@ -2406,6 +2492,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     Expression<DateTime>? date,
     Expression<int>? accountId,
     Expression<int>? categoryId,
+    Expression<int>? goalId,
     Expression<String>? receiptPath,
     Expression<bool>? isRecurring,
     Expression<String>? tags,
@@ -2419,6 +2506,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
       if (date != null) 'date': date,
       if (accountId != null) 'account_id': accountId,
       if (categoryId != null) 'category_id': categoryId,
+      if (goalId != null) 'goal_id': goalId,
       if (receiptPath != null) 'receipt_path': receiptPath,
       if (isRecurring != null) 'is_recurring': isRecurring,
       if (tags != null) 'tags': tags,
@@ -2434,6 +2522,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     Value<DateTime>? date,
     Value<int>? accountId,
     Value<int?>? categoryId,
+    Value<int?>? goalId,
     Value<String?>? receiptPath,
     Value<bool>? isRecurring,
     Value<String?>? tags,
@@ -2447,6 +2536,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
       date: date ?? this.date,
       accountId: accountId ?? this.accountId,
       categoryId: categoryId ?? this.categoryId,
+      goalId: goalId ?? this.goalId,
       receiptPath: receiptPath ?? this.receiptPath,
       isRecurring: isRecurring ?? this.isRecurring,
       tags: tags ?? this.tags,
@@ -2478,6 +2568,9 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     if (categoryId.present) {
       map['category_id'] = Variable<int>(categoryId.value);
     }
+    if (goalId.present) {
+      map['goal_id'] = Variable<int>(goalId.value);
+    }
     if (receiptPath.present) {
       map['receipt_path'] = Variable<String>(receiptPath.value);
     }
@@ -2503,6 +2596,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
           ..write('date: $date, ')
           ..write('accountId: $accountId, ')
           ..write('categoryId: $categoryId, ')
+          ..write('goalId: $goalId, ')
           ..write('receiptPath: $receiptPath, ')
           ..write('isRecurring: $isRecurring, ')
           ..write('tags: $tags, ')
@@ -3699,6 +3793,7 @@ typedef $$GoalsTableTableCreateCompanionBuilder =
       Value<String> emoji,
       required double targetAmount,
       Value<double> savedAmount,
+      Value<String> type,
       Value<DateTime?> deadline,
       Value<bool> isCompleted,
       Value<DateTime> createdAt,
@@ -3710,10 +3805,40 @@ typedef $$GoalsTableTableUpdateCompanionBuilder =
       Value<String> emoji,
       Value<double> targetAmount,
       Value<double> savedAmount,
+      Value<String> type,
       Value<DateTime?> deadline,
       Value<bool> isCompleted,
       Value<DateTime> createdAt,
     });
+
+final class $$GoalsTableTableReferences
+    extends BaseReferences<_$AppDatabase, $GoalsTableTable, Goal> {
+  $$GoalsTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$TransactionsTableTable, List<Transaction>>
+  _transactionsTableRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.transactionsTable,
+        aliasName: $_aliasNameGenerator(
+          db.goalsTable.id,
+          db.transactionsTable.goalId,
+        ),
+      );
+
+  $$TransactionsTableTableProcessedTableManager get transactionsTableRefs {
+    final manager = $$TransactionsTableTableTableManager(
+      $_db,
+      $_db.transactionsTable,
+    ).filter((f) => f.goalId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _transactionsTableRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$GoalsTableTableFilterComposer
     extends Composer<_$AppDatabase, $GoalsTableTable> {
@@ -3749,6 +3874,11 @@ class $$GoalsTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<DateTime> get deadline => $composableBuilder(
     column: $table.deadline,
     builder: (column) => ColumnFilters(column),
@@ -3763,6 +3893,31 @@ class $$GoalsTableTableFilterComposer
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> transactionsTableRefs(
+    Expression<bool> Function($$TransactionsTableTableFilterComposer f) f,
+  ) {
+    final $$TransactionsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.transactionsTable,
+      getReferencedColumn: (t) => t.goalId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$TransactionsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.transactionsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$GoalsTableTableOrderingComposer
@@ -3796,6 +3951,11 @@ class $$GoalsTableTableOrderingComposer
 
   ColumnOrderings<double> get savedAmount => $composableBuilder(
     column: $table.savedAmount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -3843,6 +4003,9 @@ class $$GoalsTableTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
   GeneratedColumn<DateTime> get deadline =>
       $composableBuilder(column: $table.deadline, builder: (column) => column);
 
@@ -3853,6 +4016,32 @@ class $$GoalsTableTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  Expression<T> transactionsTableRefs<T extends Object>(
+    Expression<T> Function($$TransactionsTableTableAnnotationComposer a) f,
+  ) {
+    final $$TransactionsTableTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.transactionsTable,
+          getReferencedColumn: (t) => t.goalId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$TransactionsTableTableAnnotationComposer(
+                $db: $db,
+                $table: $db.transactionsTable,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$GoalsTableTableTableManager
@@ -3866,9 +4055,9 @@ class $$GoalsTableTableTableManager
           $$GoalsTableTableAnnotationComposer,
           $$GoalsTableTableCreateCompanionBuilder,
           $$GoalsTableTableUpdateCompanionBuilder,
-          (Goal, BaseReferences<_$AppDatabase, $GoalsTableTable, Goal>),
+          (Goal, $$GoalsTableTableReferences),
           Goal,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool transactionsTableRefs})
         > {
   $$GoalsTableTableTableManager(_$AppDatabase db, $GoalsTableTable table)
     : super(
@@ -3888,6 +4077,7 @@ class $$GoalsTableTableTableManager
                 Value<String> emoji = const Value.absent(),
                 Value<double> targetAmount = const Value.absent(),
                 Value<double> savedAmount = const Value.absent(),
+                Value<String> type = const Value.absent(),
                 Value<DateTime?> deadline = const Value.absent(),
                 Value<bool> isCompleted = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -3897,6 +4087,7 @@ class $$GoalsTableTableTableManager
                 emoji: emoji,
                 targetAmount: targetAmount,
                 savedAmount: savedAmount,
+                type: type,
                 deadline: deadline,
                 isCompleted: isCompleted,
                 createdAt: createdAt,
@@ -3908,6 +4099,7 @@ class $$GoalsTableTableTableManager
                 Value<String> emoji = const Value.absent(),
                 required double targetAmount,
                 Value<double> savedAmount = const Value.absent(),
+                Value<String> type = const Value.absent(),
                 Value<DateTime?> deadline = const Value.absent(),
                 Value<bool> isCompleted = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
@@ -3917,14 +4109,51 @@ class $$GoalsTableTableTableManager
                 emoji: emoji,
                 targetAmount: targetAmount,
                 savedAmount: savedAmount,
+                type: type,
                 deadline: deadline,
                 isCompleted: isCompleted,
                 createdAt: createdAt,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$GoalsTableTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({transactionsTableRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (transactionsTableRefs) db.transactionsTable,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (transactionsTableRefs)
+                    await $_getPrefetchedData<
+                      Goal,
+                      $GoalsTableTable,
+                      Transaction
+                    >(
+                      currentTable: table,
+                      referencedTable: $$GoalsTableTableReferences
+                          ._transactionsTableRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$GoalsTableTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).transactionsTableRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.goalId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -3939,9 +4168,9 @@ typedef $$GoalsTableTableProcessedTableManager =
       $$GoalsTableTableAnnotationComposer,
       $$GoalsTableTableCreateCompanionBuilder,
       $$GoalsTableTableUpdateCompanionBuilder,
-      (Goal, BaseReferences<_$AppDatabase, $GoalsTableTable, Goal>),
+      (Goal, $$GoalsTableTableReferences),
       Goal,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool transactionsTableRefs})
     >;
 typedef $$TransactionsTableTableCreateCompanionBuilder =
     TransactionsTableCompanion Function({
@@ -3952,6 +4181,7 @@ typedef $$TransactionsTableTableCreateCompanionBuilder =
       required DateTime date,
       required int accountId,
       Value<int?> categoryId,
+      Value<int?> goalId,
       Value<String?> receiptPath,
       Value<bool> isRecurring,
       Value<String?> tags,
@@ -3966,6 +4196,7 @@ typedef $$TransactionsTableTableUpdateCompanionBuilder =
       Value<DateTime> date,
       Value<int> accountId,
       Value<int?> categoryId,
+      Value<int?> goalId,
       Value<String?> receiptPath,
       Value<bool> isRecurring,
       Value<String?> tags,
@@ -4019,6 +4250,25 @@ final class $$TransactionsTableTableReferences
       $_db.categoriesTable,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $GoalsTableTable _goalIdTable(_$AppDatabase db) =>
+      db.goalsTable.createAlias(
+        $_aliasNameGenerator(db.transactionsTable.goalId, db.goalsTable.id),
+      );
+
+  $$GoalsTableTableProcessedTableManager? get goalId {
+    final $_column = $_itemColumn<int>('goal_id');
+    if ($_column == null) return null;
+    final manager = $$GoalsTableTableTableManager(
+      $_db,
+      $_db.goalsTable,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_goalIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -4117,6 +4367,29 @@ class $$TransactionsTableTableFilterComposer
           }) => $$CategoriesTableTableFilterComposer(
             $db: $db,
             $table: $db.categoriesTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$GoalsTableTableFilterComposer get goalId {
+    final $$GoalsTableTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.goalId,
+      referencedTable: $db.goalsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GoalsTableTableFilterComposer(
+            $db: $db,
+            $table: $db.goalsTable,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4226,6 +4499,29 @@ class $$TransactionsTableTableOrderingComposer
     );
     return composer;
   }
+
+  $$GoalsTableTableOrderingComposer get goalId {
+    final $$GoalsTableTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.goalId,
+      referencedTable: $db.goalsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GoalsTableTableOrderingComposer(
+            $db: $db,
+            $table: $db.goalsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$TransactionsTableTableAnnotationComposer
@@ -4315,6 +4611,29 @@ class $$TransactionsTableTableAnnotationComposer
     );
     return composer;
   }
+
+  $$GoalsTableTableAnnotationComposer get goalId {
+    final $$GoalsTableTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.goalId,
+      referencedTable: $db.goalsTable,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GoalsTableTableAnnotationComposer(
+            $db: $db,
+            $table: $db.goalsTable,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$TransactionsTableTableTableManager
@@ -4330,7 +4649,7 @@ class $$TransactionsTableTableTableManager
           $$TransactionsTableTableUpdateCompanionBuilder,
           (Transaction, $$TransactionsTableTableReferences),
           Transaction,
-          PrefetchHooks Function({bool accountId, bool categoryId})
+          PrefetchHooks Function({bool accountId, bool categoryId, bool goalId})
         > {
   $$TransactionsTableTableTableManager(
     _$AppDatabase db,
@@ -4357,6 +4676,7 @@ class $$TransactionsTableTableTableManager
                 Value<DateTime> date = const Value.absent(),
                 Value<int> accountId = const Value.absent(),
                 Value<int?> categoryId = const Value.absent(),
+                Value<int?> goalId = const Value.absent(),
                 Value<String?> receiptPath = const Value.absent(),
                 Value<bool> isRecurring = const Value.absent(),
                 Value<String?> tags = const Value.absent(),
@@ -4369,6 +4689,7 @@ class $$TransactionsTableTableTableManager
                 date: date,
                 accountId: accountId,
                 categoryId: categoryId,
+                goalId: goalId,
                 receiptPath: receiptPath,
                 isRecurring: isRecurring,
                 tags: tags,
@@ -4383,6 +4704,7 @@ class $$TransactionsTableTableTableManager
                 required DateTime date,
                 required int accountId,
                 Value<int?> categoryId = const Value.absent(),
+                Value<int?> goalId = const Value.absent(),
                 Value<String?> receiptPath = const Value.absent(),
                 Value<bool> isRecurring = const Value.absent(),
                 Value<String?> tags = const Value.absent(),
@@ -4395,6 +4717,7 @@ class $$TransactionsTableTableTableManager
                 date: date,
                 accountId: accountId,
                 categoryId: categoryId,
+                goalId: goalId,
                 receiptPath: receiptPath,
                 isRecurring: isRecurring,
                 tags: tags,
@@ -4408,64 +4731,80 @@ class $$TransactionsTableTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({accountId = false, categoryId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (accountId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.accountId,
-                                referencedTable:
-                                    $$TransactionsTableTableReferences
-                                        ._accountIdTable(db),
-                                referencedColumn:
-                                    $$TransactionsTableTableReferences
-                                        ._accountIdTable(db)
-                                        .id,
-                              )
-                              as T;
-                    }
-                    if (categoryId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.categoryId,
-                                referencedTable:
-                                    $$TransactionsTableTableReferences
-                                        ._categoryIdTable(db),
-                                referencedColumn:
-                                    $$TransactionsTableTableReferences
-                                        ._categoryIdTable(db)
-                                        .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({accountId = false, categoryId = false, goalId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (accountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.accountId,
+                                    referencedTable:
+                                        $$TransactionsTableTableReferences
+                                            ._accountIdTable(db),
+                                    referencedColumn:
+                                        $$TransactionsTableTableReferences
+                                            ._accountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (categoryId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.categoryId,
+                                    referencedTable:
+                                        $$TransactionsTableTableReferences
+                                            ._categoryIdTable(db),
+                                    referencedColumn:
+                                        $$TransactionsTableTableReferences
+                                            ._categoryIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (goalId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.goalId,
+                                    referencedTable:
+                                        $$TransactionsTableTableReferences
+                                            ._goalIdTable(db),
+                                    referencedColumn:
+                                        $$TransactionsTableTableReferences
+                                            ._goalIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -4482,7 +4821,7 @@ typedef $$TransactionsTableTableProcessedTableManager =
       $$TransactionsTableTableUpdateCompanionBuilder,
       (Transaction, $$TransactionsTableTableReferences),
       Transaction,
-      PrefetchHooks Function({bool accountId, bool categoryId})
+      PrefetchHooks Function({bool accountId, bool categoryId, bool goalId})
     >;
 
 class $AppDatabaseManager {

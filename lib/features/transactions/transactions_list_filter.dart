@@ -64,17 +64,17 @@ class TransactionsListFilter extends ConsumerWidget {
         );
         if (selectedFilter == TransactionTypeFilter.income) {
           transactionsFiltered = transactionsFiltered.where(
-            (tx) => tx.transaction.type == 'income',
+            (tx) => tx.transaction.type == TransactionType.income.name,
           );
         }
         if (selectedFilter == TransactionTypeFilter.expense) {
           transactionsFiltered = transactionsFiltered.where(
-            (tx) => tx.transaction.type == 'expense',
+            (tx) => tx.transaction.type == TransactionType.expense.name,
           );
         }
         if (selectedFilter == TransactionTypeFilter.transfer) {
           transactionsFiltered = transactionsFiltered.where(
-            (tx) => tx.transaction.type == 'transfer',
+            (tx) => tx.transaction.type == TransactionType.transfer.name,
           );
         }
 

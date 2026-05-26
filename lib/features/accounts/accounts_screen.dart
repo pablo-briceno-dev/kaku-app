@@ -21,7 +21,16 @@ class AccountsScreen extends StatelessWidget {
               title: 'Nueva Cuenta',
               useRootNavigator: true,
               isFullScreen: true,
-              child: SingleChildScrollView(child: AccountFormSheet()),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    AccountFormSheet(),
+                    SizedBox(
+                      height: MediaQuery.of(context).viewPadding.bottom + 30,
+                    ),
+                  ],
+                ),
+              ),
             ),
             icon: Icon(Icons.add),
             label: Text('Nueva'),

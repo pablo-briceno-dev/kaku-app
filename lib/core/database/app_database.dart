@@ -37,7 +37,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 3;
 
   // Aquí irán las migraciones cuando actualice el schema
   @override
@@ -45,6 +45,14 @@ class AppDatabase extends _$AppDatabase {
     onCreate: (Migrator m) async {
       await m.createAll();
       await _seedDefaultCategories(); // categorías por defecto
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      if (from == 1 && to == 2) {
+        await m.addColumn(transactionsTable, transactionsTable.goalId);
+      }
+      if (from == 2 && to == 3) {
+        await m.addColumn(goalsTable, goalsTable.type);
+      }
     },
   );
 

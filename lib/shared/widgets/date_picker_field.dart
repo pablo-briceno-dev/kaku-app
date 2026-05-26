@@ -3,12 +3,14 @@ import 'package:kaku/core/date_formatter.dart';
 
 class DatePickerField extends StatelessWidget {
   final DateTime selectedDate;
+  final String? label;
   final ValueChanged<DateTime> onChanged;
 
   const DatePickerField({
     super.key,
     required this.selectedDate,
     required this.onChanged,
+    this.label,
   });
 
   Future<void> _pickDate(BuildContext context) async {
@@ -59,7 +61,10 @@ class DatePickerField extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              DateFormatter.relative(selectedDate),
+              label != null &&
+                      DateFormatter.isSameDay(selectedDate, DateTime.now())
+                  ? label!
+                  : DateFormatter.relative(selectedDate),
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,

@@ -337,4 +337,56 @@ class BudgetCalculator {
     final now = DateTime.now();
     return year == now.year && month == now.month;
   }
+
+  /// Obtiene los meses/días estimados para completar la meta
+  /// Usado en GoalsScreen para mostrar "Estimado: 5 meses" o "Estimado: 1 día" real
+  static String getEstimatedTime(DateTime startDate, DateTime endDate) {
+    int months =
+        (endDate.year - startDate.year) * 12 +
+        (endDate.month - startDate.month);
+
+    // Ajustar si aún no ha llegado el día del mes
+    if (endDate.day < startDate.day) {
+      months--;
+    }
+
+    if (months >= 1) {
+      return months == 1 ? '1 mes' : '$months meses';
+    } else {
+      final days = endDate.difference(startDate).inDays;
+      return days == 1 ? '1 día' : '$days días';
+    }
+  }
+
+  /// Obtiene la estimación de tiempo para completar la meta
+  /// Usado en GoalsScreen para mostrar "Estimado: 5 meses" o "Estimado: 1 día" real
+  static String getEstimatedSavingTime(
+    double remaining,
+    double avgMonthlySavings, {
+    DateTime? deadline,
+  }) {
+    if (deadline != null) {
+      final startDate = DateTime.now();
+      final endDate = deadline;
+      return getEstimatedTime(startDate, endDate);
+    }
+    final months = estimatedMonths(remaining, avgMonthlySavings);
+
+    if (months == null) {
+      return 'Sin estimación';
+    }
+
+    final startDate = DateTime.now();
+
+    final wholeMonths = months.floor();
+    final extraDays = ((months - wholeMonths) * 30).round();
+
+    final endDate = DateTime(
+      startDate.year,
+      startDate.month + wholeMonths,
+      startDate.day + extraDays,
+    );
+
+    return getEstimatedTime(startDate, endDate);
+  }
 }

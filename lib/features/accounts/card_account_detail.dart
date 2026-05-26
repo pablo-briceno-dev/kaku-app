@@ -27,7 +27,7 @@ class CardAccountDetail extends ConsumerWidget {
         monthTransactions.value
             ?.where(
               (tx) =>
-                  tx.transaction.type == 'income' &&
+                  tx.transaction.type == TransactionType.income.name &&
                   tx.transaction.accountId == account.id,
             )
             .fold<double>(0, (sum, tx) => sum + tx.transaction.amount) ??
@@ -36,7 +36,7 @@ class CardAccountDetail extends ConsumerWidget {
         monthTransactions.value
             ?.where(
               (tx) =>
-                  tx.transaction.type == 'expense' &&
+                  tx.transaction.type == TransactionType.expense.name &&
                   tx.transaction.accountId == account.id,
             )
             .fold<double>(0, (sum, tx) => sum + tx.transaction.amount) ??

@@ -44,7 +44,7 @@ class AppShell extends ConsumerWidget {
             _NavItem(
               icon: Icons.bar_chart_outlined,
               selectedIcon: Icons.bar_chart,
-              label: 'Stats',
+              label: 'Estadísticas',
               index: 1,
               current: currentIndex,
               onTap: () => context.go(_tabs[1]),
@@ -76,13 +76,6 @@ class AppShell extends ConsumerWidget {
           ],
         ),
       ),
-      // FAB central para agregar gasto rápido desde cualquier tab
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () => context.push(AppRoutes.addTransaction),
-      //   tooltip: 'Agregar gasto',
-      //   child: const Icon(Icons.add, size: 28),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

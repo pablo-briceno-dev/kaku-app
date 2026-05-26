@@ -304,8 +304,6 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
                   : const Text('Crear Cuenta'),
             ),
           ),
-
-          const SizedBox(height: 50),
         ],
       ),
     );

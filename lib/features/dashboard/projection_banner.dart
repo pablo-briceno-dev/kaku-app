@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
+import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 
@@ -40,7 +41,7 @@ class ProjectionBanner extends ConsumerWidget {
 
     // Total gastado en el mes (solo gastos, no ingresos)
     final totalSpent = transactions
-        .where((t) => t.transaction.type == 'expense')
+        .where((t) => t.transaction.type == TransactionType.expense.name)
         .fold(0.0, (sum, t) => sum + t.transaction.amount);
 
     // Si no hay gastos todavía no hay nada que proyectar

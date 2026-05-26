@@ -24,12 +24,12 @@ class CardBalanceDashboard extends ConsumerWidget {
     );
     final income =
         monthTransactions.value
-            ?.where((tx) => tx.transaction.type == 'income')
+            ?.where((tx) => tx.transaction.type == TransactionType.income.name)
             .fold<double>(0, (sum, tx) => sum + tx.transaction.amount) ??
         0;
     final expense =
         monthTransactions.value
-            ?.where((tx) => tx.transaction.type == 'expense')
+            ?.where((tx) => tx.transaction.type == TransactionType.expense.name)
             .fold<double>(0, (sum, tx) => sum + tx.transaction.amount) ??
         0;
     final savingsRate = BudgetCalculator.savingsRate(income, expense);
