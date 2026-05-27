@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/features/settings/profile_sheet.dart';
 import 'package:kaku/features/settings/widgets/profile_avatar.dart';
 import 'package:kaku/shared/providers/profile_provider.dart';
+import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 
 class ProfileCard extends ConsumerWidget {
   const ProfileCard({super.key});
@@ -12,7 +14,13 @@ class ProfileCard extends ConsumerWidget {
     final profile = ref.watch(profileProvider);
 
     return InkWell(
-      onTap: () {},
+      onTap: () => AppBottomSheet.show(
+        context,
+        title: 'Editar perfil',
+        useRootNavigator: true,
+        isFullScreen: true,
+        child: SingleChildScrollView(child: ProfileSheet()),
+      ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         decoration: BoxDecoration(
