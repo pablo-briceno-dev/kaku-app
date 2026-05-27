@@ -118,6 +118,22 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
 
   Future<bool> updateTransaction(Transaction transaction) =>
       update(transactionsTable).replace(transaction);
+
+  Future<double> getTotalExpenses(int month, int year) async {
+    final result = await customSelect(
+      '''SELECT COALESCE(SUM(amount), 0) as total
+        FROM transactions_table
+        WHERE type = 'expense'
+          AND strftime('%m', date) = ?
+          AND strftime('%Y', date) = ?''',
+      variables: [
+        Variable(month.toString().padLeft(2, '0')),
+        Variable(year.toString()),
+      ],
+      readsFrom: {transactionsTable},
+    ).getSingle();
+    return result.read<double>('total');
+  }
 }
 
 // Clase de resultado typesafe para JOIN ──
