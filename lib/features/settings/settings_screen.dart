@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/features/settings/profile_card.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -8,7 +9,12 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: Text('Configuración'), defaultActions: false),
-      body: Center(child: Text('SettingsScreen')),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: Column(children: [ProfileCard()]),
+        ),
+      ),
     );
   }
 }
