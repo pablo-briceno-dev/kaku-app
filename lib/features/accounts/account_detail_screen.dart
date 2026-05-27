@@ -45,7 +45,15 @@ class AccountDetailScreen extends ConsumerWidget {
                   isFullScreen: true,
                   useRootNavigator: true,
                   child: SingleChildScrollView(
-                    child: AccountFormSheet(account: account),
+                    child: Column(
+                      children: [
+                        AccountFormSheet(account: account),
+                        SizedBox(
+                          height:
+                              MediaQuery.of(context).viewPadding.bottom + 30,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 icon: Icon(Icons.edit),
