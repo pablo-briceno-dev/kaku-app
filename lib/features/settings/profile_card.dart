@@ -19,7 +19,14 @@ class ProfileCard extends ConsumerWidget {
         title: 'Editar perfil',
         useRootNavigator: true,
         isFullScreen: true,
-        child: SingleChildScrollView(child: ProfileSheet()),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              ProfileSheet(),
+              SizedBox(height: MediaQuery.of(context).viewPadding.bottom + 30),
+            ],
+          ),
+        ),
       ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
@@ -29,9 +36,10 @@ class ProfileCard extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            Expanded(child: ProfileAvatar(profile: profile)),
+            Expanded(flex: 1, child: ProfileAvatar(profile: profile)),
             const SizedBox(width: 8),
             Expanded(
+              flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -55,7 +63,7 @@ class ProfileCard extends ConsumerWidget {
                 ],
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: 16),
             OutlinedButton.icon(
               onPressed: () {},
               label: Text(profile.isPremium ? 'Premium' : 'Gratis'),
