@@ -28,7 +28,6 @@ class GoalsDao extends DatabaseAccessor<AppDatabase> with _$GoalsDaoMixin {
     required int goalId,
     required int accountId,
     required double amount,
-    required double balance,
   }) async {
     await transaction(() async {
       // 1. Suma el aporte a la meta
@@ -62,15 +61,38 @@ class GoalsDao extends DatabaseAccessor<AppDatabase> with _$GoalsDaoMixin {
       );
 
       // 3. Descuenta del saldo de la cuenta
+      final account = await (select(
+        accountsTable,
+      )..where((a) => a.id.equals(accountId))).getSingle();
       await (update(accountsTable)..where((a) => a.id.equals(accountId))).write(
-        AccountsTableCompanion(balance: Value(balance - amount)),
+        AccountsTableCompanion(balance: Value(account.balance - amount)),
       );
     });
   }
 
   // Eliminar meta
-  Future<int> deleteGoal(int id) =>
-      (delete(goalsTable)..where((g) => g.id.equals(id))).go();
+  Future<int> deleteGoal(int id) async {
+    return await transaction(() async {
+      // 1. Obtener todas las transacciones asociadas a la meta
+      final transactions = await (select(
+        transactionsTable,
+      )..where((t) => t.goalId.equals(id))).get();
+      // 2. Eliminar todas las transacciones asociadas a la meta
+      // y actualizar el saldo de la cuenta
+      for (var transaction in transactions) {
+        final account = await (select(
+          accountsTable,
+        )..where((a) => a.id.equals(transaction.accountId))).getSingle();
+        final newBalance = account.balance + transaction.amount;
+        await (update(accountsTable)..where((a) => a.id.equals(transaction.accountId))).write(
+          AccountsTableCompanion(balance: Value(newBalance)),
+        );
+        await delete(transactionsTable).delete(transaction);
+      }
+      
+      return (delete(goalsTable)..where((g) => g.id.equals(id))).go();
+    });
+  }
 
   // Editar nombre, emoji o monto objetivo
   Future<bool> updateGoal(Goal goal) => update(goalsTable).replace(goal);

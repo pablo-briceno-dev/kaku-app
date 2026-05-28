@@ -16,121 +16,87 @@ class GoalsScreen extends ConsumerWidget {
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final allGoalsAsync = ref.watch(allGoalsProvider);
+    final activeGoalsAsync = ref.watch(activeGoalsProvider);
+    final completedGoalsAsync = ref.watch(completedGoalsProvider);
 
-    return allGoalsAsync.when(
-      loading: () => Scaffold(
-        appBar: CustomAppBar(
-          title: Text('Metas'),
-          defaultActions: true,
-          actions: [
-            TextButton.icon(
-              onPressed: () => AppBottomSheet.show(
-                context,
-                title: 'Nueva Meta',
-                useRootNavigator: true,
-                isFullScreen: true,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      GoalFormSheet(),
-                      SizedBox(
-                        height: MediaQuery.of(context).viewPadding.bottom + 30,
-                      ),
-                    ],
+    return Scaffold(
+      appBar: CustomAppBar(
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Metas'),
+            Row(
+              children: [
+                activeGoalsAsync.when(
+                  data: (activeGoal) => Text(
+                    '${activeGoal.length} activas · ',
+                    style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                  ),
+                  error: (e, _) => Text(
+                    '0 activas · ',
+                    style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                  ),
+                  loading: () => Text(
+                    'Cargando...',
+                    style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                 ),
-              ),
-              icon: Icon(Icons.add),
-              label: Text('Nueva'),
+                completedGoalsAsync.when(
+                  data: (completedGoal) => Text(
+                    '${completedGoal.length} completadas',
+                    style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                  ),
+                  error: (e, _) => Text(
+                    '0 completadas',
+                    style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                  ),
+                  loading: () => Text(
+                    'Cargando...',
+                    style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: GoalsListSkeleton(),
-        ),
-      ),
-      error: (e, _) => const SizedBox.shrink(),
-      data: (goals) {
-        if (goals.isEmpty) {
-          return Scaffold(
-            appBar: CustomAppBar(
-              title: Text('Metas'),
-              defaultActions: true,
-              actions: [
-                TextButton.icon(
-                  onPressed: () => AppBottomSheet.show(
-                    context,
-                    title: 'Nueva Meta',
-                    useRootNavigator: true,
-                    isFullScreen: true,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          GoalFormSheet(),
-                          SizedBox(
-                            height:
-                                MediaQuery.of(context).viewPadding.bottom + 30,
-                          ),
-                        ],
-                      ),
+        defaultActions: true,
+        actions: [
+          TextButton.icon(
+            onPressed: () => AppBottomSheet.show(
+              context,
+              title: 'Nueva Meta',
+              useRootNavigator: true,
+              isFullScreen: true,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    GoalFormSheet(),
+                    SizedBox(
+                      height: MediaQuery.of(context).viewPadding.bottom + 30,
                     ),
-                  ),
-                  icon: Icon(Icons.add),
-                  label: Text('Nueva'),
+                  ],
                 ),
-              ],
-            ),
-            body: const ContentWidgetEmpty(
-              title: '🎯',
-              message: 'Sin metas activas',
-            ),
-          );
-        }
-        final activeGoals = ref.watch(activeGoalsProvider).value;
-        final completedGoals = ref.watch(completedGoalsProvider).value;
-
-        return Scaffold(
-          appBar: CustomAppBar(
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Metas'),
-                Text(
-                  '${activeGoals?.length ?? 0} activas · ${completedGoals?.length ?? 0} completadas',
-                  style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
-                ),
-              ],
-            ),
-            defaultActions: true,
-            actions: [
-              TextButton.icon(
-                onPressed: () => AppBottomSheet.show(
-                  context,
-                  title: 'Nueva Meta',
-                  useRootNavigator: true,
-                  isFullScreen: true,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        GoalFormSheet(),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).viewPadding.bottom + 30,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                icon: Icon(Icons.add),
-                label: Text('Nueva'),
               ),
-            ],
+            ),
+            icon: Icon(Icons.add),
+            label: Text('Nueva'),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: SingleChildScrollView(
-              child: GoalsList(
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          child: allGoalsAsync.when(
+            loading: () => GoalsListSkeleton(),
+            error: (e, _) => const SizedBox.shrink(),
+            data: (goals) {
+              if (goals.isEmpty) {
+                return const ContentWidgetEmpty(
+                  title: '🎯',
+                  message: 'Sin metas activas',
+                );
+              }
+              return GoalsList(
                 goals: goals
                     .map(
                       (goal) => GoalsListConfig(
@@ -146,11 +112,11 @@ class GoalsScreen extends ConsumerWidget {
                       ),
                     )
                     .toList(),
-              ),
-            ),
+              );
+            },
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

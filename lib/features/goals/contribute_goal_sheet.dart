@@ -227,7 +227,6 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
                               _amountController.text,
                               currency,
                             ),
-                            balance: account?.balance ?? 0,
                           );
 
                       if (!mounted) return;

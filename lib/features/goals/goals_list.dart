@@ -4,9 +4,11 @@ import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/features/goals/contribute_goal_sheet.dart';
+import 'package:kaku/features/goals/goal_form_sheet.dart';
 import 'package:kaku/features/goals/widgets/card_goal.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
+import 'package:kaku/shared/utils/undo_delete.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 
 class GoalsListConfig {
@@ -118,7 +120,22 @@ class GoalsList extends ConsumerWidget {
                       avgMonthlySavings,
                       deadline: goal.deadline,
                     ),
-              onTap: () {},
+              onTap: () => AppBottomSheet.show(
+                context,
+                title: 'Editar Meta ${goal.name}',
+                useRootNavigator: true,
+                isFullScreen: true,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      GoalFormSheet(goal: goal),
+                      SizedBox(
+                        height: MediaQuery.of(context).viewPadding.bottom + 30,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               onContribute: () => AppBottomSheet.show(
                 context,
                 title: 'Aportar meta',
@@ -141,12 +158,23 @@ class GoalsList extends ConsumerWidget {
                   ),
                 ),
               ),
-              onDelete: () {},
+              onDelete: () => showUndoDelete(
+                context: context,
+                label: 'Meta eliminandose',
+                onDelete: () => _onDelete(
+                  ref,
+                  goal,
+                ),
+              ),
             ),
             const SizedBox(height: 10),
           ],
         );
       }).toList(),
     );
+  }
+
+  Future<void> _onDelete(WidgetRef ref, GoalsListConfig goal) async {
+    await ref.read(goalsDaoProvider).deleteGoal(goal.id);
   }
 }

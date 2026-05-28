@@ -6,6 +6,7 @@ import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/features/goals/goals_list.dart';
 import 'package:kaku/features/goals/widgets/emoji_picker.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
@@ -13,7 +14,9 @@ import 'package:kaku/shared/widgets/date_picker_field.dart';
 import 'package:drift/drift.dart' as drift;
 
 class GoalFormSheet extends ConsumerStatefulWidget {
-  const GoalFormSheet({super.key});
+  final GoalsListConfig? goal;
+
+  const GoalFormSheet({super.key, this.goal});
 
   @override
   ConsumerState<GoalFormSheet> createState() => _GoalFormSheetState();
@@ -44,9 +47,23 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
   void initState() {
     super.initState();
     final currency = ref.read(currencyProvider);
-    controllers['name']?.text = 'Nueva Meta';
-    controllers['emoji']?.text = _emojis[0];
-    controllers['targetAmount']?.text = CurrencyFormatter.format(0, currency);
+    if (widget.goal != null) {
+      controllers['name']?.text = widget.goal!.name;
+      controllers['emoji']?.text = _emojis
+          .indexOf(widget.goal!.emoji)
+          .toString();
+      controllers['targetAmount']?.text = CurrencyFormatter.format(
+        widget.goal!.targetAmount,
+        currency,
+      );
+      controllers['deadline']?.text = DateFormatter.fullDateTime(
+        widget.goal!.deadline!,
+      );
+    } else {
+      controllers['name']?.text = 'Nueva Meta';
+      controllers['emoji']?.text = _emojis[0];
+      controllers['targetAmount']?.text = CurrencyFormatter.format(0, currency);
+    }
 
     controllers['name']?.addListener(_refresh);
     controllers['targetAmount']?.addListener(_refresh);
@@ -178,31 +195,70 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
                   ? null
                   : () async {
                       final dao = ref.read(goalsDaoProvider);
-                      await dao.insertGoal(
-                        GoalsTableCompanion.insert(
-                          name: controllers['name']!.text,
-                          emoji: drift.Value(
-                            _emojis[int.tryParse(
-                                  controllers['emoji']?.text ?? '0',
-                                ) ??
-                                0],
+                      if (widget.goal != null) {
+                        await dao.updateGoal(
+                          Goal(
+                            id: widget.goal!.id,
+                            name: controllers['name']!.text,
+                            emoji:
+                                _emojis[int.tryParse(
+                                      controllers['emoji']?.text ?? '0',
+                                    ) ??
+                                    0],
+                            targetAmount: CurrencyFormatter.parse(
+                              controllers['targetAmount']!.text,
+                              currency,
+                            ),
+                            savedAmount: widget.goal!.savedAmount,
+                            deadline:
+                                DateFormatter.isSameDay(
+                                  _deadline,
+                                  DateTime.now(),
+                                )
+                                ? null
+                                : _deadline,
+                            type: widget.goal!.type,
+                            isCompleted: widget.goal!.isCompleted,
+                            createdAt: widget.goal!.createdAt,
                           ),
-                          targetAmount: CurrencyFormatter.parse(
-                            controllers['targetAmount']!.text,
-                            currency,
+                        );
+                      } else {
+                        await dao.insertGoal(
+                          GoalsTableCompanion.insert(
+                            name: controllers['name']!.text,
+                            emoji: drift.Value(
+                              _emojis[int.tryParse(
+                                    controllers['emoji']?.text ?? '0',
+                                  ) ??
+                                  0],
+                            ),
+                            targetAmount: CurrencyFormatter.parse(
+                              controllers['targetAmount']!.text,
+                              currency,
+                            ),
+                            deadline:
+                                DateFormatter.isSameDay(
+                                  _deadline,
+                                  DateTime.now(),
+                                )
+                                ? drift.Value(null)
+                                : drift.Value(_deadline),
                           ),
-                          deadline:
-                              DateFormatter.isSameDay(_deadline, DateTime.now())
-                              ? drift.Value(null)
-                              : drift.Value(_deadline),
-                        ),
-                      );
+                        );
+                      }
                       if (context.mounted) {
-                        AppSnackbar.success(context, 'Meta creada');
+                        AppSnackbar.success(
+                          context,
+                          widget.goal != null
+                              ? 'Meta actualizada'
+                              : 'Meta creada',
+                        );
                         Navigator.pop(context);
                       }
                     },
-              child: const Text('Crear Meta'),
+              child: widget.goal != null
+                  ? const Text('Actualizar Meta')
+                  : const Text('Crear Meta'),
             ),
           ),
         ],
