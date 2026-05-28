@@ -19,4 +19,19 @@ enum CurrencyType {
         return 'ARS';
     }
   }
+
+  String get labelComplete {
+    switch (this) {
+      case CurrencyType.cop:
+        return 'Peso colombiano';
+      case CurrencyType.usd:
+        return 'Dólar estadounidense';
+      case CurrencyType.eur:
+        return 'Euro';
+      case CurrencyType.mxn:
+        return 'Peso mexicano';
+      case CurrencyType.ars:
+        return 'Peso argentino';
+    }
+  }
 }
