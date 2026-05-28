@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
@@ -112,8 +113,18 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 TextFormField(
                   controller: _amountController,
                   textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [CurrencyFormatter.inputFormatter(currency)],
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                    signed: false,
+                  ),
+                  inputFormatters: [
+                    // FilteringTextInputFormatter.allow(
+                    //   RegExp(r'[\d.,]'),
+                    // ), // ← primero
+                    CurrencyFormatter.inputFormatter(
+                      currency,
+                    ), // ← luego el tuyo
+                  ],
                   decoration: InputDecoration(
                     labelText: 'MONTO · ${currency.label}',
                     hintText: r'$0',
@@ -180,7 +191,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   child: ElevatedButton(
                     onPressed:
                         _validatedButton(
-                          CurrencyFormatter.parse(_amountController.text),
+                          CurrencyFormatter.parse(
+                            _amountController.text,
+                            currency,
+                          ),
                           account?.balance ?? 0.0,
                           selectedType,
                           selectedAccount,
@@ -193,6 +207,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                                 type: selectedType.name,
                                 amount: CurrencyFormatter.parse(
                                   _amountController.text,
+                                  currency,
                                 ),
                                 description: drift.Value(
                                   _descriptionController.text,
@@ -211,6 +226,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                                     selectedType,
                                     CurrencyFormatter.parse(
                                       _amountController.text,
+                                      currency,
                                     ),
                                   ),
                             );

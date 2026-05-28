@@ -173,7 +173,11 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
           const SizedBox(height: 20),
           TextFormField(
             controller: controllers['balance'],
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(
+              decimal:
+                  true, // ← muestra "." o "," según el idioma del dispositivo
+              signed: false, // ← no muestra el botón "-"
+            ),
             inputFormatters: [
               CurrencyFormatter.inputFormatter(
                 CurrencyType.values.firstWhere(
@@ -259,6 +263,9 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
                             currency: controllers['currency']!.text,
                             balance: CurrencyFormatter.parse(
                               controllers['balance']!.text,
+                              CurrencyType.values.firstWhere(
+                                (e) => e.label == controllers['currency']!.text,
+                              ),
                             ),
                             colorHex: controllers['colorHex']!.text,
                             icon: controllers['icon']!.text,
@@ -279,6 +286,10 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
                             balance: drift.Value(
                               CurrencyFormatter.parse(
                                 controllers['balance']!.text,
+                                CurrencyType.values.firstWhere(
+                                  (e) =>
+                                      e.label == controllers['currency']!.text,
+                                ),
                               ),
                             ),
                             colorHex: drift.Value(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/models/theme_model.dart';
+import 'package:kaku/features/settings/currency_sheet.dart';
 import 'package:kaku/features/settings/profile_card.dart';
 import 'package:kaku/features/settings/theme_color_sheet.dart';
 import 'package:kaku/features/settings/widgets/list_tile_child.dart';
@@ -82,7 +83,13 @@ class SettingsScreen extends ConsumerWidget {
                 label: 'Moneda',
                 subtitle: '${currency.label} - ${currency.labelComplete}',
                 icon: Icons.monetization_on,
-                onTap: () {},
+                onTap: () => AppBottomSheet.show(
+                  context,
+                  title: 'Moneda',
+                  useRootNavigator: false,
+                  isFullScreen: false,
+                  child: CurrencySheet(),
+                ),
               ),
               const Divider(height: 1),
               ListTileChild(

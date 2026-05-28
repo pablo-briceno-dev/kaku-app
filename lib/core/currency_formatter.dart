@@ -68,13 +68,40 @@ class CurrencyFormatter {
     return '$sign$formatted';
   }
 
-  // Convierte un String formateado de vuelta a double
-  static double parse(String text) {
+  // ════════════════════════════════════════════════════════
+  //  parse() actualizado — lee decimales correctamente
+  //
+  //  Reemplaza el parse() actual en CurrencyFormatter.
+  //  El anterior hacía replaceAll('.', '') que eliminaba
+  //  el separador decimal de USD rompiendo el valor.
+  // ════════════════════════════════════════════════════════
+  static double parse(String text, [CurrencyType currency = CurrencyType.cop]) {
     if (text.trim().isEmpty) return 0.0;
-    final clean = text
-        .replaceAll(RegExp(r'[^\d,\.]'), '') // quita $, letras, espacios
-        .replaceAll('.', '') // quita separador de miles COP
-        .replaceAll(',', ''); // coma decimal -> punto
+
+    // Quita el símbolo de moneda
+    var clean = text.replaceAll(_symbolFor(currency), '').trim();
+
+    if (currency == CurrencyType.usd || currency == CurrencyType.mxn) {
+      // USD/MXN: miles con coma, decimal con punto
+      // "1,200.50" → quita comas de miles → "1200.50"
+      clean = clean.replaceAll(',', '');
+      // El punto ya es el decimal correcto
+    } else {
+      // COP/EUR/ARS: miles con punto, decimal con coma
+      // "1.200,50" → quita puntos de miles → "1200,50"
+      //            → convierte coma decimal a punto → "1200.50"
+      //
+      // Pero "1.200" sin coma → es entero con punto de miles
+      final hasComma = clean.contains(',');
+      if (hasComma) {
+        // Tiene coma → es separador decimal
+        clean = clean.replaceAll('.', '').replaceAll(',', '.');
+      } else {
+        // Sin coma → los puntos son solo separadores de miles
+        clean = clean.replaceAll('.', '');
+      }
+    }
+
     return double.tryParse(clean) ?? 0.0;
   }
 
@@ -118,30 +145,100 @@ class CurrencyFormatter {
 
 class _CurrencyInputFormatter extends TextInputFormatter {
   final CurrencyType currency;
-
   const _CurrencyInputFormatter(this.currency);
+
+  String get _thousandsSep => switch (currency) {
+    CurrencyType.usd || CurrencyType.mxn => ',',
+    _ => '.',
+  };
+
+  String get _decimalSep => switch (currency) {
+    CurrencyType.usd || CurrencyType.mxn => '.',
+    _ => ',',
+  };
+
+  bool get _hasDecimals => switch (currency) {
+    CurrencyType.cop || CurrencyType.ars => false,
+    _ => true,
+  };
 
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    final newDigits = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
-    if (newDigits.isEmpty) {
+    final raw = newValue.text;
+
+    // ── 1. Campo vacío ────────────────────────────────
+    if (raw.isEmpty) {
       return newValue.copyWith(
         text: '',
         selection: const TextSelection.collapsed(offset: 0),
       );
     }
-    final amount = double.parse(newDigits);
-    final formatted = CurrencyFormatter.format(amount, currency);
-    final cursorPos = newValue.selection.end.clamp(0, newValue.text.length);
-    final textBeforeCursor = newValue.text.substring(0, cursorPos);
-    final digitsBeforeCursor = textBeforeCursor
+
+    // ── 2. Quitar el símbolo de moneda para trabajar
+    //       solo con el número que escribió el usuario
+    final symbol = CurrencyFormatter._symbolFor(currency);
+    final withoutSym = raw.replaceAll(symbol, '').trim();
+
+    // ── 3. Detectar si el usuario escribió un separador decimal.
+    //       Aceptamos AMBOS ("." y ",") sin importar la moneda —
+    //       luego normalizamos al correcto.
+    final hasDot = withoutSym.contains('.');
+    final hasComma = withoutSym.contains(',');
+    final hasDecimalInput = _hasDecimals && (hasDot || hasComma);
+
+    // ── 4. Separar parte entera y decimal ─────────────
+    // Primero normalizamos al separador decimal de la moneda
+    // para poder hacer el split correctamente.
+    final normalized = _normalize(withoutSym);
+    final parts = normalized.split(_decimalSep);
+
+    // Parte entera: solo dígitos
+    final intPart = parts[0].replaceAll(RegExp(r'[^\d]'), '');
+
+    // Parte decimal: solo dígitos, máximo 2
+    final decPart = hasDecimalInput && parts.length > 1
+        ? parts[1]
+              .replaceAll(RegExp(r'[^\d]'), '')
+              .substring(
+                0,
+                parts[1].replaceAll(RegExp(r'[^\d]'), '').length.clamp(0, 2),
+              )
+        : '';
+
+    // ── 5. Si no hay nada útil, limpiar ───────────────
+    if (intPart.isEmpty && !hasDecimalInput) {
+      return newValue.copyWith(
+        text: '',
+        selection: const TextSelection.collapsed(offset: 0),
+      );
+    }
+
+    // ── 6. Formatear parte entera con separadores de miles
+    final formattedInt = intPart.isEmpty ? '0' : _addThousands(intPart);
+
+    // ── 7. Construir el string final ──────────────────
+    final String formatted;
+    if (hasDecimalInput) {
+      // Muestra el separador aunque el usuario no haya
+      // escrito dígitos decimales aún: "US$1,200."
+      formatted = '$symbol$formattedInt$_decimalSep$decPart';
+    } else {
+      formatted = '$symbol$formattedInt';
+    }
+
+    // ── 8. Recalcular posición del cursor ─────────────
+    final cursorPos = newValue.selection.end.clamp(0, raw.length);
+    final digitsBeforeCursor = raw
+        .substring(0, cursorPos)
         .replaceAll(RegExp(r'[^\d]'), '')
         .length;
+
     var newCursorPos = 0;
     var digitCount = 0;
+
     for (var i = 0; i < formatted.length; i++) {
       if (RegExp(r'\d').hasMatch(formatted[i])) {
         digitCount++;
@@ -151,6 +248,11 @@ class _CurrencyInputFormatter extends TextInputFormatter {
         }
       }
       newCursorPos = i + 1;
+    }
+
+    // Cursor justo después del separador decimal
+    if (hasDecimalInput && decPart.isEmpty) {
+      newCursorPos = formatted.length;
     }
 
     if (digitsBeforeCursor == 0) {
@@ -164,5 +266,55 @@ class _CurrencyInputFormatter extends TextInputFormatter {
         offset: newCursorPos.clamp(0, formatted.length),
       ),
     );
+  }
+
+  // ── Normaliza "." y "," al separador decimal correcto ──
+  // El usuario puede escribir cualquiera de los dos.
+  // Esta función convierte al separador de la moneda activa.
+  String _normalize(String raw) {
+    final hasDot = raw.contains('.');
+    final hasComma = raw.contains(',');
+
+    if (!hasDot && !hasComma) return raw;
+
+    if (_decimalSep == '.') {
+      // USD/MXN: decimal es "."
+      // Si el usuario escribió "," con <= 2 dígitos después → era decimal
+      if (hasComma && !hasDot) {
+        final afterComma = raw
+            .substring(raw.lastIndexOf(',') + 1)
+            .replaceAll(RegExp(r'[^\d]'), '');
+        return afterComma.length <= 2
+            ? raw.replaceAll(',', '.') // coma → punto decimal
+            : raw.replaceAll(',', ''); // coma de miles → quitar
+      }
+      // Ya tiene punto → correcto, pero quitamos posibles comas de miles
+      return raw.replaceAll(',', '');
+    } else {
+      // COP/EUR/ARS: decimal es ","
+      // Si el usuario escribió "." con <= 2 dígitos después → era decimal
+      if (hasDot && !hasComma) {
+        final afterDot = raw
+            .substring(raw.lastIndexOf('.') + 1)
+            .replaceAll(RegExp(r'[^\d]'), '');
+        return afterDot.length <= 2
+            ? raw.replaceAll('.', ',') // punto → coma decimal
+            : raw.replaceAll('.', ''); // punto de miles → quitar
+      }
+      // Ya tiene coma → correcto, pero quitamos posibles puntos de miles
+      return raw.replaceAll('.', '');
+    }
+  }
+
+  // ── Agrega separadores de miles a la parte entera ────
+  String _addThousands(String digits) {
+    final result = StringBuffer();
+    for (var i = 0; i < digits.length; i++) {
+      if (i > 0 && (digits.length - i) % 3 == 0) {
+        result.write(_thousandsSep);
+      }
+      result.write(digits[i]);
+    }
+    return result.toString();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
@@ -122,16 +123,25 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                     TextFormField(
                       controller: _amountController,
                       textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: false,
+                      ),
                       inputFormatters: [
-                        CurrencyFormatter.inputFormatter(currency),
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[\d.,]'),
+                        ), // ← primero
+                        CurrencyFormatter.inputFormatter(
+                          currency,
+                        ), // ← luego el tuyo,
                       ],
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Campo requerido';
                         }
-                        if (CurrencyFormatter.parse(value) > account!.balance) {
+                        if (CurrencyFormatter.parse(value, currency) >
+                            account!.balance) {
                           return 'No tienes suficiente saldo';
                         }
                         return null;
@@ -209,7 +219,10 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                             _validatedButton(
                               selectedAccount,
                               selectedCategory,
-                              CurrencyFormatter.parse(_amountController.text),
+                              CurrencyFormatter.parse(
+                                _amountController.text,
+                                currency,
+                              ),
                               account?.balance ?? 0.0,
                             )
                             ? null
@@ -223,6 +236,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                                 final differenceAmount =
                                     CurrencyFormatter.parse(
                                       _amountController.text,
+                                      currency,
                                     ) -
                                     widget.transaction.amount;
                                 if (widget.transaction.accountId !=
@@ -241,6 +255,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                                               transactionTypeSelected,
                                               CurrencyFormatter.parse(
                                                 _amountController.text,
+                                                currency,
                                               ),
                                             ) *
                                             -1),
@@ -252,6 +267,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                                           transactionTypeSelected,
                                           CurrencyFormatter.parse(
                                             _amountController.text,
+                                            currency,
                                           ),
                                         ),
                                   );
@@ -272,6 +288,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                                     id: widget.transaction.id,
                                     amount: CurrencyFormatter.parse(
                                       _amountController.text,
+                                      currency,
                                     ),
                                     description: _descriptionController.text,
                                     type: widget.transaction.type,

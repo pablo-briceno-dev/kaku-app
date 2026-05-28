@@ -34,4 +34,19 @@ enum CurrencyType {
         return 'Peso argentino';
     }
   }
+
+  String get labelCompact {
+    switch (this) {
+      case CurrencyType.cop:
+        return 'CO';
+      case CurrencyType.usd:
+        return 'US';
+      case CurrencyType.eur:
+        return 'EU';
+      case CurrencyType.mxn:
+        return 'MX';
+      case CurrencyType.ars:
+        return 'AR';
+    }
+  }
 }

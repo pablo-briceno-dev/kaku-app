@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
+import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/features/goals/widgets/emoji_picker.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
@@ -56,14 +58,15 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
     }
   }
 
-  bool _validatedButton() {
+  bool _validatedButton(CurrencyType currency) {
     if (controllers['name']?.text == null ||
         controllers['name']!.text.isEmpty) {
       return true;
     }
     if (controllers['targetAmount']?.text == null ||
         controllers['targetAmount']!.text.isEmpty ||
-        CurrencyFormatter.parse(controllers['targetAmount']!.text) <= 0) {
+        CurrencyFormatter.parse(controllers['targetAmount']!.text, currency) <=
+            0) {
       debugPrint('targetAmount <= 0');
       return true;
     }
@@ -130,14 +133,21 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
           ),
           TextFormField(
             controller: controllers['targetAmount'],
-            keyboardType: TextInputType.number,
-            inputFormatters: [CurrencyFormatter.inputFormatter(currency)],
+            keyboardType: const TextInputType.numberWithOptions(
+              decimal:
+                  true, // ← muestra "." o "," según el idioma del dispositivo
+              signed: false, // ← no muestra el botón "-"
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')), // ← primero
+              CurrencyFormatter.inputFormatter(currency), // ← luego el tuyo
+            ],
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Campo requerido';
               }
-              if (CurrencyFormatter.parse(value) <= 0) {
+              if (CurrencyFormatter.parse(value, currency) <= 0) {
                 return 'Debe ser mayor a 0';
               }
               return null;
@@ -164,7 +174,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: _validatedButton()
+              onPressed: _validatedButton(currency)
                   ? null
                   : () async {
                       final dao = ref.read(goalsDaoProvider);
@@ -179,6 +189,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
                           ),
                           targetAmount: CurrencyFormatter.parse(
                             controllers['targetAmount']!.text,
+                            currency,
                           ),
                           deadline:
                               DateFormatter.isSameDay(_deadline, DateTime.now())

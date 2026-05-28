@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
@@ -100,21 +101,29 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
           const SizedBox(height: 8),
           TextFormField(
             controller: _amountController,
-            keyboardType: TextInputType.number,
-            inputFormatters: [CurrencyFormatter.inputFormatter(currency)],
+            keyboardType: const TextInputType.numberWithOptions(
+              decimal:
+                  true, // ← muestra "." o "," según el idioma del dispositivo
+              signed: false, // ← no muestra el botón "-"
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')), // ← primero
+              CurrencyFormatter.inputFormatter(currency), // ← luego el tuyo
+            ],
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Campo requerido';
               }
-              if (CurrencyFormatter.parse(value) <= 0) {
+              if (CurrencyFormatter.parse(value, currency) <= 0) {
                 return 'Debe ser mayor a 0';
               }
-              if (CurrencyFormatter.parse(value) >
+              if (CurrencyFormatter.parse(value, currency) >
                   widget.targetAmount - widget.savedAmount) {
                 return 'No puedes aportar más que el total';
               }
-              if (CurrencyFormatter.parse(value) > (account?.balance ?? 0)) {
+              if (CurrencyFormatter.parse(value, currency) >
+                  (account?.balance ?? 0)) {
                 return 'Cuenta sin saldo suficiente';
               }
               return null;
@@ -193,13 +202,19 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
             child: ElevatedButton(
               onPressed:
                   selectedAccount == null ||
-                      CurrencyFormatter.parse(_amountController.text) >
+                      CurrencyFormatter.parse(
+                            _amountController.text,
+                            currency,
+                          ) >
                           (account?.balance ?? 0)
                   ? null
                   : () async {
                       final newSaved =
                           widget.savedAmount +
-                          CurrencyFormatter.parse(_amountController.text);
+                          CurrencyFormatter.parse(
+                            _amountController.text,
+                            currency,
+                          );
                       final completed = newSaved >= widget.targetAmount;
 
                       // 1. Guarda en la DB
@@ -210,6 +225,7 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
                             accountId: selectedAccount,
                             amount: CurrencyFormatter.parse(
                               _amountController.text,
+                              currency,
                             ),
                             balance: account?.balance ?? 0,
                           );
