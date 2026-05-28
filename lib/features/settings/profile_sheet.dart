@@ -31,20 +31,7 @@ class _ProfileSheetState extends ConsumerState<ProfileSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ProfileAvatar(profile: profile, radius: 45),
-                TextButton.icon(
-                  onPressed: () {},
-                  label: Text('Cambiar foto'),
-                  icon: Icon(Icons.camera),
-                ),
-              ],
-            ),
-          ),
+          Center(child: ProfileAvatar(profile: profile, radius: 45)),
           const SizedBox(height: 16),
           TextFormField(
             controller: _nameController,

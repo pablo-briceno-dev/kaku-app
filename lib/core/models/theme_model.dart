@@ -5,7 +5,37 @@ enum AppAccent {
   dusk, // Naranja cálido #FF9F7C
   violet, // Púrpura #C87CFF
   mono, // Gris plateado #B0B0C8
-  ocean, // Azul celeste #7CB8FF
+  ocean; // Azul celeste #7CB8FF
+
+  String get label {
+    switch (this) {
+      case AppAccent.aurora:
+        return 'Aurora';
+      case AppAccent.dusk:
+        return 'Dusk';
+      case AppAccent.violet:
+        return 'Violet';
+      case AppAccent.mono:
+        return 'Mono';
+      case AppAccent.ocean:
+        return 'Ocean';
+    }
+  }
+
+  Color get color {
+    switch (this) {
+      case AppAccent.aurora:
+        return Color(0xFF7CFFD4);
+      case AppAccent.dusk:
+        return Color(0xFFFF9F7C);
+      case AppAccent.violet:
+        return Color(0xFFC87CFF);
+      case AppAccent.mono:
+        return Color(0xFFB0B0C8);
+      case AppAccent.ocean:
+        return Color(0xFF7CB8FF);
+    }
+  }
 }
 
 enum AppThemeMode { dark, light, system }
