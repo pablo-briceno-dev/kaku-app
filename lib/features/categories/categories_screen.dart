@@ -77,11 +77,13 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
   }
 
   void _openCreateForm() {
+    final categories = ref.watch(allCategoriesProvider).value;
+
     AppBottomSheet.show(
       context,
       title: 'Nueva categoría',
       isFullScreen: true,
-      child: CategoryFormSheet(),
+      child: CategoryFormSheet(totalCategories: categories?.length ?? 0),
     );
   }
 }

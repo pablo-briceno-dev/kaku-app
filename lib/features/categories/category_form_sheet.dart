@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/colors_plates.dart';
 import 'package:kaku/core/database/app_database.dart';
+import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/features/categories/widgets/toggle_is_income_category.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
@@ -12,9 +13,10 @@ import 'package:kaku/shared/widgets/preview_icon_for_widgets.dart';
 import 'package:kaku/shared/widgets/selected_color_picker.dart';
 
 class CategoryFormSheet extends ConsumerStatefulWidget {
+  final int totalCategories;
   final Category? category;
 
-  const CategoryFormSheet({super.key, this.category});
+  const CategoryFormSheet({super.key, this.category, this.totalCategories = 0});
 
   @override
   ConsumerState<CategoryFormSheet> createState() => _CategoryFormSheetState();
@@ -32,7 +34,9 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
     super.initState();
     if (widget.category != null) {
       _nameController.text = widget.category!.name;
-      _emojiController.text = widget.category!.emoji;
+      _emojiController.text = _emojis
+          .indexOf(widget.category!.emoji)
+          .toString();
       _colorController.text = widget.category!.colorHex;
       selectedType = widget.category!.isIncome
           ? TransactionType.income
@@ -121,7 +125,9 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
                           Category(
                             id: widget.category!.id,
                             name: _nameController.text,
-                            emoji: _emojis[int.tryParse(_emojiController.text) ?? 0],
+                            emoji:
+                                _emojis[int.tryParse(_emojiController.text) ??
+                                    0],
                             colorHex: _colorController.text,
                             isDefault: widget.category!.isDefault,
                             isIncome: selectedType == TransactionType.income,
@@ -134,14 +140,29 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
                         await dao.insertCategory(
                           CategoriesTableCompanion.insert(
                             name: _nameController.text,
-                            emoji: drift.Value(_emojis[int.tryParse(_emojiController.text) ?? 0]),
+                            emoji: drift.Value(
+                              _emojis[int.tryParse(_emojiController.text) ?? 0],
+                            ),
                             colorHex: drift.Value(_colorController.text),
                             isDefault: drift.Value(false),
-                            isIncome: drift.Value(selectedType == TransactionType.income),
+                            isIncome: drift.Value(
+                              selectedType == TransactionType.income,
+                            ),
                             isActive: drift.Value(true),
                             isSystem: drift.Value(false),
+                            sortOrder: drift.Value(widget.totalCategories + 1),
                           ),
                         );
+                      }
+
+                      if (context.mounted) {
+                        AppSnackbar.success(
+                          context,
+                          widget.category != null
+                              ? 'Categoría actualizada'
+                              : 'Categoría creada',
+                        );
+                        Navigator.pop(context);
                       }
                     },
               child: widget.category != null
