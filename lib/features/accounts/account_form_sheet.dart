@@ -11,6 +11,7 @@ import 'package:kaku/features/accounts/widgets/card_account_type.dart';
 import 'package:kaku/features/accounts/widgets/selected_color_picker.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
+import 'package:kaku/shared/widgets/preview_icon_for_widgets.dart';
 
 class AccountFormSheet extends ConsumerStatefulWidget {
   final Account? account;
@@ -89,44 +90,13 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
         children: [
           // Preview
           Center(
-            child: Column(
-              children: [
-                Container(
-                  width: 90,
-                  height: 90,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: hexToColor(
-                      controllers['colorHex']?.text ?? '#7cffd4',
-                    ).withValues(alpha: 0.15),
-                    border: Border.all(
-                      color: hexToColor(
-                        controllers['colorHex']?.text ?? '#7cffd4',
-                      ).withValues(alpha: 0.1),
-                      width: 5,
-                    ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      accountType.icon,
-                      style: ts.titleLarge?.copyWith(fontSize: 40),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  controllers['name']?.text ?? '',
-                  style: ts.titleLarge?.copyWith(fontWeight: FontWeight.w800),
-                ),
-                // const SizedBox(height: 8),
-                Text(
+            child: PreviewIconForWidgets(
+              color: hexToColor(controllers['colorHex']?.text ?? '#7cffd4'),
+              icon: accountType.icon,
+              label: controllers['name']?.text,
+              subtitle:
                   '${accountType.label} · ${controllers['balance']?.text ?? ''}',
-                ),
-              ],
+              size: 90,
             ),
           ),
           const SizedBox(height: 16),

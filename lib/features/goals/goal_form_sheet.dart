@@ -7,7 +7,8 @@ import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/features/goals/goals_list.dart';
-import 'package:kaku/features/goals/widgets/emoji_picker.dart';
+import 'package:kaku/shared/utils/emojis_defaults.dart';
+import 'package:kaku/shared/widgets/emoji_picker.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/date_picker_field.dart';
@@ -23,19 +24,7 @@ class GoalFormSheet extends ConsumerStatefulWidget {
 
 class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
   DateTime _deadline = DateTime.now();
-  final List<String> _emojis = [
-    '🎯',
-    '✈️',
-    '🏠',
-    '📱',
-    '🎓',
-    '🚗',
-    '💍',
-    '🌴',
-    '💻',
-    '🎸',
-    '🐕',
-  ];
+  final List<String> _emojis = goalEmojis;
   final controllers = <String, TextEditingController>{
     'name': TextEditingController(),
     'emoji': TextEditingController(),

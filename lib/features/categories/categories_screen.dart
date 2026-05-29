@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/features/categories/categories_list.dart';
+import 'package:kaku/features/categories/category_form_sheet.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
@@ -80,7 +81,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
       context,
       title: 'Nueva categoría',
       isFullScreen: true,
-      child: const SizedBox(), // TODO: CategoryFormSheet()
+      child: CategoryFormSheet(),
     );
   }
 }

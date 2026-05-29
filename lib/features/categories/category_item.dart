@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kaku/core/colors_plates.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/features/categories/category_form_sheet.dart';
 import 'package:kaku/features/categories/widgets/category_tile.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
@@ -122,7 +123,7 @@ class CategoryItem extends ConsumerWidget {
       context,
       title: 'Editar categoría',
       isFullScreen: true,
-      child: const SizedBox(), // TODO: CategoryFormSheet(category: category)
+      child: CategoryFormSheet(category: category),
     );
   }
 
