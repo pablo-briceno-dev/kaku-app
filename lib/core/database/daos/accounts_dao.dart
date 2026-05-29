@@ -47,4 +47,7 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
       (update(accountsTable)..where((a) => a.id.equals(id))).write(
         const AccountsTableCompanion(isActive: Value(false)),
       );
+
+  Future<List<Account>> getActiveAccounts() =>
+      (select(accountsTable)..where((a) => a.isActive.equals(true))).get();
 }

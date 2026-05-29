@@ -27,6 +27,7 @@ class AddTransactionScreen extends ConsumerStatefulWidget {
 }
 
 class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
+  final _formKey = GlobalKey<FormState>();
   DateTime _selectedDate = DateTime.now();
   String? _receiptPath;
   final TextEditingController _amountController = TextEditingController();
@@ -39,27 +40,21 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
       0,
       ref.read(currencyProvider),
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _preselectAccountIfOnlyOne();
+    });
   }
 
-  bool _validatedButton(
-    double amount,
-    double accountBalance,
-    TransactionType type,
-    int? selectedAccount,
-  ) {
-    if (amount == 0) {
-      debugPrint('amount == 0');
-      return true;
+  Future<void> _preselectAccountIfOnlyOne() async {
+    // Lee las cuentas activas directamente del DAO
+    // (una sola vez, no necesita un Stream aquí)
+    final accounts = await ref.read(accountsDaoProvider).getActiveAccounts();
+
+    // Si solo hay una cuenta la pre-seleccionamos
+    // y no mostramos el selector al usuario
+    if (accounts.length == 1 && mounted) {
+      ref.read(selectedAccountProvider.notifier).state = accounts.first.id;
     }
-    if (selectedAccount == null) {
-      debugPrint('selectedAccount == null');
-      return true;
-    }
-    if (type == TransactionType.expense && amount > accountBalance) {
-      debugPrint('type == TransactionType.expense && amount < accountBalance');
-      return true;
-    }
-    return false;
   }
 
   @override
@@ -100,139 +95,152 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               )
               .firstOrNull;
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _amountController,
-                  textAlign: TextAlign.center,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                    signed: false,
+          return Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _amountController,
+                    textAlign: TextAlign.center,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                      signed: false,
+                    ),
+                    inputFormatters: [
+                      CurrencyFormatter.inputFormatter(currency),
+                    ],
+                    decoration: InputDecoration(
+                      labelText: 'MONTO · ${currency.label}',
+                      hintText: r'$0',
+                      labelStyle: ts.titleLarge?.copyWith(
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Campo requerido';
+                      }
+                      if (CurrencyFormatter.parse(value, currency) <= 0) {
+                        return 'Debe ser mayor a 0';
+                      }
+                      if (selectedType == TransactionType.expense &&
+                          CurrencyFormatter.parse(value, currency) >
+                              (account?.balance ?? 0.0)) {
+                        debugPrint('balance: ${account?.balance}');
+                        return 'Saldo insuficiente';
+                      }
+                      return null;
+                    },
+                    style: TextStyle(fontSize: 45),
                   ),
-                  inputFormatters: [CurrencyFormatter.inputFormatter(currency)],
-                  decoration: InputDecoration(
-                    labelText: 'MONTO · ${currency.label}',
-                    hintText: r'$0',
-                    labelStyle: ts.titleLarge?.copyWith(
-                      color: cs.onSurfaceVariant,
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      border: Border.symmetric(
+                        horizontal: BorderSide(color: cs.outline),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'CATEGORÍA',
+                          style: ts.titleMedium?.copyWith(
+                            color: cs.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        HorizontalChipsCategories(),
+                      ],
                     ),
                   ),
-                  style: TextStyle(fontSize: 45),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    border: Border.symmetric(
-                      horizontal: BorderSide(color: cs.outline),
-                    ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _descriptionController,
+                    textAlign: TextAlign.start,
+                    maxLength: 100,
+                    keyboardType: TextInputType.text,
+                    maxLines: 3,
+                    decoration: const InputDecoration(labelText: 'DESCRIPCIÓN'),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(height: 16),
+                  Row(
                     children: [
-                      Text(
-                        'CATEGORÍA',
-                        style: ts.titleMedium?.copyWith(
-                          color: cs.onSurfaceVariant,
+                      Expanded(
+                        child: DatePickerField(
+                          selectedDate: _selectedDate,
+                          onChanged: (date) {
+                            setState(() => _selectedDate = date);
+                          },
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      HorizontalChipsCategories(),
+                      const SizedBox(width: 16),
+                      Expanded(child: SelectedAccount()),
                     ],
                   ),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _descriptionController,
-                  textAlign: TextAlign.start,
-                  maxLength: 100,
-                  keyboardType: TextInputType.text,
-                  maxLines: 3,
-                  decoration: const InputDecoration(labelText: 'DESCRIPCIÓN'),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: DatePickerField(
-                        selectedDate: _selectedDate,
-                        onChanged: (date) {
-                          setState(() => _selectedDate = date);
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(child: SelectedAccount()),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                ReceiptPicker(
-                  initialPath: _receiptPath,
-                  onChanged: (path) => setState(() => _receiptPath = path),
-                ),
-                const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed:
-                        _validatedButton(
-                          CurrencyFormatter.parse(
-                            _amountController.text,
-                            currency,
+                  const SizedBox(height: 16),
+                  ReceiptPicker(
+                    initialPath: _receiptPath,
+                    onChanged: (path) => setState(() => _receiptPath = path),
+                  ),
+                  const Spacer(),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final valid =
+                            _formKey.currentState?.validate() ?? false;
+
+                        if (!valid) return;
+                        final dao = ref.read(transactionsDaoProvider);
+                        await dao.insertTransaction(
+                          TransactionsTableCompanion.insert(
+                            type: selectedType.name,
+                            amount: CurrencyFormatter.parse(
+                              _amountController.text,
+                              currency,
+                            ),
+                            description: drift.Value(
+                              _descriptionController.text,
+                            ),
+                            categoryId: drift.Value(selectedCategory),
+                            accountId: selectedAccount!,
+                            receiptPath: drift.Value(_receiptPath),
+                            date: _selectedDate,
                           ),
-                          account?.balance ?? 0.0,
-                          selectedType,
-                          selectedAccount,
-                        )
-                        ? null
-                        : () async {
-                            final dao = ref.read(transactionsDaoProvider);
-                            await dao.insertTransaction(
-                              TransactionsTableCompanion.insert(
-                                type: selectedType.name,
-                                amount: CurrencyFormatter.parse(
+                        );
+                        final accountDao = ref.read(accountsDaoProvider);
+                        await accountDao.updateBalance(
+                          account!.id,
+                          account.balance +
+                              BudgetCalculator.balanceDelta(
+                                selectedType,
+                                CurrencyFormatter.parse(
                                   _amountController.text,
                                   currency,
                                 ),
-                                description: drift.Value(
-                                  _descriptionController.text,
-                                ),
-                                categoryId: drift.Value(selectedCategory),
-                                accountId: selectedAccount!,
-                                receiptPath: drift.Value(_receiptPath),
-                                date: _selectedDate,
                               ),
-                            );
-                            final accountDao = ref.read(accountsDaoProvider);
-                            await accountDao.updateBalance(
-                              account!.id,
-                              account.balance +
-                                  BudgetCalculator.balanceDelta(
-                                    selectedType,
-                                    CurrencyFormatter.parse(
-                                      _amountController.text,
-                                      currency,
-                                    ),
-                                  ),
-                            );
+                        );
 
-                            if (context.mounted) {
-                              AppSnackbar.success(
-                                context,
-                                '${selectedType.label} guardado',
-                              );
-                              Navigator.pop(context);
-                            }
-                          },
-                    child: Text('Guardar ${selectedType.label}'),
+                        if (context.mounted) {
+                          AppSnackbar.success(
+                            context,
+                            '${selectedType.label} guardado',
+                          );
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Text('Guardar ${selectedType.label}'),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-              ],
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           );
         },
