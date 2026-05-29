@@ -8,7 +8,7 @@ import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/models/account_type.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/features/accounts/widgets/card_account_type.dart';
-import 'package:kaku/features/accounts/widgets/selected_color_picker.dart';
+import 'package:kaku/shared/widgets/selected_color_picker.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/preview_icon_for_widgets.dart';
