@@ -46,12 +46,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   }
 
   Future<void> _preselectAccountIfOnlyOne() async {
-    // Lee las cuentas activas directamente del DAO
-    // (una sola vez, no necesita un Stream aquí)
     final accounts = await ref.read(accountsDaoProvider).getActiveAccounts();
-
-    // Si solo hay una cuenta la pre-seleccionamos
-    // y no mostramos el selector al usuario
     if (accounts.length == 1 && mounted) {
       ref.read(selectedAccountProvider.notifier).state = accounts.first.id;
     }
