@@ -1,6 +1,5 @@
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
@@ -12,6 +11,7 @@ import 'package:kaku/features/transactions/selected_account.dart';
 import 'package:kaku/features/transactions/widgets/toggle_app_bar.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
+import 'package:kaku/shared/widgets/content_widget_empty.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
 import 'package:kaku/shared/widgets/date_picker_field.dart';
 import 'package:kaku/shared/widgets/receipt_picker.dart';
@@ -72,39 +72,35 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final selectedAccount = ref.watch(selectedAccountProvider);
     final activeAccountsAsync = ref.watch(activeAccountsProvider);
 
-    return activeAccountsAsync.when(
-      loading: () => const SizedBox.shrink(),
-      error: (e, _) => const SizedBox.shrink(),
-      data: (activeAccounts) {
-        if (activeAccounts.isEmpty) {
-          return Scaffold(
-            appBar: CustomAppBar(
-              title: Text('Nueva transacción'),
-              defaultActions: false,
-            ),
-            body: Padding(
-              padding: const EdgeInsets.all(16),
+    return Scaffold(
+      appBar: CustomAppBar(
+        title: Text('Nueva transacción'),
+        defaultActions: false,
+        actions: [ToggleAppBar()],
+      ),
+      body: activeAccountsAsync.when(
+        loading: () => const SizedBox.shrink(),
+        error: (e, _) => const SizedBox.shrink(),
+        data: (activeAccounts) {
+          if (activeAccounts.isEmpty) {
+            return const Padding(
+              padding: EdgeInsets.all(20),
               child: Center(
-                child: Text(
-                  'No tienes ninguna cuenta activa. Registra al menos una cuenta para poder crear transacciones.',
-                  style: ts.bodyLarge?.copyWith(fontSize: 20),
-                  textAlign: TextAlign.center,
+                child: ContentWidgetEmpty(
+                  title: '🏧​',
+                  message:
+                      'Registra al menos una cuenta para poder crear transacciones',
                 ),
               ),
-            ),
-          );
-        }
-        final account = activeAccounts
-            .where((ac) => selectedAccount != null && ac.id == selectedAccount)
-            .firstOrNull;
+            );
+          }
+          final account = activeAccounts
+              .where(
+                (ac) => selectedAccount != null && ac.id == selectedAccount,
+              )
+              .firstOrNull;
 
-        return Scaffold(
-          appBar: CustomAppBar(
-            title: Text('Nueva transacción'),
-            defaultActions: false,
-            actions: [ToggleAppBar()],
-          ),
-          body: Padding(
+          return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,14 +113,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     decimal: true,
                     signed: false,
                   ),
-                  inputFormatters: [
-                    // FilteringTextInputFormatter.allow(
-                    //   RegExp(r'[\d.,]'),
-                    // ), // ← primero
-                    CurrencyFormatter.inputFormatter(
-                      currency,
-                    ), // ← luego el tuyo
-                  ],
+                  inputFormatters: [CurrencyFormatter.inputFormatter(currency)],
                   decoration: InputDecoration(
                     labelText: 'MONTO · ${currency.label}',
                     hintText: r'$0',
@@ -245,9 +234,9 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 const SizedBox(height: 20),
               ],
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

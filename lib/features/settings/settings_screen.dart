@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/models/theme_model.dart';
+import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/currency_sheet.dart';
 import 'package:kaku/features/settings/profile_card.dart';
 import 'package:kaku/features/settings/theme_color_sheet.dart';
@@ -22,7 +24,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
     final currency = ref.watch(currencyProvider);
-    final categoriesAsync = ref.watch(getExpenseCategoriesProvider);
+    final categoriesAsync = ref.watch(expenseCategoriesProvider);
     final selectedMonth = ref.watch(selectedMonthProvider);
     final budgetsProgress = ref.watch(budgetProgressProvider(selectedMonth));
 
@@ -100,7 +102,7 @@ class SettingsScreen extends ConsumerWidget {
                   loading: () => 'Cargando...',
                 ),
                 icon: Icons.category,
-                onTap: () {},
+                onTap: () => context.push(AppRoutes.categories),
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/features/transactions/widgets/chip_horizontal_item.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
@@ -29,8 +30,13 @@ class HorizontalChipsCategories extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(getExpenseCategoriesProvider);
+    final selectedType = ref.watch(addTransactionTypeProvider);
+    final categoriesExpenseAsync = ref.watch(expenseCategoriesProvider);
+    final categoriesIncomeAsync = ref.watch(incomeCategoriesProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
+    final categoriesAsync = selectedType == TransactionType.expense
+        ? categoriesExpenseAsync
+        : categoriesIncomeAsync;
 
     return categoriesAsync.when(
       loading: () => const SizedBox.shrink(),

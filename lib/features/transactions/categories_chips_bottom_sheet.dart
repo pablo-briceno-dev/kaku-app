@@ -12,7 +12,7 @@ class CategoriesChipsBottomSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(getExpenseCategoriesProvider);
+    final categoriesAsync = ref.watch(expenseCategoriesProvider);
     final categorySelected = ref.watch(selectedCategoryProvider);
 
     return categoriesAsync.when(

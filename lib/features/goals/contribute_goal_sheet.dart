@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
@@ -106,10 +105,7 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
                   true, // ← muestra "." o "," según el idioma del dispositivo
               signed: false, // ← no muestra el botón "-"
             ),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')), // ← primero
-              CurrencyFormatter.inputFormatter(currency), // ← luego el tuyo
-            ],
+            inputFormatters: [CurrencyFormatter.inputFormatter(currency)],
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) {
               if (value == null || value.isEmpty) {

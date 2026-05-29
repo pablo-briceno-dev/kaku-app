@@ -37,7 +37,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 1;
 
   // Aquí irán las migraciones cuando actualice el schema
   @override
@@ -46,52 +46,51 @@ class AppDatabase extends _$AppDatabase {
       await m.createAll();
       await _seedDefaultCategories(); // categorías por defecto
     },
-    onUpgrade: (Migrator m, int from, int to) async {
-      if (from == 1 && to == 2) {
-        await m.addColumn(transactionsTable, transactionsTable.goalId);
-      }
-      if (from == 2 && to == 3) {
-        await m.addColumn(goalsTable, goalsTable.type);
-      }
-      if (from == 3 && to == 4) {
-        await into(categoriesTable).insert(
-          CategoriesTableCompanion.insert(
-            id: const Value(999),
-            name: 'Ahorro',
-            emoji: Value('🎯'),
-            colorHex: Value('#A89AAD'),
-          ),
-        );
-      }
-    },
+    onUpgrade: (Migrator m, int from, int to) async {},
   );
 
   Future<void> _seedDefaultCategories() async {
     final defaults = [
-      ('Comida', '🍔', '#FF6B6B'),
-      ('Transporte', '🚌', '#4ECDC4'),
-      ('Casa', '🏠', '#45B7D1'),
-      ('Salud', '💊', '#96CEB4'),
-      ('Ocio', '🎮', '#FFEAA7'),
-      ('Educación', '📚', '#DDA0DD'),
+      ('Comida', '🍔', '#FF6B6B', false),
+      ('Transporte', '🚌', '#4ECDC4', false),
+      ('Casa', '🏠', '#45B7D1', false),
+      ('Salud', '💊', '#96CEB4', false),
+      ('Ocio', '🎮', '#FFEAA7', false),
+      ('Educación', '📚', '#DDA0DD', false),
+      ('Compras', '🛍️', '#F39C12', false),
+      ('Servicios', '💡', '#3498DB', false),
+
+      // INGRESOS
+      ('Salario', '💼', '#27AE60', true),
+      ('Freelance', '💻', '#00B894', true),
+      ('Ventas', '🛒', '#0984E3', true),
+      ('Regalos', '🎁', '#E84393', true),
+      ('Inversiones', '📈', '#6C5CE7', true),
+      ('Otros ingresos', '💵', '#F1C40F', true),
     ];
-    for (final (name, emoji, color) in defaults) {
+    await into(categoriesTable).insert(
+      CategoriesTableCompanion.insert(
+        id: const Value(1),
+        name: 'Ahorro',
+        emoji: Value('💰'),
+        colorHex: Value('#2ECC71'),
+        isSystem: Value(true),
+      ),
+    );
+    var count = 1;
+    for (final (name, emoji, color, isIncome) in defaults) {
       await into(categoriesTable).insert(
         CategoriesTableCompanion.insert(
           name: name,
           emoji: Value(emoji),
           colorHex: Value(color),
+          isSystem: Value(false),
+          sortOrder: Value(count),
+          isIncome: Value(isIncome),
         ),
       );
+      count++;
     }
-    await into(categoriesTable).insert(
-      CategoriesTableCompanion.insert(
-        id: const Value(999),
-        name: 'Ahorro',
-        emoji: Value('🎯'),
-        colorHex: Value('#A89AAD'),
-      ),
-    );
   }
 }
 

@@ -14,7 +14,7 @@ class HorizontalTransactionTypeFilter extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedFilter = ref.watch(transactionTypeFilterProvider);
-    final categories = ref.watch(getExpenseCategoriesProvider).value;
+    final categories = ref.watch(expenseCategoriesProvider).value;
     final categorySelected = ref.watch(selectedCategoryProvider);
     final category = categories
         ?.where((e) => e.id == categorySelected)

@@ -25,6 +25,7 @@ class ContentWidgetEmpty extends StatelessWidget {
               fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),

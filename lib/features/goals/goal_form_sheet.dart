@@ -1,5 +1,5 @@
+import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
@@ -11,7 +11,6 @@ import 'package:kaku/features/goals/widgets/emoji_picker.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/date_picker_field.dart';
-import 'package:drift/drift.dart' as drift;
 
 class GoalFormSheet extends ConsumerStatefulWidget {
   final GoalsListConfig? goal;
@@ -155,10 +154,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
                   true, // ← muestra "." o "," según el idioma del dispositivo
               signed: false, // ← no muestra el botón "-"
             ),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[\d.,]')), // ← primero
-              CurrencyFormatter.inputFormatter(currency), // ← luego el tuyo
-            ],
+            inputFormatters: [CurrencyFormatter.inputFormatter(currency)],
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) {
               if (value == null || value.isEmpty) {

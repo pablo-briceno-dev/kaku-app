@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
@@ -128,12 +127,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                         signed: false,
                       ),
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'[\d.,]'),
-                        ), // ← primero
-                        CurrencyFormatter.inputFormatter(
-                          currency,
-                        ), // ← luego el tuyo,
+                        CurrencyFormatter.inputFormatter(currency),
                       ],
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {

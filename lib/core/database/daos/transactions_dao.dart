@@ -134,6 +134,16 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     ).getSingle();
     return result.read<double>('total');
   }
+
+  Future<int> countByCategory(int categoryId) async {
+    final result = await customSelect(
+      'SELECT COUNT(*) as count FROM transactions_table '
+      'WHERE category_id = ?',
+      variables: [Variable(categoryId)],
+      readsFrom: {transactionsTable},
+    ).getSingle();
+    return result.read<int>('count');
+  }
 }
 
 // Clase de resultado typesafe para JOIN ──

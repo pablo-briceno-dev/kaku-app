@@ -54,7 +54,7 @@ class GoalsDao extends DatabaseAccessor<AppDatabase> with _$GoalsDaoMixin {
           type: TransactionType.expense.name, // sale de la cuenta
           accountId: accountId,
           goalId: Value(goalId),
-          categoryId: const Value(999),
+          categoryId: const Value(1),
           description: Value('Aporte a meta: ${goal.name}'),
           date: DateTime.now(),
         ),
@@ -84,12 +84,12 @@ class GoalsDao extends DatabaseAccessor<AppDatabase> with _$GoalsDaoMixin {
           accountsTable,
         )..where((a) => a.id.equals(transaction.accountId))).getSingle();
         final newBalance = account.balance + transaction.amount;
-        await (update(accountsTable)..where((a) => a.id.equals(transaction.accountId))).write(
-          AccountsTableCompanion(balance: Value(newBalance)),
-        );
+        await (update(accountsTable)
+              ..where((a) => a.id.equals(transaction.accountId)))
+            .write(AccountsTableCompanion(balance: Value(newBalance)));
         await delete(transactionsTable).delete(transaction);
       }
-      
+
       return (delete(goalsTable)..where((g) => g.id.equals(id))).go();
     });
   }

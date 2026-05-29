@@ -9,4 +9,7 @@ class CategoriesTable extends Table {
   TextColumn get colorHex => text().withDefault(const Constant('#888888'))();
   BoolColumn get isDefault => boolean().withDefault(const Constant(false))();
   BoolColumn get isIncome => boolean().withDefault(const Constant(false))();
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+  BoolColumn get isSystem => boolean().withDefault(const Constant(false))();
 }

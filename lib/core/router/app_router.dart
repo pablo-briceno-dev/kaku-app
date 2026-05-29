@@ -4,6 +4,7 @@ import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/core/router/app_shell.dart';
 import 'package:kaku/features/accounts/account_detail_screen.dart';
 import 'package:kaku/features/accounts/accounts_screen.dart';
+import 'package:kaku/features/categories/categories_screen.dart';
 import 'package:kaku/features/categories/category_detail_screen.dart';
 import 'package:kaku/features/dashboard/dashboard_screen.dart';
 import 'package:kaku/features/goals/goals_screen.dart';
@@ -89,6 +90,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.settings,
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.categories,
+        builder: (context, state) => const CategoriesScreen(),
       ),
     ],
   );

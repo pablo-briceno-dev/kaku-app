@@ -13,6 +13,9 @@ abstract class AppRoutes {
   static const String categoryDetail = '/category/:id';
   static const String accountDetail = '/accounts/:id';
 
+  // Categorías
+  static const String categories = '/categories';
+
   // Pantallas completas (fuera del ShellRoutes -> sin bottom nav)
   static const String addTransaction = '/add-transaction';
 
@@ -32,6 +35,5 @@ abstract class AppRoutes {
     stats,
     goals,
     accounts,
-    // settings,
   ];
 }

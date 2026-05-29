@@ -620,6 +620,48 @@ class $CategoriesTableTable extends CategoriesTable
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _isSystemMeta = const VerificationMeta(
+    'isSystem',
+  );
+  @override
+  late final GeneratedColumn<bool> isSystem = GeneratedColumn<bool>(
+    'is_system',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_system" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -628,6 +670,9 @@ class $CategoriesTableTable extends CategoriesTable
     colorHex,
     isDefault,
     isIncome,
+    isActive,
+    sortOrder,
+    isSystem,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -676,6 +721,24 @@ class $CategoriesTableTable extends CategoriesTable
         isIncome.isAcceptableOrUnknown(data['is_income']!, _isIncomeMeta),
       );
     }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    }
+    if (data.containsKey('is_system')) {
+      context.handle(
+        _isSystemMeta,
+        isSystem.isAcceptableOrUnknown(data['is_system']!, _isSystemMeta),
+      );
+    }
     return context;
   }
 
@@ -709,6 +772,18 @@ class $CategoriesTableTable extends CategoriesTable
         DriftSqlType.bool,
         data['${effectivePrefix}is_income'],
       )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+      isSystem: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_system'],
+      )!,
     );
   }
 
@@ -725,6 +800,9 @@ class Category extends DataClass implements Insertable<Category> {
   final String colorHex;
   final bool isDefault;
   final bool isIncome;
+  final bool isActive;
+  final int sortOrder;
+  final bool isSystem;
   const Category({
     required this.id,
     required this.name,
@@ -732,6 +810,9 @@ class Category extends DataClass implements Insertable<Category> {
     required this.colorHex,
     required this.isDefault,
     required this.isIncome,
+    required this.isActive,
+    required this.sortOrder,
+    required this.isSystem,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -742,6 +823,9 @@ class Category extends DataClass implements Insertable<Category> {
     map['color_hex'] = Variable<String>(colorHex);
     map['is_default'] = Variable<bool>(isDefault);
     map['is_income'] = Variable<bool>(isIncome);
+    map['is_active'] = Variable<bool>(isActive);
+    map['sort_order'] = Variable<int>(sortOrder);
+    map['is_system'] = Variable<bool>(isSystem);
     return map;
   }
 
@@ -753,6 +837,9 @@ class Category extends DataClass implements Insertable<Category> {
       colorHex: Value(colorHex),
       isDefault: Value(isDefault),
       isIncome: Value(isIncome),
+      isActive: Value(isActive),
+      sortOrder: Value(sortOrder),
+      isSystem: Value(isSystem),
     );
   }
 
@@ -768,6 +855,9 @@ class Category extends DataClass implements Insertable<Category> {
       colorHex: serializer.fromJson<String>(json['colorHex']),
       isDefault: serializer.fromJson<bool>(json['isDefault']),
       isIncome: serializer.fromJson<bool>(json['isIncome']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+      isSystem: serializer.fromJson<bool>(json['isSystem']),
     );
   }
   @override
@@ -780,6 +870,9 @@ class Category extends DataClass implements Insertable<Category> {
       'colorHex': serializer.toJson<String>(colorHex),
       'isDefault': serializer.toJson<bool>(isDefault),
       'isIncome': serializer.toJson<bool>(isIncome),
+      'isActive': serializer.toJson<bool>(isActive),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+      'isSystem': serializer.toJson<bool>(isSystem),
     };
   }
 
@@ -790,6 +883,9 @@ class Category extends DataClass implements Insertable<Category> {
     String? colorHex,
     bool? isDefault,
     bool? isIncome,
+    bool? isActive,
+    int? sortOrder,
+    bool? isSystem,
   }) => Category(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -797,6 +893,9 @@ class Category extends DataClass implements Insertable<Category> {
     colorHex: colorHex ?? this.colorHex,
     isDefault: isDefault ?? this.isDefault,
     isIncome: isIncome ?? this.isIncome,
+    isActive: isActive ?? this.isActive,
+    sortOrder: sortOrder ?? this.sortOrder,
+    isSystem: isSystem ?? this.isSystem,
   );
   Category copyWithCompanion(CategoriesTableCompanion data) {
     return Category(
@@ -806,6 +905,9 @@ class Category extends DataClass implements Insertable<Category> {
       colorHex: data.colorHex.present ? data.colorHex.value : this.colorHex,
       isDefault: data.isDefault.present ? data.isDefault.value : this.isDefault,
       isIncome: data.isIncome.present ? data.isIncome.value : this.isIncome,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+      isSystem: data.isSystem.present ? data.isSystem.value : this.isSystem,
     );
   }
 
@@ -817,14 +919,26 @@ class Category extends DataClass implements Insertable<Category> {
           ..write('emoji: $emoji, ')
           ..write('colorHex: $colorHex, ')
           ..write('isDefault: $isDefault, ')
-          ..write('isIncome: $isIncome')
+          ..write('isIncome: $isIncome, ')
+          ..write('isActive: $isActive, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('isSystem: $isSystem')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, name, emoji, colorHex, isDefault, isIncome);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    emoji,
+    colorHex,
+    isDefault,
+    isIncome,
+    isActive,
+    sortOrder,
+    isSystem,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -834,7 +948,10 @@ class Category extends DataClass implements Insertable<Category> {
           other.emoji == this.emoji &&
           other.colorHex == this.colorHex &&
           other.isDefault == this.isDefault &&
-          other.isIncome == this.isIncome);
+          other.isIncome == this.isIncome &&
+          other.isActive == this.isActive &&
+          other.sortOrder == this.sortOrder &&
+          other.isSystem == this.isSystem);
 }
 
 class CategoriesTableCompanion extends UpdateCompanion<Category> {
@@ -844,6 +961,9 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
   final Value<String> colorHex;
   final Value<bool> isDefault;
   final Value<bool> isIncome;
+  final Value<bool> isActive;
+  final Value<int> sortOrder;
+  final Value<bool> isSystem;
   const CategoriesTableCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -851,6 +971,9 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
     this.colorHex = const Value.absent(),
     this.isDefault = const Value.absent(),
     this.isIncome = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.isSystem = const Value.absent(),
   });
   CategoriesTableCompanion.insert({
     this.id = const Value.absent(),
@@ -859,6 +982,9 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
     this.colorHex = const Value.absent(),
     this.isDefault = const Value.absent(),
     this.isIncome = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.isSystem = const Value.absent(),
   }) : name = Value(name);
   static Insertable<Category> custom({
     Expression<int>? id,
@@ -867,6 +993,9 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
     Expression<String>? colorHex,
     Expression<bool>? isDefault,
     Expression<bool>? isIncome,
+    Expression<bool>? isActive,
+    Expression<int>? sortOrder,
+    Expression<bool>? isSystem,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -875,6 +1004,9 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
       if (colorHex != null) 'color_hex': colorHex,
       if (isDefault != null) 'is_default': isDefault,
       if (isIncome != null) 'is_income': isIncome,
+      if (isActive != null) 'is_active': isActive,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (isSystem != null) 'is_system': isSystem,
     });
   }
 
@@ -885,6 +1017,9 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
     Value<String>? colorHex,
     Value<bool>? isDefault,
     Value<bool>? isIncome,
+    Value<bool>? isActive,
+    Value<int>? sortOrder,
+    Value<bool>? isSystem,
   }) {
     return CategoriesTableCompanion(
       id: id ?? this.id,
@@ -893,6 +1028,9 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
       colorHex: colorHex ?? this.colorHex,
       isDefault: isDefault ?? this.isDefault,
       isIncome: isIncome ?? this.isIncome,
+      isActive: isActive ?? this.isActive,
+      sortOrder: sortOrder ?? this.sortOrder,
+      isSystem: isSystem ?? this.isSystem,
     );
   }
 
@@ -917,6 +1055,15 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
     if (isIncome.present) {
       map['is_income'] = Variable<bool>(isIncome.value);
     }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (isSystem.present) {
+      map['is_system'] = Variable<bool>(isSystem.value);
+    }
     return map;
   }
 
@@ -928,7 +1075,10 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
           ..write('emoji: $emoji, ')
           ..write('colorHex: $colorHex, ')
           ..write('isDefault: $isDefault, ')
-          ..write('isIncome: $isIncome')
+          ..write('isIncome: $isIncome, ')
+          ..write('isActive: $isActive, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('isSystem: $isSystem')
           ..write(')'))
         .toString();
   }
@@ -3029,6 +3179,9 @@ typedef $$CategoriesTableTableCreateCompanionBuilder =
       Value<String> colorHex,
       Value<bool> isDefault,
       Value<bool> isIncome,
+      Value<bool> isActive,
+      Value<int> sortOrder,
+      Value<bool> isSystem,
     });
 typedef $$CategoriesTableTableUpdateCompanionBuilder =
     CategoriesTableCompanion Function({
@@ -3038,6 +3191,9 @@ typedef $$CategoriesTableTableUpdateCompanionBuilder =
       Value<String> colorHex,
       Value<bool> isDefault,
       Value<bool> isIncome,
+      Value<bool> isActive,
+      Value<int> sortOrder,
+      Value<bool> isSystem,
     });
 
 final class $$CategoriesTableTableReferences
@@ -3133,6 +3289,21 @@ class $$CategoriesTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isSystem => $composableBuilder(
+    column: $table.isSystem,
+    builder: (column) => ColumnFilters(column),
+  );
+
   Expression<bool> budgetsTableRefs(
     Expression<bool> Function($$BudgetsTableTableFilterComposer f) f,
   ) {
@@ -3222,6 +3393,21 @@ class $$CategoriesTableTableOrderingComposer
     column: $table.isIncome,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isSystem => $composableBuilder(
+    column: $table.isSystem,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CategoriesTableTableAnnotationComposer
@@ -3250,6 +3436,15 @@ class $$CategoriesTableTableAnnotationComposer
 
   GeneratedColumn<bool> get isIncome =>
       $composableBuilder(column: $table.isIncome, builder: (column) => column);
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+
+  GeneratedColumn<int> get sortOrder =>
+      $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+
+  GeneratedColumn<bool> get isSystem =>
+      $composableBuilder(column: $table.isSystem, builder: (column) => column);
 
   Expression<T> budgetsTableRefs<T extends Object>(
     Expression<T> Function($$BudgetsTableTableAnnotationComposer a) f,
@@ -3342,6 +3537,9 @@ class $$CategoriesTableTableTableManager
                 Value<String> colorHex = const Value.absent(),
                 Value<bool> isDefault = const Value.absent(),
                 Value<bool> isIncome = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<bool> isSystem = const Value.absent(),
               }) => CategoriesTableCompanion(
                 id: id,
                 name: name,
@@ -3349,6 +3547,9 @@ class $$CategoriesTableTableTableManager
                 colorHex: colorHex,
                 isDefault: isDefault,
                 isIncome: isIncome,
+                isActive: isActive,
+                sortOrder: sortOrder,
+                isSystem: isSystem,
               ),
           createCompanionCallback:
               ({
@@ -3358,6 +3559,9 @@ class $$CategoriesTableTableTableManager
                 Value<String> colorHex = const Value.absent(),
                 Value<bool> isDefault = const Value.absent(),
                 Value<bool> isIncome = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<bool> isSystem = const Value.absent(),
               }) => CategoriesTableCompanion.insert(
                 id: id,
                 name: name,
@@ -3365,6 +3569,9 @@ class $$CategoriesTableTableTableManager
                 colorHex: colorHex,
                 isDefault: isDefault,
                 isIncome: isIncome,
+                isActive: isActive,
+                sortOrder: sortOrder,
+                isSystem: isSystem,
               ),
           withReferenceMapper: (p0) => p0
               .map(

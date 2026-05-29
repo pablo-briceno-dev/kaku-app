@@ -114,8 +114,16 @@ final transactionByIdProvider = StreamProvider.family<Transaction?, int>(
 );
 
 // Categorías
-final getExpenseCategoriesProvider = FutureProvider<List<Category>>(
-  (ref) => ref.watch(categoriesDaoProvider).getExpenseCategories(),
+final allCategoriesProvider = StreamProvider<List<Category>>(
+  (ref) => ref.watch(categoriesDaoProvider).watchAllCategories(),
+);
+
+final expenseCategoriesProvider = StreamProvider<List<Category>>(
+  (ref) => ref.watch(categoriesDaoProvider).watchExpenseCategories(),
+);
+
+final incomeCategoriesProvider = StreamProvider<List<Category>>(
+  (ref) => ref.watch(categoriesDaoProvider).watchIncomeCategories(),
 );
 
 final categoryByIdProvider = StreamProvider.family<Category?, int?>((ref, id) {
