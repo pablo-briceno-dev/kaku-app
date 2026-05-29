@@ -34,6 +34,38 @@ class BudgetsDao extends DatabaseAccessor<AppDatabase> with _$BudgetsDaoMixin {
         );
   }
 
+  // Stream: presupuesto del mes de una categoría
+  Stream<BudgetWithCategory?> watchBudgetForMonthByCategory(
+    int month,
+    int year,
+    int categoryId,
+  ) {
+    final query = select(budgetsTable)
+      ..where(
+        (b) =>
+            b.month.equals(month) &
+            b.year.equals(year) &
+            b.categoryId.equals(categoryId),
+      );
+
+    return query
+        .join([
+          innerJoin(
+            categoriesTable,
+            categoriesTable.id.equalsExp(budgetsTable.categoryId),
+          ),
+        ])
+        .watchSingleOrNull()
+        .map(
+          (row) => row == null
+              ? null
+              : BudgetWithCategory(
+                  budget: row.readTable(budgetsTable),
+                  category: row.readTable(categoriesTable),
+                ),
+        );
+  }
+
   // Insertar o actualizar (upsert): si ya existe el presupuesto de esa categoría+mes lo reemplaza
   Future<void> upsertBudget(BudgetsTableCompanion budget) =>
       into(budgetsTable).insertOnConflictUpdate(budget);

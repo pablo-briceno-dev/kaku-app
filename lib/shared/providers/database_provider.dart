@@ -135,3 +135,36 @@ final categoryByIdProvider = StreamProvider.family<Category?, int?>((ref, id) {
 final allGoalsProvider = StreamProvider<List<Goal>>(
   (ref) => ref.watch(goalsDaoProvider).watchAllGoals(),
 );
+
+// Presupuestos
+final budgetProgressProviderByCategory =
+    StreamProvider.family<
+      BudgetProgress?,
+      ({int month, int year, int categoryId})
+    >((ref, params) {
+      final txDao = ref.watch(transactionsDaoProvider);
+      final budgetsDao = ref.watch(budgetsDaoProvider);
+
+      return budgetsDao
+          .watchBudgetForMonthByCategory(
+            params.month,
+            params.year,
+            params.categoryId,
+          )
+          .asyncMap((budget) async {
+            // Obtener gastos del mes
+            final expensesByCategory = await txDao.getExpensesByCategory(
+              params.month,
+              params.year,
+            );
+
+            // Si no existe presupuesto
+            if (budget == null) return null;
+
+            return BudgetProgress(
+              budget: budget.budget,
+              category: budget.category,
+              spent: expensesByCategory[budget.budget.categoryId] ?? 0.0,
+            );
+          });
+    });
