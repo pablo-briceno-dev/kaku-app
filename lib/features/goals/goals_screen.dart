@@ -67,16 +67,7 @@ class GoalsScreen extends ConsumerWidget {
               title: 'Nueva Meta',
               useRootNavigator: true,
               isFullScreen: true,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    GoalFormSheet(),
-                    SizedBox(
-                      height: MediaQuery.of(context).viewPadding.bottom + 30,
-                    ),
-                  ],
-                ),
-              ),
+              child: GoalFormSheet(),
             ),
             icon: Icon(Icons.add),
             label: Text('Nueva'),

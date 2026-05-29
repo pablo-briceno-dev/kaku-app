@@ -19,14 +19,7 @@ class ProfileCard extends ConsumerWidget {
         title: 'Editar perfil',
         useRootNavigator: true,
         isFullScreen: true,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              ProfileSheet(),
-              SizedBox(height: MediaQuery.of(context).viewPadding.bottom + 30),
-            ],
-          ),
-        ),
+        child: ProfileSheet(),
       ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),

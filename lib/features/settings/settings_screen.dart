@@ -48,17 +48,7 @@ class SettingsScreen extends ConsumerWidget {
                   subtitle: 'Elige el color de acento de la app',
                   useRootNavigator: true,
                   isFullScreen: false,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ThemeColorSheet(),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).viewPadding.bottom + 30,
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: ThemeColorSheet(),
                 ),
               ),
               const Divider(height: 1),

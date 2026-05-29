@@ -125,46 +125,25 @@ class GoalsList extends ConsumerWidget {
                 title: 'Editar Meta ${goal.name}',
                 useRootNavigator: true,
                 isFullScreen: true,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      GoalFormSheet(goal: goal),
-                      SizedBox(
-                        height: MediaQuery.of(context).viewPadding.bottom + 30,
-                      ),
-                    ],
-                  ),
-                ),
+                child: GoalFormSheet(goal: goal),
               ),
               onContribute: () => AppBottomSheet.show(
                 context,
                 title: 'Aportar meta',
                 useRootNavigator: true,
                 isFullScreen: true,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      ContributeGoalSheet(
-                        goalId: goal.id,
-                        targetAmount: goal.targetAmount,
-                        savedAmount: goal.savedAmount,
-                        emoji: goal.emoji,
-                        name: goal.name,
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).viewPadding.bottom + 30,
-                      ),
-                    ],
-                  ),
+                child: ContributeGoalSheet(
+                  goalId: goal.id,
+                  targetAmount: goal.targetAmount,
+                  savedAmount: goal.savedAmount,
+                  emoji: goal.emoji,
+                  name: goal.name,
                 ),
               ),
               onDelete: () => showUndoDelete(
                 context: context,
                 label: 'Meta eliminandose',
-                onDelete: () => _onDelete(
-                  ref,
-                  goal,
-                ),
+                onDelete: () => _onDelete(ref, goal),
               ),
             ),
             const SizedBox(height: 10),

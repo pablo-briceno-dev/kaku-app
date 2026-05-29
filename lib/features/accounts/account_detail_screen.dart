@@ -44,17 +44,7 @@ class AccountDetailScreen extends ConsumerWidget {
                   title: 'Editar',
                   isFullScreen: true,
                   useRootNavigator: true,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        AccountFormSheet(account: account),
-                        SizedBox(
-                          height:
-                              MediaQuery.of(context).viewPadding.bottom + 30,
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: AccountFormSheet(account: account),
                 ),
                 icon: Icon(Icons.edit),
                 label: Text('Editar'),

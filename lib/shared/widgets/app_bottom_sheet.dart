@@ -68,7 +68,14 @@ class AppBottomSheet extends StatelessWidget {
         isFullScreen: isFullScreen,
         isDismissible: isDismissible,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-        child: child,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              child,
+              SizedBox(height: MediaQuery.of(context).viewPadding.bottom + 30),
+            ],
+          ),
+        ),
       ),
     );
   }
