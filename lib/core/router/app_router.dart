@@ -56,21 +56,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
-            path: AppRoutes.categoryDetail, // '/category/:id'
-            builder: (_, state) {
-              final id = int.parse(state.pathParameters['id']!);
-              final month = int.parse(
-                state.uri.queryParameters['month'] ?? '1',
-              );
-              final year = int.parse(
-                state.uri.queryParameters['year'] ?? '2024',
-              );
-              return CategoryDetailScreen(id: id, month: month, year: year);
-            },
-          ),
-          GoRoute(
             path: AppRoutes.accountDetail, // '/accounts/:id'
-            builder: (_, state) =>
+            builder: (context, state) =>
                 AccountDetailScreen(id: int.parse(state.pathParameters['id']!)),
           ),
         ],
@@ -94,6 +81,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.categories,
         builder: (context, state) => const CategoriesScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.categoryDetail, // '/category/:id'
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          final month = int.parse(state.uri.queryParameters['month'] ?? '1');
+          final year = int.parse(state.uri.queryParameters['year'] ?? '2024');
+          return CategoryDetailScreen(id: id, month: month, year: year);
+        },
       ),
     ],
   );

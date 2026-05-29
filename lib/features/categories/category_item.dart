@@ -8,6 +8,7 @@ import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/categories/category_form_sheet.dart';
 import 'package:kaku/features/categories/widgets/category_tile.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 
 class CategoryItem extends ConsumerWidget {
@@ -21,6 +22,7 @@ class CategoryItem extends ConsumerWidget {
     final cs = Theme.of(context).colorScheme;
     final catColor = hexToColor(category.colorHex);
     final isActive = category.isActive;
+    final selectedMonth = ref.watch(selectedMonthProvider);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
@@ -29,6 +31,8 @@ class CategoryItem extends ConsumerWidget {
         opacity: isActive ? 1.0 : 0.4,
         child: Slidable(
           key: ValueKey('slide_${category.id}'),
+          // key: ValueKey(category.id),
+          // key: ObjectKey(category),
           endActionPane: ActionPane(
             motion: const DrawerMotion(),
             extentRatio: 0.62,
@@ -111,7 +115,18 @@ class CategoryItem extends ConsumerWidget {
           child: CategoryTile(
             category: category,
             catColor: catColor,
-            onTap: () => context.push(AppRoutes.categoryDetail),
+            onTap: () {
+              debugPrint('Category key: ${category.id}');
+              Slidable.of(context)?.close();
+
+              context.push(
+                AppRoutes.toCategory(
+                  category.id,
+                  selectedMonth.month,
+                  selectedMonth.year,
+                ),
+              );
+            },
           ),
         ),
       ),

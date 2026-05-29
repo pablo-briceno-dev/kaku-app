@@ -21,19 +21,16 @@ abstract class AppRoutes {
 
   // Helpers para construir rutas con parámetros ---
   // Uso: context.go(AppRoutes.toTransaction(42))
-  static String toTransaction(int id) => '/transaction/$id';
+  static String toTransaction(int id) =>
+      transactionDetail.replaceAll(':id', id.toString());
   static String toCategory(int id, int month, int year) =>
-      '/category/$id?month=$month&year=$year';
-  static String toAccountDetail(int id) => '/accounts/$id';
+      '${categoryDetail.replaceAll(':id', id.toString())}?month=$month&year=$year';
+  static String toAccountDetail(int id) =>
+      accountDetail.replaceAll(':id', id.toString());
   static String toAddTransaction({int? accountId}) => accountId != null
-      ? '/add-transaction?accountId=$accountId'
-      : '/add-transaction';
+      ? '$addTransaction?accountId=$accountId'
+      : addTransaction;
 
   // Lista de tabs del bottom nav (mismo orden que los BottomNavigationBarItems)
-  static const List<String> shellTabs = [
-    dashboard,
-    stats,
-    goals,
-    accounts,
-  ];
+  static const List<String> shellTabs = [dashboard, stats, goals, accounts];
 }
