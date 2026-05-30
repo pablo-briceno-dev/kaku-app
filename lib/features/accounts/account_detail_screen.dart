@@ -51,13 +51,13 @@ class AccountDetailScreen extends ConsumerWidget {
               ),
             ],
           ),
-          body: Padding(
+          body: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
                 CardAccountDetail(account: account),
                 const SizedBox(height: 16),
-                Expanded(child: HistoryAccountDetail(account: account)),
+                HistoryAccountDetail(account: account),
               ],
             ),
           ),

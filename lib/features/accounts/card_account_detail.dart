@@ -49,7 +49,7 @@ class CardAccountDetail extends ConsumerWidget {
       subtitle: 'Saldo actual',
       chipItems: [
         ChipItemConfig(
-          title: 'este mes entrada',
+          title: 'entrada',
           description: CurrencyFormatter.withSign(
             income,
             compact: true,
@@ -58,7 +58,7 @@ class CardAccountDetail extends ConsumerWidget {
           colorDescription: Colors.green,
         ),
         ChipItemConfig(
-          title: 'este mes salida',
+          title: 'salida',
           description: CurrencyFormatter.withSign(
             expense,
             compact: true,

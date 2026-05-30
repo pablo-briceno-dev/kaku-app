@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/date_formatter.dart';
-import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/dashboard/widgets/transactions_list_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
@@ -87,12 +85,7 @@ class TransactionListByCategory extends ConsumerWidget {
                   ),
                   // Items del día
                   ...dayTxs.map(
-                    (txWithCat) => TransactionItem(
-                      txWithCat: txWithCat,
-                      onTap: () => context.push(
-                        AppRoutes.toTransaction(txWithCat.transaction.id),
-                      ),
-                    ),
+                    (txWithCat) => TransactionItem(txWithCat: txWithCat),
                   ),
                   const SizedBox(height: 8),
                 ],
