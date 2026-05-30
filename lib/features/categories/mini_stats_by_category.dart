@@ -20,6 +20,33 @@ class MiniStatsByCategory extends ConsumerWidget {
     );
     final currency = ref.watch(currencyProvider);
 
+    final transactions = transactionsAsync
+        .whenData(
+          (txs) => txs.where((t) => t.category?.id == categoryId).toList(),
+        )
+        .value;
+    final average = transactions != null && transactions.isNotEmpty
+        ? transactions
+                  .where((t) => t.category?.id == categoryId)
+                  .fold(
+                    0.0,
+                    (s, t) =>
+                        s +
+                        BudgetCalculator.balanceDelta(
+                          TransactionType.values
+                              .where((tx) => tx.name == t.transaction.type)
+                              .first,
+                          t.transaction.amount,
+                        ),
+                  ) /
+              transactions.length
+        : 0.0;
+    final higherSpending = transactions != null && transactions.isNotEmpty
+        ? transactions
+              .map((e) => e.transaction.amount)
+              .reduce((a, b) => a > b ? a : b)
+        : 0.0;
+
     return Row(
       children: [
         Container(
@@ -42,7 +69,7 @@ class MiniStatsByCategory extends ConsumerWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '${transactionsAsync.when(data: (transactions) => transactions.length, error: (e, _) => 0, loading: () => 0)}',
+                '${transactions?.length ?? 0}',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
             ],
@@ -69,10 +96,7 @@ class MiniStatsByCategory extends ConsumerWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '${transactionsAsync.when(data: (transactions) {
-                  final result = transactions.fold(0.0, (s, t) => s + BudgetCalculator.balanceDelta(TransactionType.values.where((tx) => tx.name == t.transaction.type).first, t.transaction.amount)) / transactions.length;
-                  return CurrencyFormatter.compact(result, currency);
-                }, error: (e, _) => 0, loading: () => 0)}',
+                CurrencyFormatter.compact(average, currency),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
             ],
@@ -99,7 +123,7 @@ class MiniStatsByCategory extends ConsumerWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '${transactionsAsync.when(data: (transactions) => CurrencyFormatter.compact(transactions.map((e) => e.transaction.amount).reduce((a, b) => a > b ? a : b), currency), error: (e, _) => 0, loading: () => 0)}',
+                CurrencyFormatter.compact(higherSpending, currency),
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
               ),
             ],

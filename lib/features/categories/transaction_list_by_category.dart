@@ -41,6 +41,13 @@ class TransactionListByCategory extends ConsumerWidget {
           grouped.putIfAbsent(key, () => []).add(tx);
         }
 
+        if (grouped.isEmpty) {
+          return const ContentWidgetEmpty(
+            title: '🫙',
+            message: 'Sin transacciones',
+          );
+        }
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
