@@ -6,6 +6,7 @@ import 'package:kaku/core/database/daos/categories_dao.dart';
 import 'package:kaku/core/database/daos/goals_dao.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/models/budget_progress.dart';
+import 'package:rxdart/rxdart.dart';
 
 // Provider singleton de la base de datos
 final databaseProvider = Provider<AppDatabase>((ref) {
@@ -56,25 +57,64 @@ final budgetProgressProvider =
       final txDao = ref.watch(transactionsDaoProvider);
       final budgetsDao = ref.watch(budgetsDaoProvider);
 
-      return budgetsDao
-          .watchBudgetsForMonth(params.month, params.year)
-          .asyncMap((budgets) async {
-            // Por cada emisión del stream, recalcula los gastos reales
-            final expensesByCategory = await txDao.getExpensesByCategory(
-              params.month,
-              params.year,
-            );
-            return budgets
-                .map(
-                  (bwc) => BudgetProgress(
-                    budget: bwc.budget,
-                    category: bwc.category,
-                    spent: expensesByCategory[bwc.budget.categoryId] ?? 0.0,
-                  ),
-                )
-                .toList();
-          });
+      // Stream 1: presupuestos del mes con su categoría
+      final budgetsStream = budgetsDao.watchBudgetsForMonth(
+        params.month,
+        params.year,
+      );
+
+      // Stream 2: gastos por categoría del mes
+      // Ahora es reactivo — emite cada vez que cambia una transacción
+      final expensesStream = txDao.watchExpensesByCategory(
+        params.month,
+        params.year,
+      );
+
+      // Combina los dos streams:
+      // Emite cuando CUALQUIERA de los dos cambia.
+      // switchMap garantiza que siempre usamos el último valor
+      // del stream de gastos cuando llega un nuevo budget.
+      return budgetsStream.switchMap((budgets) {
+        return expensesStream.map((expensesByCategory) {
+          return budgets
+              .map(
+                (bwc) => BudgetProgress(
+                  budget: bwc.budget,
+                  category: bwc.category,
+                  spent: expensesByCategory[bwc.budget.categoryId] ?? 0.0,
+                ),
+              )
+              .toList();
+        });
+      });
     });
+// final budgetProgressProvider =
+//     StreamProvider.family<List<BudgetProgress>, ({int month, int year})>((
+//       ref,
+//       params,
+//     ) {
+//       final txDao = ref.watch(transactionsDaoProvider);
+//       final budgetsDao = ref.watch(budgetsDaoProvider);
+
+//       return budgetsDao
+//           .watchBudgetsForMonth(params.month, params.year)
+//           .asyncMap((budgets) async {
+//             // Por cada emisión del stream, recalcula los gastos reales
+//             final expensesByCategory = await txDao.getExpensesByCategory(
+//               params.month,
+//               params.year,
+//             );
+//             return budgets
+//                 .map(
+//                   (bwc) => BudgetProgress(
+//                     budget: bwc.budget,
+//                     category: bwc.category,
+//                     spent: expensesByCategory[bwc.budget.categoryId] ?? 0.0,
+//                   ),
+//                 )
+//                 .toList();
+//           });
+//     });
 
 // Balance total de cuentas (reactivo)
 final totalBalanceProvider = StreamProvider<double>(

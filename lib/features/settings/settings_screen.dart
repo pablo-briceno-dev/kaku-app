@@ -104,7 +104,7 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle:
                     '${DateFormatter.monthYear(selectedMonth.year, selectedMonth.month)} - ${budgetsProgress.when(data: (budgets) => '${budgets.length} configurados', error: (e, _) => '0 configurados', loading: () => 'Cargando...')}',
                 icon: Icons.bar_chart,
-                onTap: () {},
+                onTap: () => context.push(AppRoutes.budgets),
               ),
             ],
           ),

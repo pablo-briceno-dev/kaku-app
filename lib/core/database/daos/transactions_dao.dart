@@ -16,13 +16,10 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     int month,
     int year,
   ) {
+    final range = _monthRange(year, month);
     final query =
-        (select(transactionsTable)..where(
-            (t) => t.date.isBetweenValues(
-              DateTime(year, month, 1),
-              DateTime(year, month + 1, 0, 23, 59),
-            ),
-          ))
+        (select(transactionsTable)
+            ..where((t) => t.date.isBetweenValues(range.start, range.end)))
           ..orderBy([(t) => OrderingTerm.desc(t.date)]);
     return query
         .join([
@@ -46,24 +43,45 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
 
   // TOTAL de gastos por categoría en un mes
   Future<Map<int, double>> getExpensesByCategory(int month, int year) async {
-    final query = customSelect(
-      '''SELECT category_id, SUM(amount) as total
-        FROM transactions_table
-        WHERE type = 'expense'
-          AND strftime('%m', date) = ?
-          AND strftime('%Y', date) = ?
-        GROUP BY category_id''',
-      variables: [
-        Variable(month.toString().padLeft(2, '0')),
-        Variable(year.toString()),
-      ],
-      readsFrom: {transactionsTable},
-    );
+    final range = _monthRange(year, month);
+
+    final query = select(transactionsTable)
+      ..where(
+        (t) =>
+            t.type.equals('expense') &
+            t.date.isBetweenValues(range.start, range.end),
+      );
+
     final rows = await query.get();
-    return {
-      for (final row in rows)
-        row.read<int?>('category_id') ?? 0: row.read<double>('total'),
-    };
+
+    // Agrupa y suma por categoryId en Dart
+    // (más simple que un customSelect con GROUP BY)
+    final Map<int, double> result = {};
+    for (final tx in rows) {
+      final key = tx.categoryId ?? 0;
+      result[key] = (result[key] ?? 0) + tx.amount;
+    }
+    return result;
+  }
+
+  // TOTAL de gastos por categoría en un mes (Stream)
+  Stream<Map<int, double>> watchExpensesByCategory(int month, int year) {
+    final range = _monthRange(year, month);
+
+    return (select(transactionsTable)..where(
+          (t) =>
+              t.type.equals('expense') &
+              t.date.isBetweenValues(range.start, range.end),
+        ))
+        .watch()
+        .map((rows) {
+          final Map<int, double> result = {};
+          for (final tx in rows) {
+            final key = tx.categoryId ?? 0;
+            result[key] = (result[key] ?? 0) + tx.amount;
+          }
+          return result;
+        });
   }
 
   // INSERTAR transacción
@@ -120,19 +138,17 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
       update(transactionsTable).replace(transaction);
 
   Future<double> getTotalExpenses(int month, int year) async {
-    final result = await customSelect(
-      '''SELECT COALESCE(SUM(amount), 0) as total
-        FROM transactions_table
-        WHERE type = 'expense'
-          AND strftime('%m', date) = ?
-          AND strftime('%Y', date) = ?''',
-      variables: [
-        Variable(month.toString().padLeft(2, '0')),
-        Variable(year.toString()),
-      ],
-      readsFrom: {transactionsTable},
-    ).getSingle();
-    return result.read<double>('total');
+    final range = _monthRange(year, month);
+
+    final rows =
+        await (select(transactionsTable)..where(
+              (t) =>
+                  t.type.equals('expense') &
+                  t.date.isBetweenValues(range.start, range.end),
+            ))
+            .get();
+
+    return rows.fold(0.0, (sum, tx) => sum + tx.amount).toDouble();
   }
 
   Future<int> countByCategory(int categoryId) async {
@@ -144,6 +160,11 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     ).getSingle();
     return result.read<int>('count');
   }
+
+  MonthRange _monthRange(int year, int month) => MonthRange(
+    start: DateTime(year, month, 1),
+    end: DateTime(year, month + 1, 0, 23, 59),
+  );
 }
 
 // Clase de resultado typesafe para JOIN ──
@@ -151,4 +172,10 @@ class TransactionWithCategory {
   final Transaction transaction;
   final Category? category;
   const TransactionWithCategory({required this.transaction, this.category});
+}
+
+class MonthRange {
+  final DateTime start;
+  final DateTime end;
+  const MonthRange({required this.start, required this.end});
 }

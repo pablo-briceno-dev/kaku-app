@@ -8,6 +8,7 @@ import 'package:kaku/features/categories/categories_screen.dart';
 import 'package:kaku/features/categories/category_detail_screen.dart';
 import 'package:kaku/features/dashboard/dashboard_screen.dart';
 import 'package:kaku/features/goals/goals_screen.dart';
+import 'package:kaku/features/settings/budget_list_screen.dart';
 import 'package:kaku/features/settings/settings_screen.dart';
 import 'package:kaku/features/stats/stats_screen.dart';
 import 'package:kaku/features/transactions/add_transaction_screen.dart';
@@ -89,6 +90,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           final month = int.parse(state.uri.queryParameters['month'] ?? '1');
           final year = int.parse(state.uri.queryParameters['year'] ?? '2024');
           return CategoryDetailScreen(id: id, month: month, year: year);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.budgets, // '/category/:id'
+        builder: (context, state) {
+          return BudgetListScreen();
         },
       ),
     ],

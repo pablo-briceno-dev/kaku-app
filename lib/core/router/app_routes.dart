@@ -8,6 +8,8 @@ abstract class AppRoutes {
 
   static const String transactions = '/transactions';
 
+  static const String budgets = '/budgets';
+
   // Sub-rutas de detalle (también dentro del ShellRoutes)
   static const String transactionDetail = '/transaction/:id';
   static const String categoryDetail = '/category/:id';
