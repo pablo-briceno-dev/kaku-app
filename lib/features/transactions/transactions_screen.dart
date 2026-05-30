@@ -60,7 +60,7 @@ class TransactionsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: CustomAppBar(title: Text('Transacciones')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
