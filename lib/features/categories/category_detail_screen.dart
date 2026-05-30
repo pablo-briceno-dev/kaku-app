@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/models/budget_progress.dart';
 import 'package:kaku/features/categories/category_form_sheet.dart';
 import 'package:kaku/features/categories/mini_stats_by_category.dart';
+import 'package:kaku/features/categories/transaction_list_by_category.dart';
 import 'package:kaku/features/categories/widgets/card_budget_category.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
@@ -86,8 +87,8 @@ class CategoryDetailScreen extends ConsumerWidget {
             if (budget != null) budgetStatus = budget.status;
           });
 
-          return Padding(
-            padding: const EdgeInsets.all(20),
+          return SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
                 CardBudgetCategory(
@@ -99,6 +100,8 @@ class CategoryDetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 MiniStatsByCategory(categoryId: id),
+                const SizedBox(height: 16),
+                TransactionListByCategory(categoryId: id),
               ],
             ),
           );
