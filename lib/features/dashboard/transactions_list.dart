@@ -33,6 +33,7 @@ class TransactionsList extends ConsumerWidget {
         // Agrupar por día usando groupKey como clave
         final Map<String, List<TransactionWithCategory>> grouped = {};
         for (final tx in transactions) {
+          if (grouped.length > 10) break;
           final key = DateFormatter.groupKey(tx.transaction.date);
           grouped.putIfAbsent(key, () => []).add(tx);
         }
