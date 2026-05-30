@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/models/budget_progress.dart';
+import 'package:kaku/shared/utils/budget_color.dart';
 
 class ProgressBarItem extends StatelessWidget {
   final String emoji;
@@ -23,11 +24,7 @@ class ProgressBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final color = switch (status) {
-      BudgetStatus.ok => cs.primary,
-      BudgetStatus.warning => Colors.amber,
-      BudgetStatus.overBudget => cs.error,
-    };
+    final color = getBudgetColorForStatus(status, cs);
 
     return InkWell(
       onTap: onTap,

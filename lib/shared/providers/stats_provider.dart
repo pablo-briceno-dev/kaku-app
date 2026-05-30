@@ -1,44 +1,46 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/colors_plates.dart';
+import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/models/stats_models.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:rxdart/rxdart.dart';
 
 /// Lista de CategorySlice para la dona.
 /// Combina los gastos por categoría con los datos de la categoría (color, nombre)
-final categorySlicesProvider = FutureProvider.autoDispose
-    .family<List<CategorySlice>, ({int month, int year})>((ref, params) async {
+final categorySlicesProvider = StreamProvider.autoDispose
+    .family<List<CategorySlice>, ({int month, int year})>((ref, params) {
       final txDao = ref.watch(transactionsDaoProvider);
       final catDao = ref.watch(categoriesDaoProvider);
 
-      // Gastos por categoría del mes
-      final expenseMap = await txDao.getExpensesByCategory(
-        params.month,
-        params.year,
-      );
-      if (expenseMap.isEmpty) return [];
+      // Combina los dos streams — emite cuando CUALQUIERA cambia.
+      // CombineLatest2 espera a tener al menos un valor de cada uno
+      // antes de emitir el primero.
+      return Rx.combineLatest2(
+        txDao.watchExpensesByCategory(params.month, params.year),
+        catDao.watchExpenseCategories(),
+        (Map<int, double> expenses, List<Category> categories) {
+          if (expenses.isEmpty) return <CategorySlice>[];
 
-      // Porcentajes calculados
-      final percentages = BudgetCalculator.categoryPercentages(expenseMap);
+          final catMap = {for (final c in categories) c.id: c};
+          final percentages = BudgetCalculator.categoryPercentages(expenses);
 
-      // Categorías para obtener nombre, emoji y color
-      final categories = await catDao.getExpenseCategories();
-      final catMap = {for (final c in categories) c.id: c};
-
-      return expenseMap.entries.where((e) => catMap.containsKey(e.key)).map(
-        (e) {
-          final cat = catMap[e.key]!;
-          return CategorySlice(
-            categoryId: cat.id,
-            name: cat.name,
-            emoji: cat.emoji,
-            color: hexToColor(cat.colorHex),
-            amount: e.value,
-            percentage: percentages[e.key] ?? 0,
-          );
+          return (expenses.entries.where((e) => catMap.containsKey(e.key)).map((
+            e,
+          ) {
+            final cat = catMap[e.key]!;
+            return CategorySlice(
+              categoryId: cat.id,
+              name: cat.name,
+              emoji: cat.emoji,
+              color: hexToColor(cat.colorHex),
+              amount: e.value,
+              percentage: percentages[e.key] ?? 0,
+            );
+          }).toList()..sort((a, b) => b.amount.compareTo(a.amount)));
         },
-      ).toList()..sort((a, b) => a.amount.compareTo(b.amount)); // mayor a menor
+      );
     });
 
 /// Datos diarios para el BarChart

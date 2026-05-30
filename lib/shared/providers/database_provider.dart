@@ -88,33 +88,6 @@ final budgetProgressProvider =
         });
       });
     });
-// final budgetProgressProvider =
-//     StreamProvider.family<List<BudgetProgress>, ({int month, int year})>((
-//       ref,
-//       params,
-//     ) {
-//       final txDao = ref.watch(transactionsDaoProvider);
-//       final budgetsDao = ref.watch(budgetsDaoProvider);
-
-//       return budgetsDao
-//           .watchBudgetsForMonth(params.month, params.year)
-//           .asyncMap((budgets) async {
-//             // Por cada emisión del stream, recalcula los gastos reales
-//             final expensesByCategory = await txDao.getExpensesByCategory(
-//               params.month,
-//               params.year,
-//             );
-//             return budgets
-//                 .map(
-//                   (bwc) => BudgetProgress(
-//                     budget: bwc.budget,
-//                     category: bwc.category,
-//                     spent: expensesByCategory[bwc.budget.categoryId] ?? 0.0,
-//                   ),
-//                 )
-//                 .toList();
-//           });
-//     });
 
 // Balance total de cuentas (reactivo)
 final totalBalanceProvider = StreamProvider<double>(
@@ -185,26 +158,33 @@ final budgetProgressProviderByCategory =
       final txDao = ref.watch(transactionsDaoProvider);
       final budgetsDao = ref.watch(budgetsDaoProvider);
 
-      return budgetsDao
-          .watchBudgetForMonthByCategory(
-            params.month,
-            params.year,
-            params.categoryId,
-          )
-          .asyncMap((budget) async {
-            // Obtener gastos del mes
-            final expensesByCategory = await txDao.getExpensesByCategory(
-              params.month,
-              params.year,
-            );
+      // Stream 1: presupuestos del mes con su categoría
+      final budgetsStream = budgetsDao.watchBudgetForMonthByCategory(
+        params.month,
+        params.year,
+        params.categoryId,
+      );
 
-            // Si no existe presupuesto
-            if (budget == null) return null;
+      // Stream 2: gastos por categoría del mes
+      // Ahora es reactivo — emite cada vez que cambia una transacción
+      final expensesStream = txDao.watchExpensesByCategory(
+        params.month,
+        params.year,
+      );
 
-            return BudgetProgress(
-              budget: budget.budget,
-              category: budget.category,
-              spent: expensesByCategory[budget.budget.categoryId] ?? 0.0,
-            );
-          });
+      // Combina los dos streams:
+      // Emite cuando CUALQUIERA de los dos cambia.
+      // switchMap garantiza que siempre usamos el último valor
+      // del stream de gastos cuando llega un nuevo budget.
+      return budgetsStream.switchMap((bwc) {
+        return expensesStream.map((expensesByCategory) {
+          if (bwc == null) return null;
+
+          return BudgetProgress(
+            budget: bwc.budget,
+            category: bwc.category,
+            spent: expensesByCategory[bwc.budget.categoryId] ?? 0.0,
+          );
+        });
+      });
     });

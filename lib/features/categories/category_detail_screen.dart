@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/core/models/budget_progress.dart';
 import 'package:kaku/features/categories/category_form_sheet.dart';
 import 'package:kaku/features/categories/mini_stats_by_category.dart';
 import 'package:kaku/features/categories/widgets/card_budget_category.dart';
@@ -78,9 +79,11 @@ class CategoryDetailScreen extends ConsumerWidget {
           );
           var limit = 0.0;
           var spent = 0.0;
+          var budgetStatus = BudgetStatus.ok;
           budgetProgress.whenData((budget) {
             limit = budget?.budget != null ? budget!.budget.limitAmount : 0.0;
             spent = budget?.spent ?? 0.0;
+            if (budget != null) budgetStatus = budget.status;
           });
 
           return Padding(
@@ -92,6 +95,7 @@ class CategoryDetailScreen extends ConsumerWidget {
                   spent: spent,
                   month: selectedMonth.month,
                   currency: currency,
+                  status: budgetStatus,
                 ),
                 const SizedBox(height: 16),
                 MiniStatsByCategory(categoryId: id),

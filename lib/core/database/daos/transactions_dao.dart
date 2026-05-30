@@ -41,29 +41,6 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
         );
   }
 
-  // TOTAL de gastos por categoría en un mes
-  Future<Map<int, double>> getExpensesByCategory(int month, int year) async {
-    final range = _monthRange(year, month);
-
-    final query = select(transactionsTable)
-      ..where(
-        (t) =>
-            t.type.equals('expense') &
-            t.date.isBetweenValues(range.start, range.end),
-      );
-
-    final rows = await query.get();
-
-    // Agrupa y suma por categoryId en Dart
-    // (más simple que un customSelect con GROUP BY)
-    final Map<int, double> result = {};
-    for (final tx in rows) {
-      final key = tx.categoryId ?? 0;
-      result[key] = (result[key] ?? 0) + tx.amount;
-    }
-    return result;
-  }
-
   // TOTAL de gastos por categoría en un mes (Stream)
   Stream<Map<int, double>> watchExpensesByCategory(int month, int year) {
     final range = _monthRange(year, month);

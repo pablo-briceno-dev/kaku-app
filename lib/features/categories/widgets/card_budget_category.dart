@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:kaku/core/currency_formatter.dart';
+import 'package:kaku/core/models/budget_progress.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/shared/utils/budget_color.dart';
 
 class CardBudgetCategory extends StatelessWidget {
   final double limit;
   final double spent;
   final int month;
   final CurrencyType currency;
+  final BudgetStatus status;
 
   const CardBudgetCategory({
     super.key,
@@ -14,6 +17,7 @@ class CardBudgetCategory extends StatelessWidget {
     required this.spent,
     required this.month,
     required this.currency,
+    required this.status,
   });
 
   @override
@@ -56,6 +60,8 @@ class CardBudgetCategory extends StatelessWidget {
         ),
       );
     }
+
+    final colorBudget = getBudgetColorForStatus(status, cs);
 
     return Container(
       width: double.infinity,
@@ -100,7 +106,7 @@ class CardBudgetCategory extends StatelessWidget {
           LinearProgressIndicator(
             value: spent / limit,
             backgroundColor: cs.surfaceContainerHighest.withValues(alpha: 0.4),
-            valueColor: AlwaysStoppedAnimation<Color>(cs.error),
+            valueColor: AlwaysStoppedAnimation<Color>(colorBudget),
             minHeight: 10,
             borderRadius: BorderRadius.circular(12),
           ),
