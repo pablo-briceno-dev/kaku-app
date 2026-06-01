@@ -138,6 +138,32 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     return result.read<int>('count');
   }
 
+  Future<List<TransactionWithCategory>> getTransactionsInRange(
+    DateTime start,
+    DateTime end,
+  ) async {
+    final query =
+        (select(transactionsTable)
+              ..where((t) => t.date.isBetweenValues(start, end))
+              ..orderBy([(t) => OrderingTerm.desc(t.date)]))
+            .join([
+              leftOuterJoin(
+                categoriesTable,
+                categoriesTable.id.equalsExp(transactionsTable.categoryId),
+              ),
+            ]);
+
+    final rows = await query.get();
+    return rows
+        .map(
+          (row) => TransactionWithCategory(
+            transaction: row.readTable(transactionsTable),
+            category: row.readTableOrNull(categoriesTable),
+          ),
+        )
+        .toList();
+  }
+
   MonthRange _monthRange(int year, int month) => MonthRange(
     start: DateTime(year, month, 1),
     end: DateTime(year, month + 1, 0, 23, 59),

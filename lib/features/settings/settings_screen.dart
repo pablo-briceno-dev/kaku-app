@@ -4,8 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/models/theme_model.dart';
 import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/features/settings/backup_sheet.dart';
 import 'package:kaku/features/settings/currency_sheet.dart';
+import 'package:kaku/features/settings/export_sheet.dart';
 import 'package:kaku/features/settings/profile_card.dart';
+import 'package:kaku/features/settings/storage_sheet.dart';
 import 'package:kaku/features/settings/theme_color_sheet.dart';
 import 'package:kaku/features/settings/widgets/list_tile_child.dart';
 import 'package:kaku/features/settings/widgets/section_card.dart';
@@ -27,6 +30,8 @@ class SettingsScreen extends ConsumerWidget {
     final categoriesAsync = ref.watch(expenseCategoriesProvider);
     final selectedMonth = ref.watch(selectedMonthProvider);
     final budgetsProgress = ref.watch(budgetProgressProvider(selectedMonth));
+    final backupSubtitle = ref.watch(lastBackupSubtitleProvider);
+    final storageSubtitle = ref.watch(storageSubtitleProvider);
 
     return Scaffold(
       appBar: CustomAppBar(title: Text('Configuración'), defaultActions: false),
@@ -113,23 +118,43 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               ListTileChild(
                 label: 'Backup Google Drive',
-                subtitle: 'Última sync: 2022-05-20',
+                subtitle: backupSubtitle.when(
+                  data: (s) => s,
+                  error: (e, _) => 'Sin sincronizar',
+                  loading: () => 'Cargando...',
+                ),
                 icon: Icons.backup,
-                onTap: () {},
+                onTap: () => AppBottomSheet.show(
+                  context,
+                  title: 'Backup',
+                  child: const BackupSheet(),
+                ),
               ),
               const Divider(height: 1),
               ListTileChild(
                 label: 'Exportar datos',
                 subtitle: 'CSV · PDF',
                 icon: Icons.upload_file,
-                onTap: () {},
+                onTap: () => AppBottomSheet.show(
+                  context,
+                  title: 'Exportar datos',
+                  child: const ExportSheet(),
+                ),
               ),
               const Divider(height: 1),
               ListTileChild(
                 label: 'Almacenamiento local',
-                subtitle: '14.2 MB · 32 fotos', // TODO: actualizar
+                subtitle: storageSubtitle.when(
+                  data: (s) => s,
+                  error: (e, _) => 'No disponible',
+                  loading: () => 'Cargando...',
+                ),
                 icon: Icons.storage,
-                onTap: () {},
+                onTap: () => AppBottomSheet.show(
+                  context,
+                  title: 'Almacenamiento',
+                  child: const StorageSheet(),
+                ),
               ),
             ],
           ),

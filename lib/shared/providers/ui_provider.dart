@@ -1,8 +1,11 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
+import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/core/models/transaction_type_filter.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
+import 'package:kaku/shared/services/storage_service.dart';
 import 'package:riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -77,3 +80,32 @@ final transactionTypeFilterProvider =
     StateProvider.autoDispose<TransactionTypeFilter>(
       (_) => TransactionTypeFilter.all,
     );
+
+// Backup - Info
+const _kLastBackupKey = 'last_backup_date';
+
+// Llama esto en BackupService.backup() cuando result == success:
+//   await saveLastBackupDate();
+Future<void> saveLastBackupDate() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString(_kLastBackupKey, DateTime.now().toIso8601String());
+}
+
+final lastBackupSubtitleProvider = FutureProvider<String>((ref) async {
+  final prefs = await SharedPreferences.getInstance();
+  final raw = prefs.getString(_kLastBackupKey);
+  if (raw == null) return 'Sin sincronizar';
+
+  final date = DateTime.tryParse(raw);
+  if (date == null) return 'Sin sincronizar';
+
+  // → "Última sync: Hoy", "Última sync: Ayer", "Última sync: 15 de mayo"
+  return 'Última sync: ${DateFormatter.relative(date)}';
+});
+
+// Storage
+final storageSubtitleProvider = FutureProvider<String>((ref) async {
+  final info = await StorageService.getInfo();
+  if (info.count == 0) return 'Sin recibos guardados';
+  return '${info.sizeLabel} · ${info.count} ${info.count == 1 ? 'foto' : 'fotos'}';
+});
