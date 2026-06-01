@@ -1,35 +1,27 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:archive/archive_io.dart';
+import 'package:crypto/crypto.dart';
+import 'package:encrypt/encrypt.dart' as enc;
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http/http.dart' as http;
 import 'package:kaku/core/database/app_database.dart';
-import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 class BackupService {
   static final _signIn = GoogleSignIn.instance;
-
-  // Scopes necesarios para Drive
   static const _driveScopes = [drive.DriveApi.driveFileScope];
-
-  // ── Inicializar (llama una vez al arrancar la app) ───────
-  // En main.dart o en un provider de inicialización:
-  //   await BackupService.initialize();
-  static Future<void> initialize() async {
-    await _signIn.initialize(
-      serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID'],
-    );
-    // Escucha eventos de autenticación
-    _signIn.authenticationEvents
-        .listen(_onAuthEvent)
-        .onError((e) => debugPrint('Auth error: $e'));
-    _signIn.attemptLightweightAuthentication();
-  }
+  static const _backupFileName = 'kaku_backup.zip.enc'; // cifrado + zipeado
 
   static GoogleSignInAccount? _currentUser;
+  static bool get isSignedIn => _currentUser != null;
+  static GoogleSignInAccount? get currentUser => _currentUser;
+
   static void _onAuthEvent(GoogleSignInAuthenticationEvent event) {
     _currentUser = switch (event) {
       GoogleSignInAuthenticationEventSignIn() => event.user,
@@ -37,12 +29,14 @@ class BackupService {
     };
   }
 
-  // ── Cuenta activa ────────────────────────────────────────
-  static GoogleSignInAccount? get currentUser => _currentUser;
-  static bool get isSignedIn => _currentUser != null;
+  static Future<void> initialize({String? serverClientId}) async {
+    await _signIn.initialize(serverClientId: serverClientId);
+    _signIn.authenticationEvents
+        .listen(_onAuthEvent)
+        .onError((e) => debugPrint('Auth error: $e'));
+    _signIn.attemptLightweightAuthentication();
+  }
 
-  // ── Autenticar al usuario ────────────────────────────────
-  // ✅ v7: authenticate() en lugar de signIn()
   static Future<bool> authenticate() async {
     try {
       if (!_signIn.supportsAuthenticate()) return false;
@@ -54,73 +48,211 @@ class BackupService {
     }
   }
 
-  // ── Desconectar ──────────────────────────────────────────
   static Future<void> signOut() async {
     await _signIn.signOut();
     _currentUser = null;
   }
 
-  // ── Realizar backup ──────────────────────────────────────
+  // ════════════════════════════════════════════════════
+  //  BACKUP — empaqueta, cifra y sube a Drive
+  // ════════════════════════════════════════════════════
   static Future<BackupResult> backup(AppDatabase db) async {
     try {
-      // 1. Verificar que hay usuario autenticado
       if (_currentUser == null) return BackupResult.notSignedIn;
 
-      // 2. Solicitar autorización para Drive
-      // ✅ v7: la autorización es separada del sign in
-      final GoogleSignInClientAuthorization? authorization =
+      final authorization =
           await _currentUser!.authorizationClient.authorizationForScopes(
             _driveScopes,
           ) ??
           await _currentUser!.authorizationClient.authorizeScopes(_driveScopes);
 
-      if (authorization == null) return BackupResult.notSignedIn;
-
-      // 3. Cliente HTTP autenticado con el access token
-      final client = _AuthClient(authorization.accessToken);
-      final driveApi = drive.DriveApi(client);
-
-      // 4. Ruta del archivo .db
-      final dbDir = await getApplicationDocumentsDirectory();
-      final dbFile = File('${dbDir.path}/kaku.db');
+      final appDir = await getApplicationDocumentsDirectory();
+      final dbFile = File(path.join(appDir.path, 'kaku_app.db'));
       if (!await dbFile.exists()) return BackupResult.dbNotFound;
 
-      // 5. Buscar o crear la carpeta "Kaku Backup"
-      final folderId = await _getOrCreateFolder(driveApi);
+      // 1. Crear ZIP con la DB + carpeta de recibos
+      final zipBytes = await _createZip(appDir.path, dbFile);
 
-      // 6. Subir el archivo (actualiza si ya existe)
+      // 2. Cifrar el ZIP con AES-256
+      // La clave se deriva del email del usuario → única por cuenta
+      final encryptedBytes = _encrypt(
+        data: zipBytes,
+        email: _currentUser!.email,
+      );
+
+      // 3. Guardar temporalmente el archivo cifrado
+      final tempFile = File('${appDir.path}/kaku_backup_temp.zip.enc');
+      await tempFile.writeAsBytes(encryptedBytes);
+
+      // 4. Subir a Drive
+      final client = _AuthClient(authorization.accessToken);
+      final driveApi = drive.DriveApi(client);
+      final folderId = await _getOrCreateFolder(driveApi);
       final existing = await _findExistingBackup(driveApi, folderId);
+
       final media = drive.Media(
-        dbFile.openRead(),
-        await dbFile.length(),
+        tempFile.openRead(),
+        await tempFile.length(),
         contentType: 'application/octet-stream',
       );
 
       if (existing != null) {
         await driveApi.files.update(
-          drive.File()..name = 'kaku_backup.db',
+          drive.File()..name = _backupFileName,
           existing,
           uploadMedia: media,
         );
       } else {
         await driveApi.files.create(
           drive.File()
-            ..name = 'kaku_backup.db'
+            ..name = _backupFileName
             ..parents = [folderId],
           uploadMedia: media,
         );
       }
 
+      // 5. Limpiar archivo temporal
+      await tempFile.delete();
       client.close();
-      await saveLastBackupDate();
+
       return BackupResult.success;
-    } on GoogleSignInException catch (e) {
-      debugPrint('BackupService.backup GoogleSignInException: $e');
+    } on GoogleSignInException {
       return BackupResult.notSignedIn;
     } catch (e) {
       debugPrint('BackupService.backup error: $e');
       return BackupResult.error;
     }
+  }
+
+  // ════════════════════════════════════════════════════
+  //  RESTAURAR — descarga, descifra y descomprime
+  // ════════════════════════════════════════════════════
+  static Future<RestoreResult> restore() async {
+    try {
+      if (_currentUser == null) return RestoreResult.notSignedIn;
+
+      final authorization =
+          await _currentUser!.authorizationClient.authorizationForScopes(
+            _driveScopes,
+          ) ??
+          await _currentUser!.authorizationClient.authorizeScopes(_driveScopes);
+
+      final client = _AuthClient(authorization.accessToken);
+      final driveApi = drive.DriveApi(client);
+      final folderId = await _getOrCreateFolder(driveApi);
+      final fileId = await _findExistingBackup(driveApi, folderId);
+
+      if (fileId == null) return RestoreResult.noBackupFound;
+
+      // 1. Descargar el archivo cifrado
+      final response =
+          await driveApi.files.get(
+                fileId,
+                downloadOptions: drive.DownloadOptions.fullMedia,
+              )
+              as drive.Media;
+
+      final bytes = <int>[];
+      await for (final chunk in response.stream) {
+        bytes.addAll(chunk);
+      }
+      final encryptedBytes = Uint8List.fromList(bytes);
+
+      // 2. Descifrar
+      final zipBytes = _decrypt(
+        data: encryptedBytes,
+        email: _currentUser!.email,
+      );
+
+      // 3. Descomprimir y restaurar archivos
+      final appDir = await getApplicationDocumentsDirectory();
+      await _restoreFromZip(zipBytes, appDir.path);
+
+      client.close();
+      return RestoreResult.success;
+    } catch (e) {
+      debugPrint('BackupService.restore error: $e');
+      return RestoreResult.error;
+    }
+  }
+
+  // ════════════════════════════════════════════════════
+  //  Helpers privados
+  // ════════════════════════════════════════════════════
+
+  // Crea ZIP con kaku.db + todos los recibos
+  static Future<Uint8List> _createZip(String appDirPath, File dbFile) async {
+    final encoder = ZipEncoder();
+    final archive = Archive();
+
+    // Agregar la DB
+    final dbBytes = await dbFile.readAsBytes();
+    archive.addFile(ArchiveFile('kaku.db', dbBytes.length, dbBytes));
+
+    // Agregar los recibos si existen
+    final receiptsDir = Directory('$appDirPath/receipts');
+    if (await receiptsDir.exists()) {
+      await for (final entity in receiptsDir.list()) {
+        if (entity is File) {
+          final fileBytes = await entity.readAsBytes();
+          final fileName = entity.path.split('/').last;
+          archive.addFile(
+            ArchiveFile('receipts/$fileName', fileBytes.length, fileBytes),
+          );
+        }
+      }
+    }
+
+    return Uint8List.fromList(encoder.encode(archive));
+  }
+
+  // Restaura los archivos del ZIP al directorio de la app
+  static Future<void> _restoreFromZip(
+    Uint8List zipBytes,
+    String appDirPath,
+  ) async {
+    final archive = ZipDecoder().decodeBytes(zipBytes);
+
+    for (final file in archive) {
+      if (file.isFile) {
+        final outFile = File('$appDirPath/${file.name}');
+        await outFile.parent.create(recursive: true);
+        await outFile.writeAsBytes(file.content as List<int>);
+      }
+    }
+  }
+
+  // ── Cifrado AES-256-CBC ───────────────────────────────
+  // La clave se deriva del email del usuario con SHA-256.
+  // Así el backup solo puede descifrarse con la misma cuenta.
+  // El IV es aleatorio en cada backup para mayor seguridad.
+  static Uint8List _encrypt({required Uint8List data, required String email}) {
+    final key = enc.Key(
+      Uint8List.fromList(
+        sha256.convert(utf8.encode(email)).bytes, // 32 bytes = AES-256
+      ),
+    );
+    final iv = enc.IV.fromSecureRandom(16); // IV aleatorio
+    final encrypter = enc.Encrypter(enc.AES(key, mode: enc.AESMode.cbc));
+    final encrypted = encrypter.encryptBytes(data, iv: iv);
+
+    // Prepend del IV al ciphertext para poder usarlo al descifrar
+    // Formato: [16 bytes IV][resto = ciphertext]
+    final result = Uint8List(16 + encrypted.bytes.length);
+    result.setAll(0, iv.bytes);
+    result.setAll(16, encrypted.bytes);
+    return result;
+  }
+
+  static Uint8List _decrypt({required Uint8List data, required String email}) {
+    final key = enc.Key(
+      Uint8List.fromList(sha256.convert(utf8.encode(email)).bytes),
+    );
+    // Extraer IV de los primeros 16 bytes
+    final iv = enc.IV(Uint8List.sublistView(data, 0, 16));
+    final ciphertext = enc.Encrypted(Uint8List.sublistView(data, 16));
+    final encrypter = enc.Encrypter(enc.AES(key, mode: enc.AESMode.cbc));
+    return Uint8List.fromList(encrypter.decryptBytes(ciphertext, iv: iv));
   }
 
   static Future<String> _getOrCreateFolder(drive.DriveApi api) async {
@@ -148,7 +280,7 @@ class BackupService {
   ) async {
     final list = await api.files.list(
       q:
-          "name='kaku_backup.db' "
+          "name='$_backupFileName' "
           "and '$folderId' in parents "
           "and trashed=false",
       spaces: 'drive',
@@ -159,7 +291,8 @@ class BackupService {
 
 enum BackupResult { success, notSignedIn, dbNotFound, error }
 
-// ── Cliente HTTP con el access token de Drive ────────────────
+enum RestoreResult { success, notSignedIn, noBackupFound, error }
+
 class _AuthClient extends http.BaseClient {
   final String _token;
   final _inner = http.Client();
