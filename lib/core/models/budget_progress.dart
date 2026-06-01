@@ -6,23 +6,22 @@ class BudgetProgress {
   final Budget budget; // límite y mes - de BudgetsTable
   final Category category; // emoji, nombre, color - de CategoriesTable
   final double spent; // gasto real calculado desde TransactionsTable
+  final double effectiveLimit; // puede diferir de budget.limitAmount
 
   const BudgetProgress({
     required this.budget,
     required this.category,
     required this.spent,
+    required this.effectiveLimit,
   });
 
   // Getters de conveniencia (úsalos directo en el widget)
 
   // Cuánto queda disponible (puede ser negativo si pasó el límite)
-  double get remaining => budget.limitAmount - spent;
+  double get remaining => effectiveLimit - spent;
 
   // Progreso entre 0.0 y 1.0 (1.0 = 100%, puede superar 1.0 si se excedió)
-  double get progress {
-    if (budget.limitAmount <= 0) return 0.0;
-    return spent / budget.limitAmount;
-  }
+  double get progress  => effectiveLimit > 0 ? spent / effectiveLimit : 0;
 
   // Porcentaje legible: "72%" o "105%" si se excedió
   String get percentageLabel => '${(progress * 100).toStringAsFixed(0)}%';
@@ -33,6 +32,11 @@ class BudgetProgress {
     if (progress >= 0.8) return BudgetStatus.warning;
     return BudgetStatus.ok;
   }
+
+  bool get hasRolloverAdjustment =>
+      budget.rollover && effectiveLimit != budget.limitAmount;
+
+  double get rolloverAmount => effectiveLimit - budget.limitAmount;
 }
 
 enum BudgetStatus {

@@ -75,16 +75,30 @@ final budgetProgressProvider =
       // switchMap garantiza que siempre usamos el último valor
       // del stream de gastos cuando llega un nuevo budget.
       return budgetsStream.switchMap((budgets) {
-        return expensesStream.map((expensesByCategory) {
-          return budgets
-              .map(
-                (bwc) => BudgetProgress(
-                  budget: bwc.budget,
-                  category: bwc.category,
-                  spent: expensesByCategory[bwc.budget.categoryId] ?? 0.0,
-                ),
-              )
-              .toList();
+        return expensesStream.asyncMap((expensesByCategory) async {
+          final List<BudgetProgress> result = [];
+
+          for (final bwc in budgets) {
+            final effectiveLimit = await budgetsDao.getEffectiveLimit(
+              categoryId: bwc.category.id,
+              month: params.month,
+              year: params.year,
+              baseLimit: bwc.budget.limitAmount,
+              rollover: bwc.budget.rollover,
+              txDao: txDao,
+            );
+
+            result.add(
+              BudgetProgress(
+                budget: bwc.budget,
+                category: bwc.category,
+                spent: expensesByCategory[bwc.budget.categoryId] ?? 0.0,
+                effectiveLimit: effectiveLimit,
+              ),
+            );
+          }
+
+          return result;
         });
       });
     });
@@ -177,13 +191,23 @@ final budgetProgressProviderByCategory =
       // switchMap garantiza que siempre usamos el último valor
       // del stream de gastos cuando llega un nuevo budget.
       return budgetsStream.switchMap((bwc) {
-        return expensesStream.map((expensesByCategory) {
+        return expensesStream.asyncMap((expensesByCategory) async {
           if (bwc == null) return null;
+
+          final effectiveLimit = await budgetsDao.getEffectiveLimit(
+            categoryId: bwc.category.id,
+            month: params.month,
+            year: params.year,
+            baseLimit: bwc.budget.limitAmount,
+            rollover: bwc.budget.rollover,
+            txDao: txDao,
+          );
 
           return BudgetProgress(
             budget: bwc.budget,
             category: bwc.category,
             spent: expensesByCategory[bwc.budget.categoryId] ?? 0.0,
+            effectiveLimit: effectiveLimit,
           );
         });
       });

@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:kaku/core/database/app_database.dart';
+import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/database/tables/budgets_table.dart';
 import 'package:kaku/core/database/tables/categories_table.dart';
 
@@ -73,6 +74,46 @@ class BudgetsDao extends DatabaseAccessor<AppDatabase> with _$BudgetsDaoMixin {
   // Eliminar presupuesto
   Future<int> deleteBudget(int id) =>
       (delete(budgetsTable)..where((b) => b.id.equals(id))).go();
+
+  Future<double> getEffectiveLimit({
+    required int categoryId,
+    required int month,
+    required int year,
+    required double baseLimit,
+    required bool rollover,
+    required TransactionsDao txDao,
+  }) async {
+    if (!rollover) return baseLimit;
+
+    // Busca el presupuesto del mes anterior
+    final prevMonth = month == 1 ? 12 : month - 1;
+    final prevYear = month == 1 ? year - 1 : year;
+
+    final prevBudget =
+        await (select(budgetsTable)..where(
+              (b) =>
+                  b.categoryId.equals(categoryId) &
+                  b.month.equals(prevMonth) &
+                  b.year.equals(prevYear),
+            ))
+            .getSingleOrNull();
+
+    if (prevBudget == null) return baseLimit;
+
+    // Calcula lo gastado el mes anterior
+    final prevSpent = await txDao.getTotalExpensesByCategory(
+      categoryId: categoryId,
+      month: prevMonth,
+      year: prevYear,
+    );
+
+    // Sobrante = límite anterior - gastado anterior
+    // Puede ser positivo (sobró) o negativo (se pasó)
+    final leftover = prevBudget.limitAmount - prevSpent;
+
+    // El nuevo límite efectivo nunca puede ser menor a 0
+    return (baseLimit + leftover).clamp(0, double.infinity);
+  }
 }
 
 class BudgetWithCategory {

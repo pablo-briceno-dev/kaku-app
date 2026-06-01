@@ -221,6 +221,11 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                                 ),
                               ),
                         );
+                        if (_receiptPath != null) {
+                          ref
+                              .read(storageRefreshSignalProvider.notifier)
+                              .state++;
+                        }
 
                         if (context.mounted) {
                           AppSnackbar.success(

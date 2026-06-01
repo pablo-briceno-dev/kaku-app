@@ -4,6 +4,7 @@ import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/core/models/transaction_type_filter.dart';
+import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:kaku/shared/services/storage_service.dart';
 import 'package:riverpod/legacy.dart';
@@ -91,21 +92,45 @@ Future<void> saveLastBackupDate() async {
   await prefs.setString(_kLastBackupKey, DateTime.now().toIso8601String());
 }
 
-final lastBackupSubtitleProvider = FutureProvider<String>((ref) async {
+// Señal para el backup — se incrementa tras cada backup exitoso
+final backupRefreshSignalProvider = StateProvider<int>((ref) => 0);
+
+// Señal para el almacenamiento — se incrementa al adjuntar/borrar recibos
+final storageRefreshSignalProvider = StateProvider<int>((ref) => 0);
+
+final lastBackupSubtitleProvider = FutureProvider.autoDispose<String>((
+  ref,
+) async {
+  // Observar la señal — cuando cambie este provider se recalcula
+  ref.watch(backupRefreshSignalProvider);
+
   final prefs = await SharedPreferences.getInstance();
-  final raw = prefs.getString(_kLastBackupKey);
+  final raw = prefs.getString('last_backup_date');
   if (raw == null) return 'Sin sincronizar';
 
   final date = DateTime.tryParse(raw);
   if (date == null) return 'Sin sincronizar';
 
-  // → "Última sync: Hoy", "Última sync: Ayer", "Última sync: 15 de mayo"
   return 'Última sync: ${DateFormatter.relative(date)}';
 });
 
-// Storage
-final storageSubtitleProvider = FutureProvider<String>((ref) async {
+// ════════════════════════════════════════════════════════
+//  storageSubtitleProvider — reactivo
+//
+//  Se recalcula cuando storageRefreshSignalProvider cambia.
+//  También observa las transacciones para detectar cuando
+//  se adjunta o elimina una foto de recibo.
+// ════════════════════════════════════════════════════════
+final storageSubtitleProvider = FutureProvider.autoDispose<String>((ref) async {
+  // Señal manual (al limpiar recibos desde el sheet)
+  ref.watch(storageRefreshSignalProvider);
+
+  // También se recalcula cuando cambian las transacciones
+  // porque adjuntar/eliminar una foto modifica el conteo
+  ref.watch(activeAccountsProvider);
+
   final info = await StorageService.getInfo();
   if (info.count == 0) return 'Sin recibos guardados';
-  return '${info.sizeLabel} · ${info.count} ${info.count == 1 ? 'foto' : 'fotos'}';
+  return '${info.sizeLabel} · ${info.count} '
+      '${info.count == 1 ? 'foto' : 'fotos'}';
 });

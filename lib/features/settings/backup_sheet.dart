@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/backup_service.dart';
 
 class BackupSheet extends ConsumerStatefulWidget {
@@ -48,6 +49,7 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
         case BackupResult.success:
           _statusMessage = '✅ Backup completado correctamente';
           _isError       = false;
+          ref.read(backupRefreshSignalProvider.notifier).state++;
         case BackupResult.notSignedIn:
           _statusMessage = 'Inicia sesión con Google primero';
           _isError       = true;

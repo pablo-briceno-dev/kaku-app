@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/storage_service.dart';
 
 class StorageSheet extends ConsumerStatefulWidget {
@@ -56,6 +57,7 @@ class _StorageSheetState extends ConsumerState<StorageSheet> {
     if (confirm != true) return;
  
     setState(() => _clearing = true);
+    ref.read(storageRefreshSignalProvider.notifier).state++;
     await StorageService.clearReceipts(ref.read(databaseProvider));
     await _loadInfo(); // refresca el contador
     if (mounted) setState(() => _clearing = false);

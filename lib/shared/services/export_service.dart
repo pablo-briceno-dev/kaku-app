@@ -72,7 +72,7 @@ class ExportService {
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
-                'Kaku — Reporte $periodLabel',
+                'Kaku - Reporte $periodLabel',
                 style: pw.TextStyle(
                   fontSize: 16,
                   fontWeight: pw.FontWeight.bold,

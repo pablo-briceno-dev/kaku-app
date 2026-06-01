@@ -164,6 +164,23 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
         .toList();
   }
 
+  Future<double> getTotalExpensesByCategory({
+    required int categoryId,
+    required int month,
+    required int year,
+  }) async {
+    final range = _monthRange(year, month);
+    final rows =
+        await (select(transactionsTable)..where(
+              (t) =>
+                  t.categoryId.equals(categoryId) &
+                  t.type.equals('expense') &
+                  t.date.isBetweenValues(range.start, range.end),
+            ))
+            .get();
+    return rows.fold(0.0, (sum, tx) => sum + tx.amount).toDouble();
+  }
+
   MonthRange _monthRange(int year, int month) => MonthRange(
     start: DateTime(year, month, 1),
     end: DateTime(year, month + 1, 0, 23, 59),
