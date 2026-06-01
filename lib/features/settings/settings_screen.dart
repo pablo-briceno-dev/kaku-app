@@ -5,8 +5,10 @@ import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/models/theme_model.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/backup_sheet.dart';
+import 'package:kaku/features/settings/biometric_toggle.dart';
 import 'package:kaku/features/settings/currency_sheet.dart';
 import 'package:kaku/features/settings/export_sheet.dart';
+import 'package:kaku/features/settings/notifications_toggle.dart';
 import 'package:kaku/features/settings/profile_card.dart';
 import 'package:kaku/features/settings/storage_sheet.dart';
 import 'package:kaku/features/settings/theme_color_sheet.dart';
@@ -161,21 +163,23 @@ class SettingsScreen extends ConsumerWidget {
           SectionHeader('Seguridad'),
           SectionCard(
             children: [
-              SwitchListTileChild(
-                label: 'Biometría / FaceID',
-                subtitle: 'Protege la app al abrirse',
-                icon: Icons.security,
-                value: true,
-                onChanged: (v) {},
-              ),
+              BiometricToggle(),
+              // SwitchListTileChild(
+              //   label: 'Biometría / FaceID',
+              //   subtitle: 'Protege la app al abrirse',
+              //   icon: Icons.security,
+              //   value: true,
+              //   onChanged: (v) {},
+              // ),
               const Divider(height: 1),
-              SwitchListTileChild(
-                label: 'Notificaciones',
-                subtitle: 'Alertas de presupuesto',
-                icon: Icons.notifications,
-                value: true,
-                onChanged: (v) {},
-              ),
+              NotificationsToggle(),
+              // SwitchListTileChild(
+              //   label: 'Notificaciones',
+              //   subtitle: 'Alertas de presupuesto',
+              //   icon: Icons.notifications,
+              //   value: true,
+              //   onChanged: (v) {},
+              // ),
             ],
           ),
           SectionHeader('Zona peligrosa'),

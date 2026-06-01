@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/dashboard/widgets/progress_bar_item.dart';
 import 'package:kaku/features/dashboard/widgets/budget_bar_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
+import 'package:kaku/shared/services/notification_service.dart';
 
 class HorizontalProgressBars extends ConsumerWidget {
   const HorizontalProgressBars({super.key});
@@ -50,6 +52,15 @@ class HorizontalProgressBars extends ConsumerWidget {
             itemCount: budgetProgress.length,
             itemBuilder: (context, index) {
               final budget = budgetProgress[index];
+              if (budget.progress >= 0.8) {
+                NotificationService.showBudgetAlert(
+                  categoryName: budget.category.name,
+                  categoryEmoji: budget.category.emoji,
+                  percentage: budget.progress,
+                  spent: CurrencyFormatter.compact(budget.spent),
+                  limit: CurrencyFormatter.compact(budget.effectiveLimit),
+                );
+              }
               return Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: ProgressBarItem(
