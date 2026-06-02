@@ -23,4 +23,5 @@ class TransactionsTable extends Table {
   TextColumn get tags =>
       text().nullable()(); // JSON: '["vacaciones","trabajo"]'
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+  IntColumn get transferId => integer().nullable()();
 }

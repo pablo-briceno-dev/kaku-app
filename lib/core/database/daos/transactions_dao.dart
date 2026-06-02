@@ -3,6 +3,7 @@ import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/database/tables/accounts_table.dart';
 import 'package:kaku/core/database/tables/categories_table.dart';
 import 'package:kaku/core/database/tables/transactions_table.dart';
+import 'package:kaku/core/models/transaction_type.dart';
 
 part 'transactions_dao.g.dart';
 
@@ -179,6 +180,56 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
             ))
             .get();
     return rows.fold(0.0, (sum, tx) => sum + tx.amount).toDouble();
+  }
+
+  Future<void> createTransfer({
+    required int fromAccountId,
+    required int toAccountId,
+    required double amount,
+    required double fromBalance,
+    required double toBalance,
+    String? description,
+    DateTime? date,
+  }) async {
+    await transaction(() async {
+      final now = date ?? DateTime.now();
+      final transferId = now.millisecondsSinceEpoch; // id único compartido
+
+      // 1. Gasto en la cuenta origen
+      await into(transactionsTable).insert(
+        TransactionsTableCompanion.insert(
+          amount: amount,
+          type: TransactionType.transfer.name,
+          accountId: fromAccountId,
+          categoryId: const Value(
+            null,
+          ), // las transferencias no tienen categoría
+          description: Value(description ?? 'Transferencia'),
+          date: now,
+          transferId: Value(transferId),
+        ),
+      );
+
+      // 2. Ingreso en la cuenta destino
+      await into(transactionsTable).insert(
+        TransactionsTableCompanion.insert(
+          amount: amount,
+          type: TransactionType.transfer.name,
+          accountId: toAccountId,
+          categoryId: const Value(null),
+          description: Value(description ?? 'Transferencia'),
+          date: now,
+          transferId: Value(transferId),
+        ),
+      );
+
+      // 3. Actualizar balances
+      await (update(accountsTable)..where((a) => a.id.equals(fromAccountId)))
+          .write(AccountsTableCompanion(balance: Value(fromBalance - amount)));
+
+      await (update(accountsTable)..where((a) => a.id.equals(toAccountId)))
+          .write(AccountsTableCompanion(balance: Value(toBalance + amount)));
+    });
   }
 
   MonthRange _monthRange(int year, int month) => MonthRange(

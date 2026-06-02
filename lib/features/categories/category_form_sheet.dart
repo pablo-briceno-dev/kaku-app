@@ -85,6 +85,18 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
             decoration: const InputDecoration(labelText: 'Nombre*'),
           ),
           const SizedBox(height: 16),
+          // emoji_picker.EmojiPicker(
+          //   onEmojiSelected: (category, emoji) {
+          //     setState(() => _emojiController.text = emoji.emoji);
+          //     Navigator.pop(context);
+          //   },
+          //   config: emoji_picker.Config(
+          //     height: 280,
+          //     emojiViewConfig: emoji_picker.EmojiViewConfig(
+          //       backgroundColor: Theme.of(context).colorScheme.surface,
+          //     ),
+          //   ),
+          // ),
           EmojiPicker(
             emojis: _emojis,
             selectedEmoji: int.tryParse(_emojiController.text) ?? 0,

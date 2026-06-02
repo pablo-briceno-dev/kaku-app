@@ -2188,6 +2188,17 @@ class $TransactionsTableTable extends TransactionsTable
     requiredDuringInsert: false,
     defaultValue: currentDateAndTime,
   );
+  static const VerificationMeta _transferIdMeta = const VerificationMeta(
+    'transferId',
+  );
+  @override
+  late final GeneratedColumn<int> transferId = GeneratedColumn<int>(
+    'transfer_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2202,6 +2213,7 @@ class $TransactionsTableTable extends TransactionsTable
     isRecurring,
     tags,
     createdAt,
+    transferId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2301,6 +2313,12 @@ class $TransactionsTableTable extends TransactionsTable
         createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
       );
     }
+    if (data.containsKey('transfer_id')) {
+      context.handle(
+        _transferIdMeta,
+        transferId.isAcceptableOrUnknown(data['transfer_id']!, _transferIdMeta),
+      );
+    }
     return context;
   }
 
@@ -2358,6 +2376,10 @@ class $TransactionsTableTable extends TransactionsTable
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
       )!,
+      transferId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}transfer_id'],
+      ),
     );
   }
 
@@ -2380,6 +2402,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final bool isRecurring;
   final String? tags;
   final DateTime createdAt;
+  final int? transferId;
   const Transaction({
     required this.id,
     required this.amount,
@@ -2393,6 +2416,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     required this.isRecurring,
     this.tags,
     required this.createdAt,
+    this.transferId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2419,6 +2443,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       map['tags'] = Variable<String>(tags);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
+    if (!nullToAbsent || transferId != null) {
+      map['transfer_id'] = Variable<int>(transferId);
+    }
     return map;
   }
 
@@ -2444,6 +2471,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       isRecurring: Value(isRecurring),
       tags: tags == null && nullToAbsent ? const Value.absent() : Value(tags),
       createdAt: Value(createdAt),
+      transferId: transferId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(transferId),
     );
   }
 
@@ -2465,6 +2495,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       isRecurring: serializer.fromJson<bool>(json['isRecurring']),
       tags: serializer.fromJson<String?>(json['tags']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      transferId: serializer.fromJson<int?>(json['transferId']),
     );
   }
   @override
@@ -2483,6 +2514,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'isRecurring': serializer.toJson<bool>(isRecurring),
       'tags': serializer.toJson<String?>(tags),
       'createdAt': serializer.toJson<DateTime>(createdAt),
+      'transferId': serializer.toJson<int?>(transferId),
     };
   }
 
@@ -2499,6 +2531,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     bool? isRecurring,
     Value<String?> tags = const Value.absent(),
     DateTime? createdAt,
+    Value<int?> transferId = const Value.absent(),
   }) => Transaction(
     id: id ?? this.id,
     amount: amount ?? this.amount,
@@ -2512,6 +2545,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     isRecurring: isRecurring ?? this.isRecurring,
     tags: tags.present ? tags.value : this.tags,
     createdAt: createdAt ?? this.createdAt,
+    transferId: transferId.present ? transferId.value : this.transferId,
   );
   Transaction copyWithCompanion(TransactionsTableCompanion data) {
     return Transaction(
@@ -2535,6 +2569,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           : this.isRecurring,
       tags: data.tags.present ? data.tags.value : this.tags,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      transferId: data.transferId.present
+          ? data.transferId.value
+          : this.transferId,
     );
   }
 
@@ -2552,7 +2589,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('receiptPath: $receiptPath, ')
           ..write('isRecurring: $isRecurring, ')
           ..write('tags: $tags, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('transferId: $transferId')
           ..write(')'))
         .toString();
   }
@@ -2571,6 +2609,7 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     isRecurring,
     tags,
     createdAt,
+    transferId,
   );
   @override
   bool operator ==(Object other) =>
@@ -2587,7 +2626,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.receiptPath == this.receiptPath &&
           other.isRecurring == this.isRecurring &&
           other.tags == this.tags &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.transferId == this.transferId);
 }
 
 class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
@@ -2603,6 +2643,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
   final Value<bool> isRecurring;
   final Value<String?> tags;
   final Value<DateTime> createdAt;
+  final Value<int?> transferId;
   const TransactionsTableCompanion({
     this.id = const Value.absent(),
     this.amount = const Value.absent(),
@@ -2616,6 +2657,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     this.isRecurring = const Value.absent(),
     this.tags = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.transferId = const Value.absent(),
   });
   TransactionsTableCompanion.insert({
     this.id = const Value.absent(),
@@ -2630,6 +2672,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     this.isRecurring = const Value.absent(),
     this.tags = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.transferId = const Value.absent(),
   }) : amount = Value(amount),
        type = Value(type),
        date = Value(date),
@@ -2647,6 +2690,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     Expression<bool>? isRecurring,
     Expression<String>? tags,
     Expression<DateTime>? createdAt,
+    Expression<int>? transferId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2661,6 +2705,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
       if (isRecurring != null) 'is_recurring': isRecurring,
       if (tags != null) 'tags': tags,
       if (createdAt != null) 'created_at': createdAt,
+      if (transferId != null) 'transfer_id': transferId,
     });
   }
 
@@ -2677,6 +2722,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     Value<bool>? isRecurring,
     Value<String?>? tags,
     Value<DateTime>? createdAt,
+    Value<int?>? transferId,
   }) {
     return TransactionsTableCompanion(
       id: id ?? this.id,
@@ -2691,6 +2737,7 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
       isRecurring: isRecurring ?? this.isRecurring,
       tags: tags ?? this.tags,
       createdAt: createdAt ?? this.createdAt,
+      transferId: transferId ?? this.transferId,
     );
   }
 
@@ -2733,6 +2780,9 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
+    if (transferId.present) {
+      map['transfer_id'] = Variable<int>(transferId.value);
+    }
     return map;
   }
 
@@ -2750,7 +2800,8 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
           ..write('receiptPath: $receiptPath, ')
           ..write('isRecurring: $isRecurring, ')
           ..write('tags: $tags, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('transferId: $transferId')
           ..write(')'))
         .toString();
   }
@@ -4393,6 +4444,7 @@ typedef $$TransactionsTableTableCreateCompanionBuilder =
       Value<bool> isRecurring,
       Value<String?> tags,
       Value<DateTime> createdAt,
+      Value<int?> transferId,
     });
 typedef $$TransactionsTableTableUpdateCompanionBuilder =
     TransactionsTableCompanion Function({
@@ -4408,6 +4460,7 @@ typedef $$TransactionsTableTableUpdateCompanionBuilder =
       Value<bool> isRecurring,
       Value<String?> tags,
       Value<DateTime> createdAt,
+      Value<int?> transferId,
     });
 
 final class $$TransactionsTableTableReferences
@@ -4537,6 +4590,11 @@ class $$TransactionsTableTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get transferId => $composableBuilder(
+    column: $table.transferId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$AccountsTableTableFilterComposer get accountId {
     final $$AccountsTableTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -4661,6 +4719,11 @@ class $$TransactionsTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get transferId => $composableBuilder(
+    column: $table.transferId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$AccountsTableTableOrderingComposer get accountId {
     final $$AccountsTableTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -4772,6 +4835,11 @@ class $$TransactionsTableTableAnnotationComposer
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get transferId => $composableBuilder(
+    column: $table.transferId,
+    builder: (column) => column,
+  );
 
   $$AccountsTableTableAnnotationComposer get accountId {
     final $$AccountsTableTableAnnotationComposer composer = $composerBuilder(
@@ -4888,6 +4956,7 @@ class $$TransactionsTableTableTableManager
                 Value<bool> isRecurring = const Value.absent(),
                 Value<String?> tags = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<int?> transferId = const Value.absent(),
               }) => TransactionsTableCompanion(
                 id: id,
                 amount: amount,
@@ -4901,6 +4970,7 @@ class $$TransactionsTableTableTableManager
                 isRecurring: isRecurring,
                 tags: tags,
                 createdAt: createdAt,
+                transferId: transferId,
               ),
           createCompanionCallback:
               ({
@@ -4916,6 +4986,7 @@ class $$TransactionsTableTableTableManager
                 Value<bool> isRecurring = const Value.absent(),
                 Value<String?> tags = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
+                Value<int?> transferId = const Value.absent(),
               }) => TransactionsTableCompanion.insert(
                 id: id,
                 amount: amount,
@@ -4929,6 +5000,7 @@ class $$TransactionsTableTableTableManager
                 isRecurring: isRecurring,
                 tags: tags,
                 createdAt: createdAt,
+                transferId: transferId,
               ),
           withReferenceMapper: (p0) => p0
               .map(
