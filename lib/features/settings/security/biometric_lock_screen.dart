@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/features/settings/security/pin_screen.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
+import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
 
 class BiometricLockScreen extends ConsumerStatefulWidget {
@@ -43,8 +45,9 @@ class _BiometricLockScreenState extends ConsumerState<BiometricLockScreen>
   }
 
   Future<void> _checkAndLock() async {
-    final enabled = await BiometricService.isEnabled();
-    if (enabled && mounted) {
+    final pinEnabled = await AppPinService.isEnabled();
+    final biometricEnabled = await BiometricService.isEnabled();
+    if ((pinEnabled || biometricEnabled) && mounted) {
       setState(() => _isLocked = true);
       await _authenticate();
     }
@@ -54,15 +57,30 @@ class _BiometricLockScreenState extends ConsumerState<BiometricLockScreen>
     if (_isAuthenticating) return;
     setState(() => _isAuthenticating = true);
 
-    final result = await BiometricService.authenticate(
-      reason: 'Confirma tu identidad para acceder a Kaku',
-    );
+    final pinEnabled = await AppPinService.isEnabled();
 
-    if (mounted) {
-      setState(() {
-        _isAuthenticating = false;
-        if (result == BiometricResult.success) _isLocked = false;
-      });
+    if (pinEnabled) {
+      // Usa el PIN propio de la app
+      if (mounted) {
+        final verified = await PinScreen.verifyPin(context);
+        if (mounted) {
+          setState(() {
+            _isAuthenticating = false;
+            if (verified) _isLocked = false;
+          });
+        }
+      }
+    } else {
+      // Usa la biometría del sistema
+      final result = await BiometricService.authenticate(
+        reason: 'Confirma tu identidad para acceder a Kaku',
+      );
+      if (mounted) {
+        setState(() {
+          _isAuthenticating = false;
+          if (result == BiometricResult.success) _isLocked = false;
+        });
+      }
     }
   }
 

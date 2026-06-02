@@ -1,4 +1,6 @@
 abstract class AppRoutes {
+  static const String root = '/lock';
+  
   // Tabs principales (dentro del ShellRoute)
   static const String dashboard = '/';
   static const String stats = '/stats';

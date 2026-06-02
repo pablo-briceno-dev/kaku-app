@@ -1,18 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kaku/core/router/app_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/shared/services/app_pin_service.dart';
+import 'package:kaku/shared/services/biometric_service.dart';
 
-class AppShell extends ConsumerWidget {
+class AppShell extends ConsumerStatefulWidget {
   final Widget child;
 
   const AppShell({super.key, required this.child});
 
+  @override
+  ConsumerState<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends ConsumerState<AppShell>
+    with WidgetsBindingObserver {
   // Mismo orden que los BottomNavigationBarItem de abajo
   static const _tabs = AppRoutes.shellTabs;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      resetAuthentication();
+    }
+    if (state == AppLifecycleState.resumed) {
+      _checkLock();
+    }
+  }
+
+  Future<void> _checkLock() async {
+    final pinEnabled = await AppPinService.isEnabled();
+    final biometricEnabled = await BiometricService.isEnabled();
+    if (!pinEnabled && !biometricEnabled) return;
+
+    if (!mounted) return;
+    // Navega a /lock que volverá a pedir autenticación
+    context.go(AppRoutes.root);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
 
     // Calcula qué tab está activo según la URL actual.
@@ -23,7 +64,7 @@ class AppShell extends ConsumerWidget {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: child,
+      body: widget.child,
       bottomNavigationBar: BottomAppBar(
         color: cs.surface,
         elevation: 8,

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/features/settings/widgets/switch_list_tile_child.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class BiometricToggle extends ConsumerWidget {
   const BiometricToggle({super.key});
@@ -49,29 +48,22 @@ class BiometricToggle extends ConsumerWidget {
   ) async {
     final result = await ref
         .read(biometricsEnabledProvider.notifier)
-        .toggle(newValue);
+        .toggle(newValue, context); // ← pasa context para PinScreen
 
     if (!context.mounted) return;
 
-    if (!result.success) {
+    // Solo muestra error si hay mensaje (null = usuario canceló)
+    if (!result.success && result.error != null) {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
           title: const Text('No se pudo configurar'),
-          content: Text(result.error ?? 'Error desconocido'),
+          content: Text(result.error!),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Entendido'),
             ),
-            if (result.error?.contains('Ajustes') == true)
-              FilledButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  openAppSettings();
-                },
-                child: const Text('Abrir Ajustes'),
-              ),
           ],
         ),
       );

@@ -9,19 +9,31 @@ import 'package:kaku/features/categories/category_detail_screen.dart';
 import 'package:kaku/features/dashboard/dashboard_screen.dart';
 import 'package:kaku/features/goals/goals_screen.dart';
 import 'package:kaku/features/settings/budget_list_screen.dart';
+import 'package:kaku/features/settings/security/lock_screen.dart';
 import 'package:kaku/features/settings/settings_screen.dart';
 import 'package:kaku/features/stats/stats_screen.dart';
 import 'package:kaku/features/transactions/add_transaction_screen.dart';
 import 'package:kaku/features/transactions/transaction_detail_screen.dart';
 import 'package:kaku/features/transactions/transactions_screen.dart';
+import 'package:kaku/shared/services/app_pin_service.dart';
+import 'package:kaku/shared/services/biometric_service.dart';
+
+bool _authenticated = false;
+ 
+// Llamado desde AppShell cuando la app vuelve de background
+void resetAuthentication() => _authenticated = false;
+ 
+// Llamado desde LockScreen cuando el usuario autentica exitosamente
+void setAuthenticated()    => _authenticated = true;
 
 // Provider que expone el router a toda la app
 // Se consume en main.dart con: router: ref.watch(routerProvider)
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: AppRoutes.dashboard,
+    initialLocation: AppRoutes.root,
     debugLogDiagnostics: true, //! Quitar en producción
     routes: [
+      GoRoute(path: AppRoutes.root, builder: (_, state) => const LockScreen()),
       // ShellRoute: envuelve todas las pantallas que tienen bottom nav
       ShellRoute(
         builder: (context, state, child) => AppShell(child: child),
@@ -99,5 +111,30 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
     ],
+    redirect: (context, routerState) async {
+      final isLockRoute = routerState.matchedLocation == AppRoutes.root;
+ 
+      // Ya en /lock → no redirigir
+      if (isLockRoute) return null;
+ 
+      // ✅ FIX 2: si ya autenticó en esta sesión → dejar pasar
+      if (_authenticated) return null;
+ 
+      // Si no hay bloqueo activo → dejar pasar sin pasar por /lock
+      final locked = await _isLocked();
+      if (!locked) {
+        _authenticated = true; // no tiene bloqueo, marcar como autenticado
+        return null;
+      }
+ 
+      // Tiene bloqueo y no ha autenticado → ir a /lock
+      return AppRoutes.root;
+    },
   );
 });
+
+Future<bool> _isLocked() async {
+  final pinEnabled = await AppPinService.isEnabled();
+  final biometricEnabled = await BiometricService.isEnabled();
+  return pinEnabled || biometricEnabled;
+}

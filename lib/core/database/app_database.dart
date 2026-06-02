@@ -92,6 +92,18 @@ class AppDatabase extends _$AppDatabase {
       count++;
     }
   }
+
+  Future<void> deleteEverything() async {
+    await transaction(() async {
+      // Orden importante: primero las tablas con foreign keys
+      await delete(transactionsTable).go();
+      await delete(budgetsTable).go();
+      await delete(goalsTable).go();
+      await delete(accountsTable).go();
+      // Las categorías del sistema (id=999) se recrean al iniciar
+      await delete(categoriesTable).go();
+    });
+  }
 }
 
 LazyDatabase _openConnection() {

@@ -1,6 +1,10 @@
 // ── Estado de biometría ───────────────────────────────────
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/features/settings/security/pin_screen.dart';
+import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
+import 'package:kaku/shared/services/notification_service.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:riverpod/legacy.dart';
 
@@ -16,41 +20,84 @@ class BiometricsNotifier extends StateNotifier<bool> {
   }
 
   Future<void> _load() async {
-    state = await BiometricService.isEnabled();
+    // Activo si hay PIN configurado O si la biometría del sistema está activa
+    final pinEnabled = await AppPinService.isEnabled();
+    final biometricEnabled = await BiometricService.isEnabled();
+    state = pinEnabled || biometricEnabled;
   }
 
-  // Activa: pide autenticación antes de guardar
-  // Desactiva: también pide autenticación (para que otro no lo desactive)
-  Future<BiometricToggleResult> toggle(bool newValue) async {
-    final result = await BiometricService.authenticate(
-      reason: newValue
-          ? 'Confirma tu identidad para activar la biometría'
-          : 'Confirma tu identidad para desactivar la biometría',
-    );
+  Future<BiometricToggleResult> toggle(
+    bool newValue,
+    BuildContext context,
+  ) async {
+    if (newValue) {
+      return _activate(context);
+    } else {
+      return _deactivate(context);
+    }
+  }
 
-    if (result != BiometricResult.success) {
+  // ── Activar: intenta biometría del sistema, si no → PIN propio ──
+  Future<BiometricToggleResult> _activate(BuildContext context) async {
+    final systemAvailable = await BiometricService.isAvailable();
+
+    if (systemAvailable) {
+      // Intenta con biometría/PIN del sistema
+      final result = await BiometricService.authenticate(
+        reason: 'Confirma tu identidad para activar el bloqueo',
+      );
+      if (result == BiometricResult.success) {
+        await BiometricService.setEnabled(true);
+        state = true;
+        return BiometricToggleResult(success: true);
+      }
+    }
+
+    // Fallback: crear PIN propio de la app
+    if (!context.mounted) return BiometricToggleResult(success: false);
+    final pin = await PinScreen.createPin(context);
+    if (pin == null) {
       return BiometricToggleResult(
         success: false,
-        error: _errorMessage(result),
+        error: null, // el usuario canceló — no mostrar error
       );
     }
 
-    await BiometricService.setEnabled(newValue);
-    state = newValue;
+    await AppPinService.savePin(pin);
+    state = true;
     return BiometricToggleResult(success: true);
   }
 
-  String _errorMessage(BiometricResult result) => switch (result) {
-    BiometricResult.notEnrolled =>
-      'No tienes biometría configurada en el dispositivo. '
-          'Ve a Ajustes → Seguridad para configurarla.',
-    BiometricResult.notAvailable =>
-      'Tu dispositivo no soporta autenticación biométrica.',
-    BiometricResult.lockedOut =>
-      'Biometría bloqueada por demasiados intentos. '
-          'Desbloquea el dispositivo con tu PIN primero.',
-    _ => 'No se pudo autenticar. Intenta de nuevo.',
-  };
+  // ── Desactivar: pide verificación antes ──────────────
+  Future<BiometricToggleResult> _deactivate(BuildContext context) async {
+    final pinEnabled = await AppPinService.isEnabled();
+
+    bool verified = false;
+
+    if (pinEnabled) {
+      // Verifica con el PIN propio
+      if (!context.mounted) return BiometricToggleResult(success: false);
+      verified = await PinScreen.verifyPin(context);
+    } else {
+      // Verifica con biometría del sistema
+      final result = await BiometricService.authenticate(
+        reason: 'Confirma tu identidad para desactivar el bloqueo',
+      );
+      verified = result == BiometricResult.success;
+    }
+
+    if (!verified) {
+      return BiometricToggleResult(
+        success: false,
+        error: 'No se pudo verificar tu identidad.',
+      );
+    }
+
+    await AppPinService.clearPin();
+    await BiometricService.setEnabled(false);
+    state = false;
+    return BiometricToggleResult(success: true);
+  }
 }
 
 class BiometricToggleResult {
@@ -66,3 +113,51 @@ final biometricTypeProvider = FutureProvider<BiometricType?>((ref) async {
   if (!hasBiometrics) return null; // solo PIN disponible
   return BiometricService.getAvailableType();
 });
+
+// ── Estado de notificaciones ─────────────────────────────
+final notificationsEnabledProvider =
+    StateNotifierProvider<NotificationsNotifier, bool>((ref) {
+      return NotificationsNotifier();
+    });
+
+class NotificationsNotifier extends StateNotifier<bool> {
+  NotificationsNotifier() : super(false) {
+    _load();
+  }
+
+  Future<void> _load() async {
+    final hasPermission = await NotificationService.hasPermission();
+    final isEnabled = await NotificationService.isEnabled();
+    // Solo está "activo" si tiene permiso Y está habilitado
+    state = hasPermission && isEnabled;
+  }
+
+  Future<NotificationToggleResult> toggle(bool newValue) async {
+    if (newValue) {
+      // Activar: pedir permiso del sistema si no lo tiene
+      final hasPermission = await NotificationService.hasPermission();
+      if (!hasPermission) {
+        final granted = await NotificationService.requestPermission();
+        if (!granted) {
+          return NotificationToggleResult(
+            success: false,
+            permissionDenied: true,
+          );
+        }
+      }
+    }
+
+    await NotificationService.setEnabled(newValue);
+    state = newValue;
+    return NotificationToggleResult(success: true);
+  }
+}
+
+class NotificationToggleResult {
+  final bool success;
+  final bool permissionDenied;
+  const NotificationToggleResult({
+    required this.success,
+    this.permissionDenied = false,
+  });
+}

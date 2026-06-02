@@ -5,7 +5,8 @@ import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/models/theme_model.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/backup_sheet.dart';
-import 'package:kaku/features/settings/biometric_toggle.dart';
+import 'package:kaku/features/settings/danger_zone_sheet.dart';
+import 'package:kaku/features/settings/security/biometric_toggle.dart';
 import 'package:kaku/features/settings/currency_sheet.dart';
 import 'package:kaku/features/settings/export_sheet.dart';
 import 'package:kaku/features/settings/notifications_toggle.dart';
@@ -164,22 +165,8 @@ class SettingsScreen extends ConsumerWidget {
           SectionCard(
             children: [
               BiometricToggle(),
-              // SwitchListTileChild(
-              //   label: 'Biometría / FaceID',
-              //   subtitle: 'Protege la app al abrirse',
-              //   icon: Icons.security,
-              //   value: true,
-              //   onChanged: (v) {},
-              // ),
               const Divider(height: 1),
               NotificationsToggle(),
-              // SwitchListTileChild(
-              //   label: 'Notificaciones',
-              //   subtitle: 'Alertas de presupuesto',
-              //   icon: Icons.notifications,
-              //   value: true,
-              //   onChanged: (v) {},
-              // ),
             ],
           ),
           SectionHeader('Zona peligrosa'),
@@ -189,7 +176,11 @@ class SettingsScreen extends ConsumerWidget {
                 label: 'Borrar todos los datos',
                 subtitle: 'Elimina todos los datos de la app',
                 icon: Icons.delete,
-                onTap: () {},
+                onTap: () => AppBottomSheet.show(
+                  context,
+                  // title: 'Borrar datos',
+                  child: const DangerZoneSheet(),
+                ),
               ),
             ],
           ),
