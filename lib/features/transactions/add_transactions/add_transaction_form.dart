@@ -15,7 +15,6 @@ import 'package:kaku/shared/widgets/date_picker_field.dart';
 import 'package:kaku/shared/widgets/receipt_picker.dart';
 
 class AddTransactionForm extends ConsumerStatefulWidget {
-
   const AddTransactionForm({super.key});
 
   @override
@@ -92,7 +91,6 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                     if (selectedType == TransactionType.expense &&
                         CurrencyFormatter.parse(value, currency) >
                             (account?.balance ?? 0.0)) {
-                      debugPrint('balance: ${account?.balance}');
                       return 'Saldo insuficiente';
                     }
                     return null;
@@ -142,7 +140,14 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Expanded(child: SelectedAccount()),
+                    Expanded(
+                      child: SelectedAccount(
+                        accountId: selectedAccount,
+                        onTap: (accountId) =>
+                            ref.read(selectedAccountProvider.notifier).state =
+                                accountId,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),

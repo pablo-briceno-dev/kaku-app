@@ -12,7 +12,7 @@ import 'package:kaku/features/settings/budget_list_screen.dart';
 import 'package:kaku/features/settings/security/lock_screen.dart';
 import 'package:kaku/features/settings/settings_screen.dart';
 import 'package:kaku/features/stats/stats_screen.dart';
-import 'package:kaku/features/transactions/add_transaction_screen.dart';
+import 'package:kaku/features/transactions/add_transactions/add_transaction_screen.dart';
 import 'package:kaku/features/transactions/transaction_detail_screen.dart';
 import 'package:kaku/features/transactions/transactions_screen.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';

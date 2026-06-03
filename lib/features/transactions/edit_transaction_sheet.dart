@@ -197,7 +197,16 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        Expanded(child: SelectedAccount()),
+                        Expanded(
+                          child: SelectedAccount(
+                            accountId: selectedAccount,
+                            onTap: (accountId) =>
+                                ref
+                                        .read(selectedAccountProvider.notifier)
+                                        .state =
+                                    accountId,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),

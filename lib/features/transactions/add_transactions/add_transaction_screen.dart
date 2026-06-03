@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/models/transaction_type.dart';
-import 'package:kaku/features/transactions/add_transaction_form.dart';
+import 'package:kaku/features/transactions/add_transactions/add_transaction_form.dart';
+import 'package:kaku/features/transactions/add_transactions/add_transaction_transfer_form.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
@@ -61,7 +62,6 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen>
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    debugPrint('selectedType: ${_tabController.index}');
     final currentColor = switch (_currentTab) {
       0 => TransactionType.expense.color,
       1 => TransactionType.income.color,
@@ -107,7 +107,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen>
         children: [
           AddTransactionForm(),
           AddTransactionForm(),
-          AddTransactionForm(),
+          AddTransactionTransferForm(),
         ],
       ),
     );

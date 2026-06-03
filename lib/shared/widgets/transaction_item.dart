@@ -37,11 +37,20 @@ class TransactionItem extends StatelessWidget {
     final tx = txWithCat.transaction;
     final cat = txWithCat.category;
 
-    final isExpense = tx.type == TransactionType.expense.name;
-    final amountColor = isExpense ? cs.error : const Color(0xFF6ADF9A);
-    final amountPrefix = isExpense ? '-' : '+';
+    final transactionType = TransactionType.values
+        .where((type) => type.name == tx.type)
+        .first;
+    final amountColor = transactionType.color;
+    final amountPrefix = transactionType.prefix;
 
     final hasActions = slideActions != null && slideActions!.isNotEmpty;
+
+    Widget buildIcon() {
+      if (tx.type == TransactionType.transfer.name) {
+        return Icon(Icons.swap_horiz_rounded, color: cs.secondary);
+      }
+      return Text(cat?.emoji ?? '💸', style: const TextStyle(fontSize: 18));
+    }
 
     Widget item = Padding(
       padding: const EdgeInsets.only(bottom: 5),
@@ -61,10 +70,7 @@ class TransactionItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               alignment: Alignment.center,
-              child: Text(
-                cat?.emoji ?? '💸',
-                style: const TextStyle(fontSize: 18),
-              ),
+              child: buildIcon(),
             ),
             const SizedBox(width: 12),
             Expanded(

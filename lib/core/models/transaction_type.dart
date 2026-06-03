@@ -37,4 +37,15 @@ enum TransactionType {
         return Colors.blue;
     }
   }
+
+  String get prefix {
+    switch (this) {
+      case TransactionType.expense:
+        return '-';
+      case TransactionType.income:
+        return '+';
+      case TransactionType.transfer:
+        return '';
+    }
+  }
 }

@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/features/transactions/accounts_bottom_sheet.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
-import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 
 class SelectedAccount extends ConsumerWidget {
-  const SelectedAccount({super.key});
+  final int? accountId;
+  final Function(int) onTap;
+
+  const SelectedAccount({super.key, required this.onTap, this.accountId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
-    final selectedAccount = ref.watch(selectedAccountProvider);
     final activeAccounts = ref.watch(activeAccountsProvider).value;
     final account = activeAccounts?.length == 1
         ? activeAccounts![0]
         : activeAccounts
-              ?.where((e) => selectedAccount != null && e.id == selectedAccount)
+              ?.where((e) => accountId != null && e.id == accountId)
               .firstOrNull;
 
     return InkWell(
@@ -26,7 +27,7 @@ class SelectedAccount extends ConsumerWidget {
               context,
               title: 'Cuentas',
               isFullScreen: true,
-              child: AccountsBottomSheet(),
+              child: AccountsBottomSheet(onTap: onTap),
             ),
       borderRadius: BorderRadius.circular(12),
       child: Container(

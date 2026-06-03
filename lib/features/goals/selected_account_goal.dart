@@ -26,7 +26,11 @@ class SelectedAccountGoal extends ConsumerWidget {
               context,
               title: 'Cuentas',
               isFullScreen: true,
-              child: AccountsBottomSheet(),
+              child: AccountsBottomSheet(
+                onTap: (accountId) =>
+                    ref.read(selectedAccountProvider.notifier).state =
+                        accountId,
+              ),
             ),
       borderRadius: BorderRadius.circular(12),
       child: Container(

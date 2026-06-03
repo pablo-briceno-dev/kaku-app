@@ -11,7 +11,9 @@ import 'package:kaku/shared/widgets/card_account_item.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
 
 class AccountsBottomSheet extends ConsumerWidget {
-  const AccountsBottomSheet({super.key});
+  final Function(int) onTap;
+
+  const AccountsBottomSheet({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,8 +73,7 @@ class AccountsBottomSheet extends ConsumerWidget {
                         (e) => e.label == accountData.currency,
                       ),
                       onTap: () {
-                        ref.read(selectedAccountProvider.notifier).state =
-                            accountData.id;
+                        onTap(accountData.id);
                         Navigator.pop(context);
                       },
                     ),
