@@ -89,7 +89,7 @@ class AppDatabase extends _$AppDatabase {
           name: name,
           emoji: Value(emoji),
           colorHex: Value(color),
-          isSystem: Value(false),
+          isSystem: Value(true),
           sortOrder: Value(count),
           isIncome: Value(isIncome),
         ),
