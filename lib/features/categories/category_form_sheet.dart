@@ -7,8 +7,7 @@ import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/features/categories/widgets/toggle_is_income_category.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
-import 'package:kaku/shared/utils/emojis_defaults.dart';
-import 'package:kaku/shared/widgets/emoji_picker.dart';
+import 'package:kaku/shared/widgets/emoji_picker_field.dart';
 import 'package:kaku/shared/widgets/preview_icon_for_widgets.dart';
 import 'package:kaku/shared/widgets/selected_color_picker.dart';
 
@@ -23,32 +22,27 @@ class CategoryFormSheet extends ConsumerStatefulWidget {
 }
 
 class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emojiController = TextEditingController(text: '0');
-  TextEditingController _colorController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _colorController = TextEditingController();
   TransactionType selectedType = TransactionType.expense;
-  final List<String> _emojis = categoryEmojis;
+  String _selectedEmoji = '🍕';
 
   @override
   void initState() {
     super.initState();
     if (widget.category != null) {
       _nameController.text = widget.category!.name;
-      _emojiController.text = _emojis
-          .indexOf(widget.category!.emoji)
-          .toString();
+      _selectedEmoji = widget.category!.emoji;
       _colorController.text = widget.category!.colorHex;
       selectedType = widget.category!.isIncome
           ? TransactionType.income
           : TransactionType.expense;
     } else {
       _nameController.text = 'Nueva Categoría';
-      _emojiController.text = '0';
       _colorController.text = '#FF6B6B';
     }
 
     _nameController.addListener(_refresh);
-    _emojiController.addListener(_refresh);
     _colorController.addListener(_refresh);
   }
 
@@ -68,7 +62,7 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
           Center(
             child: PreviewIconForWidgets(
               color: hexToColor(_colorController.text),
-              icon: _emojis[int.tryParse(_emojiController.text) ?? 0],
+              icon: _selectedEmoji,
               label: _nameController.text,
               subtitle: 'Vista previa',
               size: 90,
@@ -85,26 +79,13 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
             decoration: const InputDecoration(labelText: 'Nombre*'),
           ),
           const SizedBox(height: 16),
-          // emoji_picker.EmojiPicker(
-          //   onEmojiSelected: (category, emoji) {
-          //     setState(() => _emojiController.text = emoji.emoji);
-          //     Navigator.pop(context);
-          //   },
-          //   config: emoji_picker.Config(
-          //     height: 280,
-          //     emojiViewConfig: emoji_picker.EmojiViewConfig(
-          //       backgroundColor: Theme.of(context).colorScheme.surface,
-          //     ),
-          //   ),
-          // ),
-          EmojiPicker(
-            emojis: _emojis,
-            selectedEmoji: int.tryParse(_emojiController.text) ?? 0,
-            onEmojiSelected: (index) =>
-                setState(() => _emojiController.text = index.toString()),
+          EmojiPickerField(
+            selectedEmoji: _selectedEmoji,
+            onChanged: (emoji) => setState(() => _selectedEmoji = emoji),
           ),
           const SizedBox(height: 16),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text('Color', style: ts.titleMedium),
               const SizedBox(width: 20),
@@ -137,9 +118,7 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
                           Category(
                             id: widget.category!.id,
                             name: _nameController.text,
-                            emoji:
-                                _emojis[int.tryParse(_emojiController.text) ??
-                                    0],
+                            emoji: _selectedEmoji,
                             colorHex: _colorController.text,
                             isDefault: widget.category!.isDefault,
                             isIncome: selectedType == TransactionType.income,
@@ -152,9 +131,7 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
                         await dao.insertCategory(
                           CategoriesTableCompanion.insert(
                             name: _nameController.text,
-                            emoji: drift.Value(
-                              _emojis[int.tryParse(_emojiController.text) ?? 0],
-                            ),
+                            emoji: drift.Value(_selectedEmoji),
                             colorHex: drift.Value(_colorController.text),
                             isDefault: drift.Value(false),
                             isIncome: drift.Value(

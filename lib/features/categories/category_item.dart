@@ -60,7 +60,7 @@ class CategoryItem extends ConsumerWidget {
                 ),
               ),
               // ── Activar / Desactivar ──
-              if (!category.isSystem)
+              if (!category.isSystem) ...[
                 CustomSlidableAction(
                   onPressed: (_) => _toggleActive(context, ref),
                   backgroundColor: isActive
@@ -89,27 +89,28 @@ class CategoryItem extends ConsumerWidget {
                     ],
                   ),
                 ),
-              CustomSlidableAction(
-                onPressed: (_) => _tryDelete(context, ref),
-                backgroundColor: cs.error.withValues(alpha: 0.12),
-                foregroundColor: cs.error,
-                borderRadius: BorderRadius.circular(12),
-                padding: EdgeInsets.zero,
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.delete_outline_rounded, size: 20),
-                    SizedBox(height: 4),
-                    Text(
-                      'Eliminar',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
+                CustomSlidableAction(
+                  onPressed: (_) => _tryDelete(context, ref),
+                  backgroundColor: cs.error.withValues(alpha: 0.12),
+                  foregroundColor: cs.error,
+                  borderRadius: BorderRadius.circular(12),
+                  padding: EdgeInsets.zero,
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.delete_outline_rounded, size: 20),
+                      SizedBox(height: 4),
+                      Text(
+                        'Eliminar',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
           child: CategoryTile(

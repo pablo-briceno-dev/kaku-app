@@ -7,11 +7,10 @@ import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/features/goals/goals_list.dart';
-import 'package:kaku/shared/utils/emojis_defaults.dart';
-import 'package:kaku/shared/widgets/emoji_picker.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/date_picker_field.dart';
+import 'package:kaku/shared/widgets/emoji_picker_field.dart';
 
 class GoalFormSheet extends ConsumerStatefulWidget {
   final GoalsListConfig? goal;
@@ -23,11 +22,10 @@ class GoalFormSheet extends ConsumerStatefulWidget {
 }
 
 class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
+  String _selectedEmoji = '🎯';
   DateTime _deadline = DateTime.now();
-  final List<String> _emojis = goalEmojis;
   final controllers = <String, TextEditingController>{
     'name': TextEditingController(),
-    'emoji': TextEditingController(),
     'targetAmount': TextEditingController(),
   };
 
@@ -37,9 +35,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
     final currency = ref.read(currencyProvider);
     if (widget.goal != null) {
       controllers['name']?.text = widget.goal!.name;
-      controllers['emoji']?.text = _emojis
-          .indexOf(widget.goal!.emoji)
-          .toString();
+      _selectedEmoji = widget.goal!.emoji;
       controllers['targetAmount']?.text = CurrencyFormatter.format(
         widget.goal!.targetAmount,
         currency,
@@ -49,7 +45,6 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
       );
     } else {
       controllers['name']?.text = 'Nueva Meta';
-      controllers['emoji']?.text = _emojis[0];
       controllers['targetAmount']?.text = CurrencyFormatter.format(0, currency);
     }
 
@@ -95,7 +90,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  _emojis[int.tryParse(controllers['emoji']?.text ?? '0') ?? 0],
+                  _selectedEmoji,
                   style: ts.titleLarge?.copyWith(
                     fontWeight: FontWeight.w800,
                     fontSize: 50,
@@ -129,13 +124,11 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
             decoration: const InputDecoration(labelText: 'Nombre*'),
           ),
           const SizedBox(height: 16),
-          Text('Emoji', style: ts.titleMedium),
-          EmojiPicker(
-            emojis: _emojis,
-            selectedEmoji: int.tryParse(controllers['emoji']?.text ?? '0') ?? 0,
-            onEmojiSelected: (index) =>
-                setState(() => controllers['emoji']?.text = index.toString()),
+          EmojiPickerField(
+            selectedEmoji: _selectedEmoji,
+            onChanged: (emoji) => setState(() => _selectedEmoji = emoji),
           ),
+          const SizedBox(height: 26),
           TextFormField(
             controller: controllers['targetAmount'],
             keyboardType: const TextInputType.numberWithOptions(
@@ -185,11 +178,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
                           Goal(
                             id: widget.goal!.id,
                             name: controllers['name']!.text,
-                            emoji:
-                                _emojis[int.tryParse(
-                                      controllers['emoji']?.text ?? '0',
-                                    ) ??
-                                    0],
+                            emoji: _selectedEmoji,
                             targetAmount: CurrencyFormatter.parse(
                               controllers['targetAmount']!.text,
                               currency,
@@ -211,12 +200,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
                         await dao.insertGoal(
                           GoalsTableCompanion.insert(
                             name: controllers['name']!.text,
-                            emoji: drift.Value(
-                              _emojis[int.tryParse(
-                                    controllers['emoji']?.text ?? '0',
-                                  ) ??
-                                  0],
-                            ),
+                            emoji: drift.Value(_selectedEmoji),
                             targetAmount: CurrencyFormatter.parse(
                               controllers['targetAmount']!.text,
                               currency,
