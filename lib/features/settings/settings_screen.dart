@@ -6,6 +6,7 @@ import 'package:kaku/core/models/theme_model.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/backup_sheet.dart';
 import 'package:kaku/features/settings/danger_zone_sheet.dart';
+import 'package:kaku/features/settings/local_backup_sheet.dart';
 import 'package:kaku/features/settings/security/biometric_toggle.dart';
 import 'package:kaku/features/settings/currency_sheet.dart';
 import 'package:kaku/features/settings/export_sheet.dart';
@@ -20,8 +21,10 @@ import 'package:kaku/features/settings/widgets/switch_list_tile_child.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
+import 'package:kaku/shared/services/premium_service.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
+import 'package:kaku/shared/widgets/premium_gate.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -119,18 +122,33 @@ class SettingsScreen extends ConsumerWidget {
           SectionHeader('Datos'),
           SectionCard(
             children: [
-              ListTileChild(
-                label: 'Backup Google Drive',
-                subtitle: backupSubtitle.when(
-                  data: (s) => s,
-                  error: (e, _) => 'Sin sincronizar',
-                  loading: () => 'Cargando...',
+              PremiumGate(
+                feature: PremiumFeature.backupDrive,
+                showLockBadge: true,
+                child: ListTileChild(
+                  label: 'Backup Google Drive',
+                  subtitle: backupSubtitle.when(
+                    data: (s) => s,
+                    error: (e, _) => 'Sin sincronizar',
+                    loading: () => 'Cargando...',
+                  ),
+                  icon: Icons.backup,
+                  onTap: () => AppBottomSheet.show(
+                    context,
+                    title: 'Backup',
+                    child: const BackupSheet(),
+                  ),
                 ),
-                icon: Icons.backup,
+              ),
+              const Divider(height: 1),
+              ListTileChild(
+                label: 'Backup local',
+                subtitle: 'Gratis · Comparte el archivo donde quieras',
+                icon: Icons.save_outlined,
                 onTap: () => AppBottomSheet.show(
                   context,
-                  title: 'Backup',
-                  child: const BackupSheet(),
+                  title: 'Backup local',
+                  child: const LocalBackupSheet(),
                 ),
               ),
               const Divider(height: 1),

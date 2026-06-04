@@ -4,9 +4,11 @@ import 'package:kaku/features/goals/goal_form_sheet.dart';
 import 'package:kaku/features/goals/goals_list.dart';
 import 'package:kaku/features/goals/widgets/goals_list_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/services/premium_service.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
+import 'package:kaku/shared/widgets/premium_gate.dart';
 
 class GoalsScreen extends ConsumerWidget {
   const GoalsScreen({super.key});
@@ -62,13 +64,29 @@ class GoalsScreen extends ConsumerWidget {
         defaultActions: true,
         actions: [
           TextButton.icon(
-            onPressed: () => AppBottomSheet.show(
-              context,
-              title: 'Nueva Meta',
-              useRootNavigator: true,
-              isFullScreen: true,
-              child: GoalFormSheet(),
-            ),
+            onPressed: () async {
+              final blocked = await PremiumLimitChecker.check(
+                context: context,
+                feature: PremiumFeature.unlimitedGoals,
+                currentCount: activeGoalsAsync.when(
+                  data: (goals) => goals.length,
+                  error: (e, _) => 0,
+                  loading: () => 0,
+                ),
+                limit: PremiumLimits.maxGoals,
+              );
+              if (blocked) return;
+
+              if (context.mounted) {
+                AppBottomSheet.show(
+                  context,
+                  title: 'Nueva Meta',
+                  useRootNavigator: true,
+                  isFullScreen: true,
+                  child: GoalFormSheet(),
+                );
+              }
+            },
             icon: Icon(Icons.add),
             label: Text('Nueva'),
           ),

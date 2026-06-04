@@ -61,6 +61,7 @@ class ExportService {
     required List<TransactionWithCategory> transactions,
     required CurrencyType currency,
     required String periodLabel,
+    bool withReceipts = false, // ← true solo para premium
   }) async {
     final doc = pw.Document();
 
@@ -71,10 +72,10 @@ class ExportService {
         .where((t) => t.transaction.type == 'income')
         .fold(0.0, (s, t) => s + t.transaction.amount);
 
-    // ✅ Fecha del reporte usando DateTime.now() directamente
     final now = DateTime.now();
     final nowLabel = '${now.day}/${now.month}/${now.year}';
 
+    // ── Página principal con la tabla ──
     doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -164,7 +165,6 @@ class ExportService {
               ...transactions.map((txc) {
                 final tx = txc.transaction;
                 final isExp = tx.type == 'expense';
-                // ✅ Fecha formateada con DateFormatter.dayMonth()
                 final dateStr = DateFormatter.dayMonth(tx.date);
                 return pw.TableRow(
                   children: [
@@ -191,6 +191,63 @@ class ExportService {
       ),
     );
 
+    // ── Páginas de recibos (solo premium) ──────────────────
+    if (withReceipts) {
+      for (final txc in transactions) {
+        final tx = txc.transaction;
+        if (tx.receiptPath == null) continue;
+
+        final receiptFile = File(tx.receiptPath!);
+        if (!await receiptFile.exists()) continue;
+
+        final imageBytes = await receiptFile.readAsBytes();
+        final image = pw.MemoryImage(imageBytes);
+        final dateStr = DateFormatter.dayMonth(tx.date);
+        final desc = tx.description ?? txc.category?.name ?? 'Sin descripción';
+
+        doc.addPage(
+          pw.Page(
+            pageFormat: PdfPageFormat.a4,
+            margin: const pw.EdgeInsets.all(32),
+            build: (context) => pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // Mini encabezado del recibo
+                pw.Container(
+                  padding: const pw.EdgeInsets.all(10),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.grey100,
+                    borderRadius: pw.BorderRadius.circular(6),
+                  ),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text(
+                        'Recibo — $desc',
+                        style: pw.TextStyle(
+                          fontWeight: pw.FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                      pw.Text(
+                        '$dateStr · ${CurrencyFormatter.format(tx.amount, currency)}',
+                        style: const pw.TextStyle(fontSize: 10),
+                      ),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 16),
+                // Imagen del recibo centrada
+                pw.Center(
+                  child: pw.Image(image, fit: pw.BoxFit.contain, height: 600),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    }
+
     final bytes = await doc.save();
     final dir = await getApplicationDocumentsDirectory();
     final file = File('${dir.path}/kaku_reporte.pdf');
@@ -205,44 +262,23 @@ class ExportService {
   }
 
   // ── PDF con imágenes de recibos (PREMIUM) ─────────────────
+  // Mantiene compatibilidad — delega a exportPdf con withReceipts: true
   static Future<void> exportPdfWithReceipts({
     required List<TransactionWithCategory> transactions,
-    required String currency,
+    required CurrencyType currency,
     required String periodLabel,
   }) async {
-    // Verificar que sea premium antes de llamar
     final canExport = await PremiumService.canDo(
       PremiumFeature.exportPdfWithReceipts,
     );
     if (canExport != null) throw Exception(canExport);
 
-    final doc = pw.Document();
-    // ... mismo código del PDF básico pero agrega las imágenes:
-
-    // Para cada transacción con recibo:
-    for (final txc in transactions) {
-      final tx = txc.transaction;
-      if (tx.receiptPath == null) continue;
-
-      final file = File(tx.receiptPath!);
-      if (!await file.exists()) continue;
-
-      final imageBytes = await file.readAsBytes();
-      final image = pw.MemoryImage(imageBytes);
-
-      // Agrega miniatura en la fila de la tabla
-      doc.addPage(
-        pw.Page(
-          build: (context) => pw.Column(
-            children: [
-              pw.Text('Recibo — ${DateFormatter.dayMonth(tx.date)}'),
-              pw.SizedBox(height: 8),
-              pw.Image(image, height: 200, fit: pw.BoxFit.contain),
-            ],
-          ),
-        ),
-      );
-    }
+    await exportPdf(
+      transactions: transactions,
+      currency: currency,
+      periodLabel: periodLabel,
+      withReceipts: true,
+    );
   }
 
   static pw.Widget _summaryItem(String label, String value, PdfColor color) =>
