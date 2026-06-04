@@ -4,8 +4,10 @@ import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/features/categories/categories_list.dart';
 import 'package:kaku/features/categories/category_form_sheet.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/services/premium_service.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
+import 'package:kaku/shared/widgets/premium_gate.dart';
 
 class CategoriesScreen extends ConsumerStatefulWidget {
   const CategoriesScreen({super.key});
@@ -39,7 +41,14 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
         title: const Text('Categorías'),
         defaultActions: false,
         actions: [
-          TextButton(onPressed: _openCreateForm, child: const Text('+ Nueva')),
+          PremiumGate(
+            feature: PremiumFeature.unlimitedCategories,
+            showLockBadge: false,
+            child: TextButton(
+              onPressed: _openCreateForm,
+              child: Text('+ Nueva'),
+            ),
+          ),
         ],
         bottom: TabBar(
           controller: _tabController,

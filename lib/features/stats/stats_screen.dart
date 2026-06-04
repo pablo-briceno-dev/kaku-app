@@ -10,6 +10,7 @@ import 'package:kaku/features/stats/spending_line_chart.dart';
 import 'package:kaku/features/stats/widgets/chart_skeleton.dart';
 import 'package:kaku/features/stats/widgets/section_title.dart';
 import 'package:kaku/features/stats/widgets/stats_empty_state.dart';
+import 'package:kaku/shared/providers/premium_provider.dart';
 import 'package:kaku/shared/providers/stats_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
@@ -21,6 +22,7 @@ class StatsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
+    final isPremium = ref.watch(isPremiumProvider);
     final params = ref.watch(selectedMonthProvider);
     final currency = ref.watch(currencyProvider);
     final prevParams = BudgetCalculator.previousMonth(
@@ -112,25 +114,45 @@ class StatsScreen extends ConsumerWidget {
                     currency: currency,
                   ),
                 ),
-                const SizedBox(height: 28),
-                const SectionTitle(
-                  title: 'Tendencia',
-                  subtitle: 'Últimos 6 meses',
+                isPremium.when(
+                  loading: () => const SizedBox.shrink(),
+                  error: (e, _) => const SizedBox.shrink(),
+                  data: (isPrem) {
+                    if (isPrem) {
+                      return Column(
+                        children: [
+                          const SizedBox(height: 28),
+                          const SectionTitle(
+                            title: 'Tendencia',
+                            subtitle: 'Últimos 6 meses',
+                          ),
+                          trendAsync.when(
+                            data: (trend) => SpendingLineChart(
+                              points: trend,
+                              currency: currency,
+                            ),
+                            error: (e, _) => Text('Error: $e'),
+                            loading: () => const ChartSkeleton(height: 160),
+                          ),
+                          const SizedBox(height: 28),
+                          SectionTitle(
+                            title: 'Mes vs anterior',
+                            subtitle: DateFormat('MMMM').format(
+                              DateTime(prevParams.year, prevParams.month),
+                            ),
+                          ),
+                          _buildComparison(
+                            params,
+                            prevParams,
+                            prevAsync,
+                            currency,
+                          ),
+                        ],
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
                 ),
-                trendAsync.when(
-                  data: (trend) =>
-                      SpendingLineChart(points: trend, currency: currency),
-                  error: (e, _) => Text('Error: $e'),
-                  loading: () => const ChartSkeleton(height: 160),
-                ),
-                const SizedBox(height: 28),
-                SectionTitle(
-                  title: 'Mes vs anterior',
-                  subtitle: DateFormat(
-                    'MMMM',
-                  ).format(DateTime(prevParams.year, prevParams.month)),
-                ),
-                _buildComparison(params, prevParams, prevAsync, currency),
 
                 const SizedBox(height: 32),
               ]),

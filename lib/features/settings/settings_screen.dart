@@ -182,7 +182,11 @@ class SettingsScreen extends ConsumerWidget {
           SectionHeader('Seguridad'),
           SectionCard(
             children: [
-              BiometricToggle(),
+              PremiumGate(
+                feature: PremiumFeature.pinLock,
+                showLockBadge: true,
+                child: BiometricToggle(),
+              ),
               const Divider(height: 1),
               NotificationsToggle(),
             ],

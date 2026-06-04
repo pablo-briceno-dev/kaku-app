@@ -5,8 +5,10 @@ import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/models/budget_progress.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
+import 'package:kaku/shared/services/premium_service.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
+import 'package:kaku/shared/widgets/premium_gate.dart';
 import 'budget_form_sheet.dart';
 
 class BudgetListScreen extends ConsumerWidget {
@@ -360,29 +362,44 @@ class _CategoryBudgetTile extends ConsumerWidget {
   };
 
   Future<void> _openForm(BuildContext context, WidgetRef ref) async {
-    final saved = await AppBottomSheet.show<bool>(
-      context,
-      title: budgetProgress != null
-          ? 'Editar presupuesto'
-          : 'Nuevo presupuesto',
-      subtitle: '${category.emoji} ${category.name}',
-      child: BudgetFormSheet(
-        category: category,
-        month: month,
-        year: year,
-        existingBudget: budgetProgress?.budget,
+    final selectedMonth = ref.watch(selectedMonthProvider);
+    final budgetsAsync = ref.watch(budgetProgressProvider(selectedMonth));
+    final blocked = await PremiumLimitChecker.check(
+      context: context,
+      feature: PremiumFeature.unlimitedBudgets,
+      currentCount: budgetsAsync.when(
+        data: (budgets) => budgets.length,
+        error: (e, _) => 0,
+        loading: () => 0,
       ),
+      limit: PremiumLimits.maxBudgets,
     );
-
-    // El stream de budgetProgressProvider se actualiza solo
-    // cuando se guarda — no hay que hacer nada aquí.
-    if (saved == true && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Presupuesto guardado'),
-          behavior: SnackBarBehavior.floating,
+    if (blocked) return;
+    if (context.mounted) {
+      final saved = await AppBottomSheet.show<bool>(
+        context,
+        title: budgetProgress != null
+            ? 'Editar presupuesto'
+            : 'Nuevo presupuesto',
+        subtitle: '${category.emoji} ${category.name}',
+        child: BudgetFormSheet(
+          category: category,
+          month: month,
+          year: year,
+          existingBudget: budgetProgress?.budget,
         ),
       );
+
+      // El stream de budgetProgressProvider se actualiza solo
+      // cuando se guarda — no hay que hacer nada aquí.
+      if (saved == true && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Presupuesto guardado'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
 }
