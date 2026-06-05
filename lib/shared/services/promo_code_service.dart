@@ -5,58 +5,56 @@ import 'package:kaku/shared/services/premium_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PromoCodeService {
-  // ── Códigos válidos (SHA-256 del código original) ────────
-  //
-  // Para agregar un código nuevo:
-  //   1. Elige el código: "KAKU-BETA-2026"
-  //   2. Calcula su hash ejecutando en Dart:
-  //      print(sha256.convert(utf8.encode("KAKU-BETA-2026")).toString());
-  //   3. Agrega el hash a este Set
-  //   4. Comparte SOLO el código original con tus testers
-  //      (nunca el hash)
-  static const _validHashes = <String>{
-    // "KAKU-BETA-2026"
-    'e3b0c44298fc1c149afb4c8996fb92427ae41e4649b934ca495991b7852b855',
-    // "PABLO-PREMIUM"
-    'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3',
-    // Agrega más hashes aquí según necesites
-    // Hasta 100 testers sin problema
-  };
- 
   static const _kUsedCodes = 'used_promo_codes';
- 
+
+  // ── Hashes de códigos válidos ─────────────────────────
+  static const _validHashes = <String>{
+    // 'KAKU-BETA-2026' ← código general para testers
+    '00d4feaecca1f7a590037b420499c9ee0fc1eddbf14d6159c17615ac95dcdfba',
+    // 'PABLO-DEV' ← tu código personal
+    '9889c38cd0f288c84018b15f7e11273fe06130faf3a036d5e52e10f93ace2097',
+    // 'TESTER-01'
+    'c998a762fb566c14af67f5e12ed5f39916608b038a8b06555f6253326d419e4c',
+    // 'TESTER-02'
+    '713498a3731aedf97e01724e2e4b04ff857a61737da9fba51797ff44380288a7',
+    // 'TESTER-03'
+    '90d3f92cb9dff39db9d49efe3d110e9ae60e9d11550e986c98452d7e70bc88ad',
+    // Agrega más hashes aquí cuando necesites más testers
+  };
+
+  // ── Canjear un código ─────────────────────────────────
   static Future<RedeemResult> redeem(String code) async {
-    final hash = sha256
-        .convert(utf8.encode(code.trim().toUpperCase()))
-        .toString();
- 
-    // Verificar que el código sea válido
-    if (!_validHashes.contains(hash)) {
+    // Normaliza y hashea el código ingresado
+    final inputHash = _hash(code);
+
+    // 1. Verificar que sea un código válido
+    if (!_validHashes.contains(inputHash)) {
       return RedeemResult.invalid;
     }
- 
-    // Verificar que no haya sido canjeado ya en este dispositivo
-    final prefs    = await SharedPreferences.getInstance();
+
+    // 2. Verificar que no haya sido canjeado en este dispositivo
+    final prefs = await SharedPreferences.getInstance();
     final usedList = prefs.getStringList(_kUsedCodes) ?? [];
- 
-    if (usedList.contains(hash)) {
+
+    if (usedList.contains(inputHash)) {
       return RedeemResult.alreadyUsed;
     }
- 
-    // Marcar como usado y activar premium
-    usedList.add(hash);
+
+    // 3. Marcar como usado y activar premium
+    usedList.add(inputHash);
     await prefs.setStringList(_kUsedCodes, usedList);
     await PremiumService.activate(source: 'promo_code');
- 
+
     return RedeemResult.success;
   }
- 
-  // Helper para generar hashes en desarrollo
-  // Llama esto en la consola y copia el resultado al Set de arriba:
-  //
-  //   PromoCodeService.generateHash('KAKU-BETA-2026')
-  static String generateHash(String code) =>
+
+  // ── Generar hash de un código ─────────────────────────
+  // Úsalo para generar nuevos hashes sin ejecutar el script:
+  //   debugPrint(PromoCodeService.generateHash('MI-NUEVO-CODIGO'));
+  static String generateHash(String code) => _hash(code);
+
+  static String _hash(String code) =>
       sha256.convert(utf8.encode(code.trim().toUpperCase())).toString();
 }
- 
+
 enum RedeemResult { success, invalid, alreadyUsed }
