@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class PriceCard extends StatelessWidget {
   final bool isPurchasing;
+  final String? localizedPrice;
   final VoidCallback onPurchase;
 
   const PriceCard({
     super.key,
     required this.isPurchasing,
     required this.onPurchase,
+    this.localizedPrice,
   });
 
   @override
@@ -66,25 +68,24 @@ class PriceCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 2),
-              Text(
-                '3',
-                style: TextStyle(
-                  fontSize: 56,
-                  fontWeight: FontWeight.w900,
-                  color: cs.primary,
-                  height: 1.0,
-                  letterSpacing: -3,
-                ),
-              ),
-              Text(
-                '.99',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: cs.primary,
-                  letterSpacing: -1,
-                ),
-              ),
+              localizedPrice != null
+                  ? Text(
+                      localizedPrice!,
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.w900,
+                        color: cs.primary,
+                        letterSpacing: -2,
+                      ),
+                    )
+                  : Container(
+                      width: 120,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: cs.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
             ],
           ),
           const SizedBox(height: 4),

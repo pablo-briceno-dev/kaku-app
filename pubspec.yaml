@@ -37,6 +37,7 @@ dependencies:
   pdf: ^3.12.0
   permission_handler: ^12.0.1
   printing: ^5.14.3
+  purchases_flutter: ^10.2.2
   riverpod: ^3.2.1
   rxdart: ^0.28.0
   share_plus: ^12.0.2

@@ -6,6 +6,7 @@ import 'package:kaku/features/premium/widgets/hero_section.dart';
 import 'package:kaku/features/premium/widgets/price_card.dart';
 import 'package:kaku/features/premium/widgets/section_label.dart';
 import 'package:kaku/shared/providers/premium_provider.dart';
+import 'package:kaku/shared/services/billing_service.dart';
 
 class PremiumScreen extends ConsumerStatefulWidget {
   const PremiumScreen({super.key});
@@ -20,6 +21,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
   late Animation<double> _fadeAnim;
   late Animation<Offset> _slideAnim;
   bool _isPurchasing = false;
+  String? _localizedPrice; // precio real de Google Play
 
   @override
   void initState() {
@@ -34,6 +36,14 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _animCtrl, curve: Curves.easeOut));
     _animCtrl.forward();
+    _loadPrice();
+  }
+
+  Future<void> _loadPrice() async {
+    final price = await BillingService.getLocalizedPrice();
+    if (mounted && price != null) {
+      setState(() => _localizedPrice = price);
+    }
   }
 
   @override
@@ -46,14 +56,55 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
   Future<void> _onPurchase() async {
     setState(() => _isPurchasing = true);
 
-    // TODO Paso 4: reemplazar con llamada real a Google Play Billing
-    await Future.delayed(const Duration(seconds: 2));
+    final result = await BillingService.purchase();
 
     if (!mounted) return;
-    await ref.read(premiumNotifierProvider.notifier).activate('purchase');
-
     setState(() => _isPurchasing = false);
-    if (mounted) Navigator.of(context).pop();
+
+    switch (result) {
+      case BillingResult.success:
+        // Premium activado — PremiumService ya lo guardó
+        ref.read(premiumNotifierProvider.notifier).activate('purchase');
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('🎉 ¡Bienvenido a Kaku Premium!'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+
+      case BillingResult.cancelled:
+      // El usuario canceló — no hacer nada
+
+      case BillingResult.pending:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Pago pendiente. Te notificaremos cuando se confirme.',
+            ),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+
+      case BillingResult.alreadyPurchased:
+        // Ya lo compró — restaurar directamente
+        await ref.read(premiumNotifierProvider.notifier).activate('restore');
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+
+      case BillingResult.productNotFound:
+        _showError(
+          'No se encontró el producto en la tienda. '
+          'Verifica tu conexión e intenta de nuevo.',
+        );
+
+      case BillingResult.failed:
+        _showError('Error al procesar el pago. Intenta de nuevo.');
+
+      default:
+        break;
+    }
   }
 
   void _openPromoCode() {
@@ -114,6 +165,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
                     // ── Precio y CTA ───────────────────────
                     PriceCard(
                       isPurchasing: _isPurchasing,
+                      localizedPrice: _localizedPrice,
                       onPurchase: _onPurchase,
                     ),
 
@@ -171,11 +223,52 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
   }
 
   Future<void> _onRestore() async {
-    // TODO Paso 4: restaurar compra desde Google Play
-    ScaffoldMessenger.of(context).showSnackBar(
+    final snack = ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Verificando compra...'),
         behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 10),
+      ),
+    );
+
+    final result = await BillingService.restore();
+    snack.close();
+
+    if (!mounted) return;
+
+    switch (result) {
+      case BillingResult.success:
+        ref.read(premiumNotifierProvider.notifier).activate('restore');
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Compra restaurada correctamente'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+
+      case BillingResult.notFound:
+        _showError(
+          'No se encontró ninguna compra previa asociada a tu cuenta de Google.',
+        );
+
+      default:
+        _showError('Error al restaurar. Intenta de nuevo.');
+    }
+  }
+
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Entendido'),
+          ),
+        ],
       ),
     );
   }

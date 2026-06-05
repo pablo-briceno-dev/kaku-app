@@ -15,6 +15,7 @@ void main() async {
 
   await BackupService.initialize();
   await NotificationService.initialize();
+  // await BillingService.initialize(); // TODO: activar cuando esté listo
 
   runApp(
     ProviderScope(
