@@ -23,6 +23,9 @@ abstract class AppRoutes {
   // Pantallas completas (fuera del ShellRoutes -> sin bottom nav)
   static const String addTransaction = '/add-transaction';
 
+  // Premium
+  static const String premium = '/premium';
+
   // Helpers para construir rutas con parámetros ---
   // Uso: context.go(AppRoutes.toTransaction(42))
   static String toTransaction(int id) =>

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/profile_sheet.dart';
 import 'package:kaku/features/settings/widgets/profile_avatar.dart';
+import 'package:kaku/shared/providers/premium_provider.dart';
 import 'package:kaku/shared/providers/profile_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 
@@ -12,6 +15,7 @@ class ProfileCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final profile = ref.watch(profileProvider);
+    final isPremium = ref.watch(isPremiumProvider);
 
     return InkWell(
       onTap: () => AppBottomSheet.show(
@@ -58,8 +62,14 @@ class ProfileCard extends ConsumerWidget {
             ),
             const SizedBox(width: 16),
             OutlinedButton.icon(
-              onPressed: () {},
-              label: Text(profile.isPremium ? 'Premium' : 'Gratis'),
+              onPressed: () => context.push(AppRoutes.premium),
+              label: Text(
+                isPremium.when(
+                  data: (premium) => premium ? 'Premium' : 'Free',
+                  error: (e, _) => 'Free',
+                  loading: () => 'Loading...',
+                ),
+              ),
               icon: Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 20,

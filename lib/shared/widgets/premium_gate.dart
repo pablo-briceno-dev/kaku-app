@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/shared/providers/premium_provider.dart';
 import 'package:kaku/shared/services/premium_service.dart';
 
@@ -45,22 +47,7 @@ class PremiumGate extends ConsumerWidget {
     );
   }
 
-  void _showPaywall(BuildContext context) {
-    // TODO: abrir PremiumScreen - se implementa en Paso 3
-    // Por ahora muestra un snackbar informativo
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Esta función es Premium'),
-        action: SnackBarAction(
-          label: 'Ver planes',
-          onPressed: () {
-            // context.push(AppRoutes.premium)
-          },
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
+  void _showPaywall(BuildContext context) => context.push(AppRoutes.premium);
 }
 
 class _LockBadge extends StatelessWidget {
@@ -110,16 +97,16 @@ class _LockBadge extends StatelessWidget {
 // ════════════════════════════════════════════════════════
 class PremiumLimitChecker {
   static Future<bool> check({
-    required BuildContext  context,
+    required BuildContext context,
     required PremiumFeature feature,
-    required int           currentCount,
-    required int           limit,
+    required int currentCount,
+    required int limit,
   }) async {
     final premium = await PremiumService.isPremium();
     if (premium) return false; // premium → no bloqueado
- 
+
     if (currentCount < limit) return false; // no llegó al límite
- 
+
     // Llegó al límite → mostrar dialog
     final reason = await PremiumService.canDo(feature);
     if (context.mounted) {
@@ -131,11 +118,11 @@ class PremiumLimitChecker {
     return true; // bloqueado
   }
 }
- 
+
 class _LimitReachedDialog extends StatelessWidget {
   final String reason;
   const _LimitReachedDialog({required this.reason});
- 
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -145,12 +132,12 @@ class _LimitReachedDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child:     const Text('Cancelar'),
+          child: const Text('Cancelar'),
         ),
         FilledButton(
           onPressed: () {
             Navigator.pop(context);
-            // context.push(AppRoutes.premium)
+            context.push(AppRoutes.premium);
           },
           child: const Text('Ver Premium'),
         ),

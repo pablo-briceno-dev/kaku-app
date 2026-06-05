@@ -8,6 +8,7 @@ import 'package:kaku/features/categories/categories_screen.dart';
 import 'package:kaku/features/categories/category_detail_screen.dart';
 import 'package:kaku/features/dashboard/dashboard_screen.dart';
 import 'package:kaku/features/goals/goals_screen.dart';
+import 'package:kaku/features/premium/premium_screen.dart';
 import 'package:kaku/features/settings/budget_list_screen.dart';
 import 'package:kaku/features/settings/security/lock_screen.dart';
 import 'package:kaku/features/settings/settings_screen.dart';
@@ -19,12 +20,12 @@ import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
 
 bool _authenticated = false;
- 
+
 // Llamado desde AppShell cuando la app vuelve de background
 void resetAuthentication() => _authenticated = false;
- 
+
 // Llamado desde LockScreen cuando el usuario autentica exitosamente
-void setAuthenticated()    => _authenticated = true;
+void setAuthenticated() => _authenticated = true;
 
 // Provider que expone el router a toda la app
 // Se consume en main.dart con: router: ref.watch(routerProvider)
@@ -110,23 +111,27 @@ final routerProvider = Provider<GoRouter>((ref) {
           return BudgetListScreen();
         },
       ),
+      GoRoute(
+        path: AppRoutes.premium,
+        builder: (context, state) => const PremiumScreen(),
+      ),
     ],
     redirect: (context, routerState) async {
       final isLockRoute = routerState.matchedLocation == AppRoutes.root;
- 
+
       // Ya en /lock → no redirigir
       if (isLockRoute) return null;
- 
+
       // ✅ FIX 2: si ya autenticó en esta sesión → dejar pasar
       if (_authenticated) return null;
- 
+
       // Si no hay bloqueo activo → dejar pasar sin pasar por /lock
       final locked = await _isLocked();
       if (!locked) {
         _authenticated = true; // no tiene bloqueo, marcar como autenticado
         return null;
       }
- 
+
       // Tiene bloqueo y no ha autenticado → ir a /lock
       return AppRoutes.root;
     },
