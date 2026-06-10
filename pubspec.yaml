@@ -46,7 +46,9 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.15.0
   drift_dev: ^2.33.0
+  flutter_launcher_icons: ^0.14.4
   flutter_lints: ^6.0.0
+  flutter_native_splash: 2.4.7
   flutter_test:
     sdk: flutter
 
@@ -55,3 +57,37 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+    - assets/icon/
+    - assets/splash/
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/icon.png" # PNG 1024x1024
+  min_sdk_android: 21
+  adaptive_icon_background: "#0d1117" # color de fondo del ícono adaptativo
+  adaptive_icon_foreground: "assets/icon/icon_foreground.png" # solo el logo sin fondo
+
+flutter_native_splash:
+  # Color de fondo — igual al fondo del ícono
+  color:      "#0d1117"
+  color_dark: "#0d1117"
+
+  # Logo centrado sobre el fondo
+  image:      assets/splash/splash.png
+  image_dark: assets/splash/splash.png
+
+  # Tamaño del logo en la pantalla (porcentaje del ancho)
+  # 30% da un logo ni muy grande ni muy pequeño
+  android_gravity:       center
+  ios_content_mode:      center
+
+  # Android 12+ tiene su propio splash con ícono adaptativo
+  android_12:
+    image:                 assets/splash/splash.png
+    icon_background_color: "#0d1117"
+    color:                 "#0d1117"
+    color_dark:            "#0d1117"
+
+  # Pantalla completa sin barra de estado
+  fullscreen: true
