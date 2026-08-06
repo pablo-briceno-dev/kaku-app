@@ -62,18 +62,34 @@ class ProfileCard extends ConsumerWidget {
             ),
             const SizedBox(width: 16),
             OutlinedButton.icon(
-              onPressed: () => context.push(AppRoutes.premium),
+              onPressed: isPremium.when(
+                data: (premium) =>
+                    premium ? null : () => context.push(AppRoutes.premium),
+                loading: () => null,
+                error: (_, __) =>
+                    () => context.push(AppRoutes.premium),
+              ),
               label: Text(
                 isPremium.when(
-                  data: (premium) => premium ? 'Premium' : 'Free',
+                  data: (premium) => premium ? '✓ Premium' : 'Free',
                   error: (e, _) => 'Free',
-                  loading: () => 'Loading...',
+                  loading: () => '...',
                 ),
               ),
               icon: Icon(
-                Icons.arrow_forward_ios_rounded,
+                isPremium.when(
+                  data: (premium) => premium
+                      ? Icons.check_circle
+                      : Icons.arrow_forward_ios_rounded,
+                  loading: () => Icons.arrow_forward_ios_rounded,
+                  error: (_, __) => Icons.arrow_forward_ios_rounded,
+                ),
                 size: 20,
-                color: cs.primary,
+                color: isPremium.when(
+                  data: (premium) => premium ? Colors.green : cs.primary,
+                  loading: () => cs.primary,
+                  error: (_, __) => cs.primary,
+                ),
               ),
               iconAlignment: IconAlignment.end,
               style: OutlinedButton.styleFrom(

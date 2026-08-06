@@ -59,14 +59,14 @@ class PriceCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'US\$',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: cs.primary,
-                ),
-              ),
+              // Text(
+              //   'US\$',
+              //   style: TextStyle(
+              //     fontSize: 18,
+              //     fontWeight: FontWeight.w700,
+              //     color: cs.primary,
+              //   ),
+              // ),
               const SizedBox(width: 2),
               localizedPrice != null
                   ? Text(

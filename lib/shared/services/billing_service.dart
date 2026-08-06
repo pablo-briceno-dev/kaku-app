@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:kaku/shared/services/premium_service.dart';
 
@@ -13,10 +14,7 @@ const _kPremiumProductId = 'kaku_premium_lifetime';
 // La obtienes en app.revenuecat.com → tu app → API Keys
 // Guárdala en .env:
 //   REVENUECAT_ANDROID_KEY=appl_xxxxxxxxxx
-const _kRevenueCatAndroidKey = String.fromEnvironment(
-  'REVENUECAT_ANDROID_KEY',
-  defaultValue: '',
-);
+String _kRevenueCatAndroidKey = dotenv.env['REVENUECAT_ANDROID_KEY'] ?? '';
 
 class BillingService {
   // ── Inicializar RevenueCat ────────────────────────────────────
@@ -25,6 +23,7 @@ class BillingService {
     if (!Platform.isAndroid && !Platform.isIOS) return;
 
     await Purchases.setLogLevel(LogLevel.debug); // quitar en producción
+    debugPrint('BillingService.initialize key: $_kRevenueCatAndroidKey');
     await Purchases.configure(PurchasesConfiguration(_kRevenueCatAndroidKey));
 
     // Si el usuario ya era premium (compra previa), sincronizar
@@ -63,7 +62,9 @@ class BillingService {
     try {
       // 1. Obtener el producto
       final product = await getProduct();
-      if (product == null) return BillingResult.productNotFound;
+      if (product == null) {
+        return BillingResult.productNotFound;
+      }
 
       // 2. Lanzar el flujo de compra de Google Play
       final purchaseResult = await Purchases.purchase(

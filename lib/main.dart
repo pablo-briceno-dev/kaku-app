@@ -5,6 +5,7 @@ import 'package:kaku/app.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:kaku/shared/services/backup_service.dart';
 import 'package:kaku/shared/services/notification_service.dart';
+import 'package:kaku/shared/services/billing_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -15,7 +16,7 @@ void main() async {
 
   await BackupService.initialize();
   await NotificationService.initialize();
-  // await BillingService.initialize(); // TODO: activar cuando esté listo
+  await BillingService.initialize();
 
   runApp(
     ProviderScope(
