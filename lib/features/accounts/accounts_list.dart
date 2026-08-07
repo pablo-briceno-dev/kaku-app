@@ -31,7 +31,7 @@ class AccountsList extends ConsumerWidget {
           ),
         ),
       ),
-      error: (_, __) => SizedBox(
+      error: (_, _) => SizedBox(
         height: 120,
         child: Center(
           child: Text(

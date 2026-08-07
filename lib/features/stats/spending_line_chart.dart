@@ -38,8 +38,9 @@ class SpendingLineChart extends StatelessWidget {
                 reservedSize: 22,
                 getTitlesWidget: (value, meta) {
                   final i = value.toInt();
-                  if (i < 0 || i >= points.length)
+                  if (i < 0 || i >= points.length) {
                     return const SizedBox.shrink();
+                  }
                   return Text(
                     points[i].label,
                     style: TextStyle(

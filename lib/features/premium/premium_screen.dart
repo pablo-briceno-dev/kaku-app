@@ -89,9 +89,8 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
       case BillingResult.alreadyPurchased:
         // Ya lo compró — restaurar directamente
         await ref.read(premiumNotifierProvider.notifier).activate('restore');
-        if (context.mounted) {
-          Navigator.of(context).pop();
-        }
+        if (!mounted) return;
+        Navigator.of(context).pop();
 
       case BillingResult.productNotFound:
         _showError(
@@ -223,7 +222,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
   }
 
   Future<void> _onRestore() async {
-    final snack = ScaffoldMessenger.of(context).showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Verificando compra...'),
         behavior: SnackBarBehavior.floating,
@@ -232,9 +231,10 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
     );
 
     final result = await BillingService.restore();
-    snack.close();
 
     if (!mounted) return;
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     switch (result) {
       case BillingResult.success:

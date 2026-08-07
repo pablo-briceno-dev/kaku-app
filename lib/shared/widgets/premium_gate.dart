@@ -23,7 +23,7 @@ class PremiumGate extends ConsumerWidget {
 
     return premiumAsync.when(
       loading: () => child,
-      error: (_, __) => child,
+      error: (_, _) => child,
       data: (isPremium) {
         if (isPremium) return child; // premium -> sin restricción
 

@@ -18,7 +18,7 @@ class BiometricToggle extends ConsumerWidget {
     //    solo PIN (sin biometría) → Icons.pin_outlined
     final (icon, label) = biometricType.when(
       loading: () => (Icons.lock_outline, 'Bloqueo de pantalla'),
-      error: (_, __) => (Icons.lock_outline, 'Bloqueo de pantalla'),
+      error: (_, _) => (Icons.lock_outline, 'Bloqueo de pantalla'),
       data: (type) => switch (type) {
         BiometricType.face => (Icons.face_retouching_natural, 'Face ID'),
         BiometricType.fingerprint => (Icons.fingerprint, 'Huella digital'),

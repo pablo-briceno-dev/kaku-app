@@ -5,14 +5,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:kaku/core/receipt_storage.dart';
 
 class ReceiptPicker extends StatefulWidget {
-  final String?               initialPath;
+  final String? initialPath;
   final ValueChanged<String?> onChanged;
 
-  const ReceiptPicker({
-    super.key,
-    this.initialPath,
-    required this.onChanged,
-  });
+  const ReceiptPicker({super.key, this.initialPath, required this.onChanged});
 
   @override
   State<ReceiptPicker> createState() => _ReceiptPickerState();
@@ -21,10 +17,10 @@ class ReceiptPicker extends StatefulWidget {
 class _ReceiptPickerState extends State<ReceiptPicker>
     with SingleTickerProviderStateMixin {
   String? _currentPath;
-  bool    _isLoading = false;
+  bool _isLoading = false;
 
   late final AnimationController _animCtrl;
-  late final Animation<double>   _fadeAnim;
+  late final Animation<double> _fadeAnim;
   final _picker = ImagePicker();
 
   @override
@@ -32,7 +28,7 @@ class _ReceiptPickerState extends State<ReceiptPicker>
     super.initState();
     _currentPath = widget.initialPath;
     _animCtrl = AnimationController(
-      vsync:    this,
+      vsync: this,
       duration: const Duration(milliseconds: 250),
     );
     _fadeAnim = CurvedAnimation(parent: _animCtrl, curve: Curves.easeInOut);
@@ -60,7 +56,7 @@ class _ReceiptPickerState extends State<ReceiptPicker>
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title:   Text('Permiso de $resource'),
+        title: Text('Permiso de $resource'),
         content: Text(
           'Kaku necesita acceso a tu $resource para adjuntar recibos. '
           'Habilítalo en los Ajustes del dispositivo.',
@@ -90,9 +86,9 @@ class _ReceiptPickerState extends State<ReceiptPicker>
 
     try {
       final file = await _picker.pickImage(
-        source:       source,
+        source: source,
         imageQuality: 80,
-        maxWidth:     1200,
+        maxWidth: 1200,
       );
 
       if (file == null) {
@@ -106,12 +102,12 @@ class _ReceiptPickerState extends State<ReceiptPicker>
       final savedPath = await ReceiptStorage.save(file.path);
 
       setState(() {
-        _currentPath = savedPath;   // ← ruta permanente, no la temporal
-        _isLoading   = false;
+        _currentPath = savedPath; // ← ruta permanente, no la temporal
+        _isLoading = false;
       });
 
       _animCtrl.forward();
-      widget.onChanged(savedPath);  // ← le pasas la ruta permanente al padre
+      widget.onChanged(savedPath); // ← le pasas la ruta permanente al padre
     } catch (e) {
       setState(() => _isLoading = false);
       if (mounted) {
@@ -145,21 +141,21 @@ class _ReceiptPickerState extends State<ReceiptPicker>
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration:       const Duration(milliseconds: 300),
-      switchInCurve:  Curves.easeOut,
+      duration: const Duration(milliseconds: 300),
+      switchInCurve: Curves.easeOut,
       switchOutCurve: Curves.easeIn,
       child: _currentPath != null
           ? _PreviewCard(
-              key:      const ValueKey('preview'),
-              path:     _currentPath!,
+              key: const ValueKey('preview'),
+              path: _currentPath!,
               fadeAnim: _fadeAnim,
               onRemove: _remove,
             )
           : _PickerButtons(
-              key:       const ValueKey('buttons'),
+              key: const ValueKey('buttons'),
               isLoading: _isLoading,
               onGallery: () => _pick(ImageSource.gallery),
-              onCamera:  () => _pick(ImageSource.camera),
+              onCamera: () => _pick(ImageSource.camera),
             ),
     );
   }
@@ -185,9 +181,7 @@ class _PickerButtons extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(
-          color: cs.outlineVariant.withValues(alpha: 0.5),
-        ),
+        border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
         borderRadius: BorderRadius.circular(12),
         color: cs.surfaceContainerHighest.withValues(alpha: 0.3),
       ),
@@ -196,7 +190,8 @@ class _PickerButtons extends StatelessWidget {
               height: 52,
               child: Center(
                 child: SizedBox(
-                  width: 18, height: 18,
+                  width: 18,
+                  height: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
               ),
@@ -205,9 +200,9 @@ class _PickerButtons extends StatelessWidget {
               children: [
                 Expanded(
                   child: _PickerButton(
-                    icon:   Icons.photo_library_outlined,
-                    label:  'Galería',
-                    onTap:  onGallery,
+                    icon: Icons.photo_library_outlined,
+                    label: 'Galería',
+                    onTap: onGallery,
                     isLeft: true,
                   ),
                 ),
@@ -220,9 +215,9 @@ class _PickerButtons extends StatelessWidget {
                 ),
                 Expanded(
                   child: _PickerButton(
-                    icon:   Icons.camera_alt_outlined,
-                    label:  'Cámara',
-                    onTap:  onCamera,
+                    icon: Icons.camera_alt_outlined,
+                    label: 'Cámara',
+                    onTap: onCamera,
                     isLeft: false,
                   ),
                 ),
@@ -251,7 +246,7 @@ class _PickerButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.horizontal(
-        left:  isLeft  ? const Radius.circular(12) : Radius.zero,
+        left: isLeft ? const Radius.circular(12) : Radius.zero,
         right: !isLeft ? const Radius.circular(12) : Radius.zero,
       ),
       child: Padding(
@@ -264,9 +259,9 @@ class _PickerButton extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontSize:   12,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color:      cs.onSurfaceVariant,
+                color: cs.onSurfaceVariant,
               ),
             ),
           ],
@@ -290,7 +285,7 @@ class _PreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs   = Theme.of(context).colorScheme;
+    final cs = Theme.of(context).colorScheme;
     final file = File(path);
 
     return FadeTransition(
@@ -298,29 +293,32 @@ class _PreviewCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: cs.outlineVariant.withValues(alpha: 0.4),
-          ),
+          border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.4)),
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
             SizedBox(
-              width:  double.infinity,
+              width: double.infinity,
               height: 160,
-              child:  file.existsSync()
-                  ? Image.file(file, fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _BrokenImage(cs: cs))
+              child: file.existsSync()
+                  ? Image.file(
+                      file,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => _BrokenImage(cs: cs),
+                    )
                   : _BrokenImage(cs: cs),
             ),
             Positioned(
-              left: 0, right: 0, bottom: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
               child: Container(
                 height: 56,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin:  Alignment.topCenter,
-                    end:    Alignment.bottomCenter,
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
                       Colors.black.withValues(alpha: 0.6),
@@ -330,16 +328,21 @@ class _PreviewCard extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: 12, bottom: 10,
+              left: 12,
+              bottom: 10,
               child: Row(
                 children: const [
-                  Icon(Icons.receipt_long_rounded,
-                      size: 12, color: Colors.white70),
+                  Icon(
+                    Icons.receipt_long_rounded,
+                    size: 12,
+                    color: Colors.white70,
+                  ),
                   SizedBox(width: 4),
                   Text(
                     'Recibo adjunto',
                     style: TextStyle(
-                      fontSize: 11, color: Colors.white70,
+                      fontSize: 11,
+                      color: Colors.white70,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -347,17 +350,22 @@ class _PreviewCard extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 8, right: 8,
+              top: 8,
+              right: 8,
               child: GestureDetector(
                 onTap: onRemove,
                 child: Container(
-                  width: 30, height: 30,
+                  width: 30,
+                  height: 30,
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.55),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.close_rounded,
-                      color: Colors.white, size: 16),
+                  child: const Icon(
+                    Icons.close_rounded,
+                    color: Colors.white,
+                    size: 16,
+                  ),
                 ),
               ),
             ),
@@ -376,8 +384,11 @@ class _BrokenImage extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     color: cs.surfaceContainerHighest,
     child: Center(
-      child: Icon(Icons.broken_image_outlined,
-          color: cs.onSurfaceVariant.withValues(alpha: 0.4), size: 32),
+      child: Icon(
+        Icons.broken_image_outlined,
+        color: cs.onSurfaceVariant.withValues(alpha: 0.4),
+        size: 32,
+      ),
     ),
   );
 }

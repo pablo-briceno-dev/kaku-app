@@ -12,7 +12,7 @@ class ProfileSheet extends ConsumerStatefulWidget {
 }
 
 class _ProfileSheetState extends ConsumerState<ProfileSheet> {
-  TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   String? _receiptPath;
 
   @override

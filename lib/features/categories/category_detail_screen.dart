@@ -57,7 +57,7 @@ class CategoryDetailScreen extends ConsumerWidget {
             }
             return [];
           },
-          error: (_, __) => [],
+          error: (_, _) => [],
           loading: () => [],
         ),
       ),

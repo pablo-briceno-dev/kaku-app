@@ -25,16 +25,19 @@ class _LockScreenState extends ConsumerState<LockScreen> {
     final pinEnabled = await AppPinService.isEnabled();
     final biometricEnabled = await BiometricService.isEnabled();
 
+    if (!mounted) return;
+
     // Sin bloqueo → ir directo
     if (!pinEnabled && !biometricEnabled) {
       setAuthenticated(); // ✅ marcar autenticado
-      if (mounted) context.go(AppRoutes.dashboard);
+      context.go(AppRoutes.dashboard);
       return;
     }
 
     if (pinEnabled) {
       final verified = await PinScreen.verifyPin(context);
-      if (mounted && verified) {
+      if (!mounted) return;
+      if (verified) {
         setAuthenticated(); // ✅ marcar autenticado
         context.go(AppRoutes.dashboard); // ✅ ruta correcta
       }
@@ -42,7 +45,8 @@ class _LockScreenState extends ConsumerState<LockScreen> {
       final result = await BiometricService.authenticate(
         reason: 'Confirma tu identidad para acceder a Kaku',
       );
-      if (mounted && result == BiometricResult.success) {
+      if (!mounted) return;
+      if (result == BiometricResult.success) {
         setAuthenticated(); // ✅ marcar autenticado
         context.go(AppRoutes.dashboard); // ✅ ruta correcta
       }

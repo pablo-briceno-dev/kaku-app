@@ -31,7 +31,7 @@ class ContributeGoalSheet extends ConsumerStatefulWidget {
 }
 
 class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
-  TextEditingController _amountController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
   int _selectedAmount = 1;
 
   @override

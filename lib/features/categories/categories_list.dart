@@ -26,10 +26,7 @@ class CategoriesList extends ConsumerWidget {
         borderRadius: BorderRadius.circular(12),
         child: child,
       ),
-      onReorder: (oldIndex, newIndex) {
-        // ReorderableListView pasa newIndex con un offset de +1
-        // cuando mueves hacia abajo — hay que corregirlo
-        if (newIndex > oldIndex) newIndex--;
+      onReorderItem: (oldIndex, newIndex) {
         final updated = [...categories];
         final item = updated.removeAt(oldIndex);
         updated.insert(newIndex, item);

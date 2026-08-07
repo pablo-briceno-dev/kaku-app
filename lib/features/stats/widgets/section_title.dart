@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class SectionTitle extends StatelessWidget {
   final String title, subtitle;
-  
+
   const SectionTitle({super.key, required this.title, required this.subtitle});
 
   @override
@@ -17,7 +17,10 @@ class SectionTitle extends StatelessWidget {
         const Spacer(),
         Text(
           subtitle,
-          style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.35)),
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.white.withValues(alpha: 0.35),
+          ),
         ),
       ],
     ),

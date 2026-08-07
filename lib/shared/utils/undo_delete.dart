@@ -110,7 +110,7 @@ class _UndoContentState extends State<_UndoContent>
         // Barra de progreso que se vacía con el timer
         AnimatedBuilder(
           animation: _progressCtrl,
-          builder: (_, __) => LinearProgressIndicator(
+          builder: (_, _) => LinearProgressIndicator(
             value: _progressCtrl.value,
             backgroundColor: Colors.white.withValues(alpha: 0.15),
             valueColor: const AlwaysStoppedAnimation(Colors.white),

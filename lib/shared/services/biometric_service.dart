@@ -35,8 +35,9 @@ class BiometricService {
     try {
       final types = await _auth.getAvailableBiometrics();
       if (types.contains(BiometricType.face)) return BiometricType.face;
-      if (types.contains(BiometricType.fingerprint))
+      if (types.contains(BiometricType.fingerprint)) {
         return BiometricType.fingerprint;
+      }
       if (types.contains(BiometricType.strong)) return BiometricType.strong;
       return null;
     } catch (_) {

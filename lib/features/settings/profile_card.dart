@@ -66,7 +66,7 @@ class ProfileCard extends ConsumerWidget {
                 data: (premium) =>
                     premium ? null : () => context.push(AppRoutes.premium),
                 loading: () => null,
-                error: (_, __) =>
+                error: (_, _) =>
                     () => context.push(AppRoutes.premium),
               ),
               label: Text(
@@ -82,13 +82,13 @@ class ProfileCard extends ConsumerWidget {
                       ? Icons.check_circle
                       : Icons.arrow_forward_ios_rounded,
                   loading: () => Icons.arrow_forward_ios_rounded,
-                  error: (_, __) => Icons.arrow_forward_ios_rounded,
+                  error: (_, _) => Icons.arrow_forward_ios_rounded,
                 ),
                 size: 20,
                 color: isPremium.when(
                   data: (premium) => premium ? Colors.green : cs.primary,
                   loading: () => cs.primary,
-                  error: (_, __) => cs.primary,
+                  error: (_, _) => cs.primary,
                 ),
               ),
               iconAlignment: IconAlignment.end,

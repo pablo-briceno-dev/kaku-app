@@ -16,8 +16,8 @@ class ReceiptViewer extends StatefulWidget {
       PageRouteBuilder(
         opaque: false,
         barrierColor: Colors.black,
-        pageBuilder: (_, __, ___) => ReceiptViewer(filePath: filePath),
-        transitionsBuilder: (_, animation, __, child) =>
+        pageBuilder: (_, _, _) => ReceiptViewer(filePath: filePath),
+        transitionsBuilder: (_, animation, _, child) =>
             FadeTransition(opacity: animation, child: child),
         transitionDuration: const Duration(milliseconds: 220),
       ),
@@ -125,7 +125,7 @@ class _ReceiptViewerState extends State<ReceiptViewer>
     // ✅ Wrap con PopScope para restaurar la UI del sistema
     // si el usuario usa el gesto de "atrás" del sistema.
     return PopScope(
-      onPopInvokedWithResult: (_, __) {
+      onPopInvokedWithResult: (_, _) {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       },
       // ✅ Material sin Scaffold para que no herede el tema
@@ -149,7 +149,7 @@ class _ReceiptViewerState extends State<ReceiptViewer>
                       ? Image.file(
                           file,
                           fit: BoxFit.contain,
-                          errorBuilder: (_, __, ___) => const _ErrorWidget(),
+                          errorBuilder: (_, _, _) => const _ErrorWidget(),
                         )
                       : const _ErrorWidget(),
                 ),

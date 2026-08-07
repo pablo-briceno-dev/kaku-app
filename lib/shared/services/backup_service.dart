@@ -42,8 +42,9 @@ class BackupService {
       if (!_signIn.supportsAuthenticate()) return false;
       await _signIn.authenticate();
       return _currentUser != null;
-    } on GoogleSignInException catch (e) {
-      // debugPrint('BackupService.authenticate error: $e');
+    } on GoogleSignInException catch (e, stackTrace) {
+      debugPrint('BackupService.authenticate error: $e');
+      debugPrintStack(stackTrace: stackTrace);
       return false;
     }
   }
@@ -118,8 +119,9 @@ class BackupService {
       return BackupResult.success;
     } on GoogleSignInException {
       return BackupResult.notSignedIn;
-    } catch (e) {
-      // debugPrint('BackupService.backup error: $e');
+    } catch (e, stackTrace) {
+      debugPrint('BackupService.backup error: $e');
+      debugPrintStack(stackTrace: stackTrace);
       return BackupResult.error;
     }
   }
@@ -170,8 +172,9 @@ class BackupService {
 
       client.close();
       return RestoreResult.success;
-    } catch (e) {
-      // debugPrint('BackupService.restore error: $e');
+    } catch (e, stackTrace) {
+      debugPrint('BackupService.restore error: $e');
+      debugPrintStack(stackTrace: stackTrace);
       return RestoreResult.error;
     }
   }
