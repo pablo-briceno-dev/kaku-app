@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PremiumLimits {
@@ -40,7 +39,7 @@ class PremiumService {
     await prefs.setBool(_kIsPremium, true);
     await prefs.setString(_kPremiumSource, source);
     await prefs.setString(_kPremiumDate, DateTime.now().toIso8601String());
-    debugPrint('premium activated - fuente: $source');
+    // debugPrint('premium activated - fuente: $source');
   }
 
   // Renovar premium (por si se hace refound)

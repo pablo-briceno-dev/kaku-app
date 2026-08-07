@@ -32,7 +32,7 @@ void setAuthenticated() => _authenticated = true;
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.root,
-    debugLogDiagnostics: true, //! Quitar en producción
+    // debugLogDiagnostics: true, //! Quitar en producción
     routes: [
       GoRoute(path: AppRoutes.root, builder: (_, state) => const LockScreen()),
       // ShellRoute: envuelve todas las pantallas que tienen bottom nav

@@ -67,7 +67,6 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
         controllers['targetAmount']!.text.isEmpty ||
         CurrencyFormatter.parse(controllers['targetAmount']!.text, currency) <=
             0) {
-      debugPrint('targetAmount <= 0');
       return true;
     }
     return false;

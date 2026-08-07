@@ -31,7 +31,6 @@ class AccountDetailScreen extends ConsumerWidget {
             ),
           );
         }
-        debugPrint(account.toString());
 
         return Scaffold(
           appBar: CustomAppBar(

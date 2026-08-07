@@ -117,7 +117,6 @@ class CategoryItem extends ConsumerWidget {
             category: category,
             catColor: catColor,
             onTap: () {
-              debugPrint('Category key: ${category.id}');
               Slidable.of(context)?.close();
 
               context.push(

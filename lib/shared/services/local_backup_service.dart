@@ -1,10 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:convert';
+
 import 'package:archive/archive_io.dart';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart' as enc;
-import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
@@ -65,7 +65,7 @@ class LocalBackupService {
 
       return LocalBackupResult.success;
     } catch (e) {
-      debugPrint('LocalBackupService.createBackup error: $e');
+      // debugPrint('LocalBackupService.createBackup error: $e');
       return LocalBackupResult.error;
     }
   }
@@ -105,7 +105,7 @@ class LocalBackupService {
 
       return LocalRestoreResult.success;
     } catch (e) {
-      debugPrint('LocalBackupService.restoreBackup error: $e');
+      // debugPrint('LocalBackupService.restoreBackup error: $e');
       return LocalRestoreResult.error;
     }
   }
@@ -217,11 +217,11 @@ class LocalBackupService {
         await downloadsDir.create(recursive: true);
       }
 
-      final destPath = '${downloadsDir.path}/${_backupFileName}';
+      final destPath = '${downloadsDir.path}/$_backupFileName';
       await tempFile.copy(destPath);
       return true;
     } catch (e) {
-      debugPrint('_saveToDownloads error: $e');
+      // debugPrint('_saveToDownloads error: $e');
       return false;
     }
   }

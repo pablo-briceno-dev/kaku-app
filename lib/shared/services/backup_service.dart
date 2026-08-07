@@ -10,8 +10,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http/http.dart' as http;
 import 'package:kaku/core/database/app_database.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 class BackupService {
   static final _signIn = GoogleSignIn.instance;
@@ -43,7 +43,7 @@ class BackupService {
       await _signIn.authenticate();
       return _currentUser != null;
     } on GoogleSignInException catch (e) {
-      debugPrint('BackupService.authenticate error: $e');
+      // debugPrint('BackupService.authenticate error: $e');
       return false;
     }
   }
@@ -119,7 +119,7 @@ class BackupService {
     } on GoogleSignInException {
       return BackupResult.notSignedIn;
     } catch (e) {
-      debugPrint('BackupService.backup error: $e');
+      // debugPrint('BackupService.backup error: $e');
       return BackupResult.error;
     }
   }
@@ -171,7 +171,7 @@ class BackupService {
       client.close();
       return RestoreResult.success;
     } catch (e) {
-      debugPrint('BackupService.restore error: $e');
+      // debugPrint('BackupService.restore error: $e');
       return RestoreResult.error;
     }
   }

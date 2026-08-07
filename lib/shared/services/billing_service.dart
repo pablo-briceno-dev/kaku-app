@@ -22,8 +22,8 @@ class BillingService {
   static Future<void> initialize() async {
     if (!Platform.isAndroid && !Platform.isIOS) return;
 
-    await Purchases.setLogLevel(LogLevel.debug); // quitar en producción
-    debugPrint('BillingService.initialize key: $_kRevenueCatAndroidKey');
+    // await Purchases.setLogLevel(LogLevel.debug); // TODO: quitar en producción
+    // debugPrint('BillingService.initialize key: $_kRevenueCatAndroidKey');
     await Purchases.configure(PurchasesConfiguration(_kRevenueCatAndroidKey));
 
     // Si el usuario ya era premium (compra previa), sincronizar
@@ -52,7 +52,7 @@ class BillingService {
       ], productCategory: ProductCategory.nonSubscription);
       return products.firstOrNull;
     } catch (e) {
-      debugPrint('BillingService.getProduct error: $e');
+      // debugPrint('BillingService.getProduct error: $e');
       return null;
     }
   }
@@ -90,7 +90,7 @@ class BillingService {
         _ => BillingResult.failed,
       };
     } catch (e) {
-      debugPrint('BillingService.purchase error: $e');
+      // debugPrint('BillingService.purchase error: $e');
       return BillingResult.failed;
     }
   }
@@ -109,7 +109,7 @@ class BillingService {
 
       return BillingResult.notFound;
     } catch (e) {
-      debugPrint('BillingService.restore error: $e');
+      // debugPrint('BillingService.restore error: $e');
       return BillingResult.failed;
     }
   }
