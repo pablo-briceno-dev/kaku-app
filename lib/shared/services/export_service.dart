@@ -50,7 +50,7 @@ class ExportService {
 
     await SharePlus.instance.share(
       ShareParams(
-        text: 'Kaku — Exportación de transacciones',
+        text: 'Kaku - Exportación de transacciones',
         files: [XFile(file.path, mimeType: 'text/csv')],
       ),
     );
@@ -223,7 +223,7 @@ class ExportService {
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
                       pw.Text(
-                        'Recibo — $desc',
+                        'Recibo - $desc',
                         style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
                           fontSize: 12,
@@ -255,14 +255,14 @@ class ExportService {
 
     await SharePlus.instance.share(
       ShareParams(
-        text: 'Kaku — Reporte $periodLabel',
+        text: 'Kaku - Reporte $periodLabel',
         files: [XFile(file.path, mimeType: 'application/pdf')],
       ),
     );
   }
 
   // ── PDF con imágenes de recibos (PREMIUM) ─────────────────
-  // Mantiene compatibilidad — delega a exportPdf con withReceipts: true
+  // Mantiene compatibilidad - delega a exportPdf con withReceipts: true
   static Future<void> exportPdfWithReceipts({
     required List<TransactionWithCategory> transactions,
     required CurrencyType currency,

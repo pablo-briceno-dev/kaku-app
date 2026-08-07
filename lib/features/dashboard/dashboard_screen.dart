@@ -23,12 +23,28 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(
-          'Hola, ${profile.displayName} 👋',
-          style: TextStyle(
-            color: cs.onSurfaceVariant,
-            fontWeight: FontWeight.normal,
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              profile.displayName == "Usuario"
+                  ? 'Bienvenido a Kaku 👋'
+                  : 'Hola, ${profile.displayName} 👋',
+              style: TextStyle(
+                color: cs.onSurfaceVariant,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Tu bolsillo, bajo control',
+              style: TextStyle(
+                color: cs.onSurfaceVariant,
+                fontWeight: FontWeight.normal,
+                fontSize: 12,
+              ),
+            ),
+          ],
         ),
         defaultActions: true,
       ),
