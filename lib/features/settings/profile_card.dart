@@ -15,7 +15,7 @@ class ProfileCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final profile = ref.watch(profileProvider);
-    final isPremium = ref.watch(isPremiumProvider);
+    final premiumAsync = ref.watch(premiumNotifierProvider);
 
     return InkWell(
       onTap: () => AppBottomSheet.show(
@@ -62,7 +62,7 @@ class ProfileCard extends ConsumerWidget {
             ),
             const SizedBox(width: 16),
             OutlinedButton.icon(
-              onPressed: isPremium.when(
+              onPressed: premiumAsync.when(
                 data: (premium) =>
                     premium ? null : () => context.push(AppRoutes.premium),
                 loading: () => null,
@@ -70,14 +70,14 @@ class ProfileCard extends ConsumerWidget {
                     () => context.push(AppRoutes.premium),
               ),
               label: Text(
-                isPremium.when(
+                premiumAsync.when(
                   data: (premium) => premium ? '✓ Premium' : 'Free',
                   error: (e, _) => 'Free',
                   loading: () => '...',
                 ),
               ),
               icon: Icon(
-                isPremium.when(
+                premiumAsync.when(
                   data: (premium) => premium
                       ? Icons.check_circle
                       : Icons.arrow_forward_ios_rounded,
@@ -85,7 +85,7 @@ class ProfileCard extends ConsumerWidget {
                   error: (_, _) => Icons.arrow_forward_ios_rounded,
                 ),
                 size: 20,
-                color: isPremium.when(
+                color: premiumAsync.when(
                   data: (premium) => premium ? Colors.green : cs.primary,
                   loading: () => cs.primary,
                   error: (_, _) => cs.primary,
