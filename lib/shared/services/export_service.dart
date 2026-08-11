@@ -30,7 +30,9 @@ class ExportService {
     required CurrencyType currency,
   }) async {
     final buffer = StringBuffer();
-    buffer.writeln('Fecha,Descripcion,Categoria,Tipo,Monto');
+    buffer.writeln(
+      'Fecha,Descripcion,Categoria,Tipo,Cantidad,M.Unitario,Total',
+    );
 
     for (final txc in transactions) {
       final tx = txc.transaction;
@@ -41,11 +43,15 @@ class ExportService {
       final desc = (tx.description ?? cat).replaceAll(',', ' ');
       final type = tx.type == 'expense' ? 'Gasto' : 'Ingreso';
       final amt = CurrencyFormatter.format(tx.amount, currency);
-      buffer.writeln('$date,$desc,$cat,$type,$amt');
+      final quantity = tx.quantity.toString();
+      final unitPrice = CurrencyFormatter.format(tx.unitPrice, currency);
+      buffer.writeln('$date,$desc,$cat,$type,$quantity,$unitPrice,$amt');
     }
 
+    final dateLabel = DateFormatter.abbrMonthDayYear(DateTime.now());
+
     final dir = await getApplicationDocumentsDirectory();
-    final file = File('${dir.path}/kaku_export.csv');
+    final file = File('${dir.path}/kaku_export_$dateLabel.csv');
     await file.writeAsString(buffer.toString(), encoding: utf8);
 
     await SharePlus.instance.share(
@@ -136,30 +142,41 @@ class ExportService {
           pw.Table(
             border: pw.TableBorder.all(color: PdfColors.grey300),
             columnWidths: const {
-              0: pw.FlexColumnWidth(1.8),
-              1: pw.FlexColumnWidth(2.5),
-              2: pw.FlexColumnWidth(1.5),
-              3: pw.FlexColumnWidth(1),
-              4: pw.FlexColumnWidth(1.5),
+              0: pw.FlexColumnWidth(1.8), //Fecha
+              1: pw.FlexColumnWidth(2.0), //Descripcion
+              2: pw.FlexColumnWidth(1.2), //Categoría
+              3: pw.FlexColumnWidth(0.8), //Tipo
+              4: pw.FlexColumnWidth(0.8), //Cantidad
+              5: pw.FlexColumnWidth(1.2), //M.Unitario
+              6: pw.FlexColumnWidth(1.2), //Total o Monto
             },
             children: [
               // Cabecera
               pw.TableRow(
                 decoration: const pw.BoxDecoration(color: PdfColors.grey200),
-                children: ['Fecha', 'Descripción', 'Categoría', 'Tipo', 'Monto']
-                    .map(
-                      (h) => pw.Padding(
-                        padding: const pw.EdgeInsets.all(6),
-                        child: pw.Text(
-                          h,
-                          style: pw.TextStyle(
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: 9,
+                children:
+                    [
+                          'Fecha',
+                          'Descripción',
+                          'Categoría',
+                          'Tipo',
+                          'Cant.',
+                          'M. Unit.',
+                          'Total',
+                        ]
+                        .map(
+                          (h) => pw.Padding(
+                            padding: const pw.EdgeInsets.all(6),
+                            child: pw.Text(
+                              h,
+                              style: pw.TextStyle(
+                                fontWeight: pw.FontWeight.bold,
+                                fontSize: 9,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    )
-                    .toList(),
+                        )
+                        .toList(),
               ),
               // Filas
               ...transactions.map((txc) {
@@ -172,6 +189,8 @@ class ExportService {
                     _cell(tx.description ?? txc.category?.name ?? '—'),
                     _cell(txc.category?.name ?? 'Sin categoría'),
                     _cell(isExp ? 'Gasto' : 'Ingreso'),
+                    _cell(tx.quantity.toString()),
+                    _cell(CurrencyFormatter.format(tx.unitPrice, currency)),
                     pw.Padding(
                       padding: const pw.EdgeInsets.all(6),
                       child: pw.Text(
@@ -248,9 +267,11 @@ class ExportService {
       }
     }
 
+    final dateLabel = DateFormatter.abbrMonthDayYear(DateTime.now());
+
     final bytes = await doc.save();
     final dir = await getApplicationDocumentsDirectory();
-    final file = File('${dir.path}/kaku_reporte.pdf');
+    final file = File('${dir.path}/kaku_reporte_$dateLabel.pdf');
     await file.writeAsBytes(bytes);
 
     await SharePlus.instance.share(

@@ -8,6 +8,7 @@ class DateFormatter {
   static final _shortDate = DateFormat('d MMM', 'es'); // "20 may"
   static final _time = DateFormat('h:mm a', 'es'); // "3:45 PM"
   static final _fullDateTime = DateFormat("d 'de' MMMM 'de' y, h:mm a", 'es');
+  static final _abbrMonthDayYear = DateFormat('d-MMM-y', 'es'); // "20-may-26"
 
   // "Hoy", "Ayer" o la fecha completa
   static String relative(DateTime date) {
@@ -61,5 +62,16 @@ class DateFormatter {
       '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
   // Compara dos fechas ignorando la hora
-  static bool isSameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
+  static bool isSameDay(DateTime a, DateTime b) =>
+      a.year == b.year && a.month == b.month && a.day == b.day;
+
+  /// Devuelve la fecha en formato "20-Ago-2026" (mes abreviado en español)
+  static String abbrMonthDayYear(DateTime date) => _abbrMonthDayYear.format(date);
+
+  /// Versión segura para nombres de archivo (sin espacios ni caracteres especiales)
+  static String fileFriendlyDate(DateTime date) {
+    // Usamos el mismo formato pero reemplazamos espacios por "_" (aunque no los tiene)
+    // y aseguramos que sea válido para nombres de archivo
+    return abbrMonthDayYear(date).replaceAll(' ', '_');
+  }
 }
