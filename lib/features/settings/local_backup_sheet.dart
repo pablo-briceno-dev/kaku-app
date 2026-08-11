@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/services/local_backup_service.dart';
 
 class LocalBackupSheet extends ConsumerStatefulWidget {
@@ -112,6 +113,11 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
       _restoringBackup = false;
       switch (result) {
         case LocalRestoreResult.success:
+          final counter = ref.read(appRefreshCounterProvider.notifier);
+          counter.state++;
+
+          // 2. (Opcional) Invalidar explícitamente el databaseProvider para asegurar recreación
+          ref.invalidate(databaseProvider);
           _statusMessage = '✅ Datos restaurados correctamente';
           _isError = false;
         case LocalRestoreResult.fileNotFound:

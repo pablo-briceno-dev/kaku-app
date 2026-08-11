@@ -6,33 +6,37 @@ import 'package:kaku/core/database/daos/categories_dao.dart';
 import 'package:kaku/core/database/daos/goals_dao.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/models/budget_progress.dart';
+import 'package:riverpod/legacy.dart';
 import 'package:rxdart/rxdart.dart';
+
+final appRefreshCounterProvider = StateProvider<int>((ref) => 0);
 
 // Provider singleton de la base de datos
 final databaseProvider = Provider<AppDatabase>((ref) {
+  ref.watch(appRefreshCounterProvider);
   final db = AppDatabase();
-  ref.onDispose(db.close);
+  ref.onDispose(() => db.close());
   return db;
 });
 
 // Providers de DAOs (acceso rápido desde cualquier widget)
-final transactionsDaoProvider = Provider<TransactionsDao>(
+final transactionsDaoProvider = Provider.autoDispose<TransactionsDao>(
   (ref) => ref.watch(databaseProvider).transactionsDao,
 );
 
-final budgetsDaoProvider = Provider<BudgetsDao>(
+final budgetsDaoProvider = Provider.autoDispose<BudgetsDao>(
   (ref) => ref.watch(databaseProvider).budgetsDao,
 );
 
-final accountsDaoProvider = Provider<AccountsDao>(
+final accountsDaoProvider = Provider.autoDispose<AccountsDao>(
   (ref) => ref.watch(databaseProvider).accountsDao,
 );
 
-final goalsDaoProvider = Provider<GoalsDao>(
+final goalsDaoProvider = Provider.autoDispose<GoalsDao>(
   (ref) => ref.watch(databaseProvider).goalsDao,
 );
 
-final categoriesDaoProvider = Provider<CategoriesDao>(
+final categoriesDaoProvider = Provider.autoDispose<CategoriesDao>(
   (ref) => ref.watch(databaseProvider).categoriesDao,
 );
 

@@ -24,4 +24,6 @@ class TransactionsTable extends Table {
       text().nullable()(); // JSON: '["vacaciones","trabajo"]'
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   IntColumn get transferId => integer().nullable()();
+  RealColumn get unitPrice => real().withDefault(const Constant(0.0))(); // Precio unitario 
+  IntColumn get quantity => integer().withDefault(const Constant(1))(); // Cantidad de unidades
 }

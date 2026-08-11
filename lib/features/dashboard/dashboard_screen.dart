@@ -25,8 +25,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return UpgradeAlert(
       upgrader: Upgrader(
         durationUntilAlertAgain: const Duration(seconds: 10),
-        debugLogging: true,
-        debugDisplayAlways: true,
+        // debugLogging: true,
+        // debugDisplayAlways: true,
       ),
       child: Scaffold(
         appBar: CustomAppBar(

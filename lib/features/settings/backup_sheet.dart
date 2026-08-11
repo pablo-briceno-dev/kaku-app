@@ -114,6 +114,11 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
       _restoring = false;
       switch (result) {
         case RestoreResult.success:
+          final counter = ref.read(appRefreshCounterProvider.notifier);
+          counter.state++;
+
+          // 2. (Opcional) Invalidar explícitamente el databaseProvider para asegurar recreación
+          ref.invalidate(databaseProvider);
           _statusMessage = '✅ Datos restaurados correctamente';
           _isError = false;
         case RestoreResult.noBackupFound:

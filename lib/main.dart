@@ -12,8 +12,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
 
-  // await Upgrader.clearSavedSettings();
-
   final prefs = await SharedPreferences.getInstance();
 
   await BackupService.initialize();

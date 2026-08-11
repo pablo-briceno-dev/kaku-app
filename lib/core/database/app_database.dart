@@ -37,7 +37,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   // Aquí irán las migraciones cuando actualice el schema
   @override
@@ -50,6 +50,14 @@ class AppDatabase extends _$AppDatabase {
       if (from == 1 && to == 2) {
         // Agregar columna transferId a la tabla de transacciones
         await m.addColumn(transactionsTable, transactionsTable.transferId);
+      }
+      if (from == 2 && to == 3) {
+        await m.addColumn(transactionsTable, transactionsTable.unitPrice);
+        await m.addColumn(transactionsTable, transactionsTable.quantity);
+
+        await customStatement(
+          'UPDATE transactions_table SET unit_price = amount WHERE unit_price = 0;',
+        );
       }
     },
   );
@@ -115,6 +123,6 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'kaku_app.db'));
-    return NativeDatabase.createInBackground(file);
+    return NativeDatabase.createInBackground(file, logStatements: true);
   });
 }

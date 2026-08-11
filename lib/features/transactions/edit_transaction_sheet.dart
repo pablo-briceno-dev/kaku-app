@@ -26,6 +26,10 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
   String? _receiptPath;
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _quantityController = TextEditingController(
+    text: '1',
+  );
+  final TextEditingController _unitPriceController = TextEditingController();
 
   bool isSameDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
@@ -41,9 +45,19 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
     );
     _descriptionController.text = widget.transaction.description ?? '';
     _selectedDate = widget.transaction.date;
+    _unitPriceController.text = CurrencyFormatter.format(
+      widget.transaction.unitPrice,
+      ref.read(currencyProvider),
+    );
+    _quantityController.text = widget.transaction.quantity.toString();
 
     _amountController.addListener(_refresh);
     _descriptionController.addListener(_refresh);
+
+    // Listener para actualizar el total cuando cambia el unitario
+    _unitPriceController.addListener(_updateTotal);
+    // Listener para actualizar el total cuando cambia la cantidad
+    _quantityController.addListener(_updateTotal);
   }
 
   void _refresh() {
@@ -55,6 +69,26 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _updateTotal() {
+    final currency = ref.watch(currencyProvider);
+    // CurrencyFormatter.parse(_amountController.text,currency,)
+    final unitPrice = CurrencyFormatter.parse(
+      _unitPriceController.text,
+      currency,
+    );
+    final quantity = int.tryParse(_quantityController.text) ?? 1;
+    final total = unitPrice * quantity;
+
+    // Evitar bucles: solo actualizar si el valor es diferente
+    final currentTotal = CurrencyFormatter.parse(
+      _amountController.text,
+      currency,
+    );
+    if (total != currentTotal) {
+      _amountController.text = CurrencyFormatter.format(total, currency);
+    }
   }
 
   bool _validatedButton(
@@ -120,7 +154,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     TextFormField(
-                      controller: _amountController,
+                      controller: _unitPriceController,
                       textAlign: TextAlign.center,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
@@ -141,7 +175,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                         return null;
                       },
                       decoration: InputDecoration(
-                        labelText: 'MONTO · ${currency.label}',
+                        labelText: 'MONTO O VALOR UNITARIO · ${currency.label}',
                         // hintText: r'$0',
                         labelStyle: ts.titleLarge?.copyWith(
                           color: cs.onSurfaceVariant,
@@ -151,6 +185,76 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                         fontSize: 45,
                         color: transactionTypeSelected.color,
                       ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _quantityController,
+                            textAlign: TextAlign.center,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: false,
+                              signed: false,
+                            ),
+                            inputFormatters: [
+                              // CurrencyFormatter.inputFormatter(currency),
+                            ],
+                            decoration: InputDecoration(
+                              labelText: 'CANTIDAD',
+                              hintText: r'1',
+                              labelStyle: ts.titleLarge?.copyWith(
+                                color: cs.onSurfaceVariant,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Campo requerido';
+                              }
+                              if (int.parse(value) <= 1) {
+                                return 'Debe ser mayor a 1';
+                              }
+                              return null;
+                            },
+                            // style: TextStyle(fontSize: 15),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: TextFormField(
+                            enabled: false,
+                            controller: _amountController,
+                            textAlign: TextAlign.center,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                              signed: false,
+                            ),
+                            inputFormatters: [
+                              CurrencyFormatter.inputFormatter(currency),
+                            ],
+                            decoration: InputDecoration(
+                              labelText: 'TOTAL · ${currency.label}',
+                              hintText: r'$0',
+                              labelStyle: ts.titleLarge?.copyWith(
+                                color: cs.onSurfaceVariant,
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Campo requerido';
+                              }
+                              if (CurrencyFormatter.parse(value, currency) >
+                                  account!.balance) {
+                                return 'No tienes suficiente saldo';
+                              }
+                              return null;
+                            },
+                            style: TextStyle(
+                              color: transactionTypeSelected.color,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     Container(
@@ -301,6 +405,15 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                                     createdAt: widget.transaction.createdAt,
                                     receiptPath: _receiptPath,
                                     categoryId: selectedCategory,
+                                    unitPrice: CurrencyFormatter.parse(
+                                      _unitPriceController.text,
+                                      currency,
+                                    ),
+                                    quantity:
+                                        int.tryParse(
+                                          _quantityController.text,
+                                        ) ??
+                                        1,
                                   ),
                                 );
                                 if (context.mounted) {

@@ -2199,6 +2199,30 @@ class $TransactionsTableTable extends TransactionsTable
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _unitPriceMeta = const VerificationMeta(
+    'unitPrice',
+  );
+  @override
+  late final GeneratedColumn<double> unitPrice = GeneratedColumn<double>(
+    'unit_price',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0.0),
+  );
+  static const VerificationMeta _quantityMeta = const VerificationMeta(
+    'quantity',
+  );
+  @override
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
+    'quantity',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2214,6 +2238,8 @@ class $TransactionsTableTable extends TransactionsTable
     tags,
     createdAt,
     transferId,
+    unitPrice,
+    quantity,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2319,6 +2345,18 @@ class $TransactionsTableTable extends TransactionsTable
         transferId.isAcceptableOrUnknown(data['transfer_id']!, _transferIdMeta),
       );
     }
+    if (data.containsKey('unit_price')) {
+      context.handle(
+        _unitPriceMeta,
+        unitPrice.isAcceptableOrUnknown(data['unit_price']!, _unitPriceMeta),
+      );
+    }
+    if (data.containsKey('quantity')) {
+      context.handle(
+        _quantityMeta,
+        quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta),
+      );
+    }
     return context;
   }
 
@@ -2380,6 +2418,14 @@ class $TransactionsTableTable extends TransactionsTable
         DriftSqlType.int,
         data['${effectivePrefix}transfer_id'],
       ),
+      unitPrice: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}unit_price'],
+      )!,
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
     );
   }
 
@@ -2403,6 +2449,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
   final String? tags;
   final DateTime createdAt;
   final int? transferId;
+  final double unitPrice;
+  final int quantity;
   const Transaction({
     required this.id,
     required this.amount,
@@ -2417,6 +2465,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     this.tags,
     required this.createdAt,
     this.transferId,
+    required this.unitPrice,
+    required this.quantity,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2446,6 +2496,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     if (!nullToAbsent || transferId != null) {
       map['transfer_id'] = Variable<int>(transferId);
     }
+    map['unit_price'] = Variable<double>(unitPrice);
+    map['quantity'] = Variable<int>(quantity);
     return map;
   }
 
@@ -2474,6 +2526,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       transferId: transferId == null && nullToAbsent
           ? const Value.absent()
           : Value(transferId),
+      unitPrice: Value(unitPrice),
+      quantity: Value(quantity),
     );
   }
 
@@ -2496,6 +2550,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       tags: serializer.fromJson<String?>(json['tags']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       transferId: serializer.fromJson<int?>(json['transferId']),
+      unitPrice: serializer.fromJson<double>(json['unitPrice']),
+      quantity: serializer.fromJson<int>(json['quantity']),
     );
   }
   @override
@@ -2515,6 +2571,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       'tags': serializer.toJson<String?>(tags),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'transferId': serializer.toJson<int?>(transferId),
+      'unitPrice': serializer.toJson<double>(unitPrice),
+      'quantity': serializer.toJson<int>(quantity),
     };
   }
 
@@ -2532,6 +2590,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     Value<String?> tags = const Value.absent(),
     DateTime? createdAt,
     Value<int?> transferId = const Value.absent(),
+    double? unitPrice,
+    int? quantity,
   }) => Transaction(
     id: id ?? this.id,
     amount: amount ?? this.amount,
@@ -2546,6 +2606,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     tags: tags.present ? tags.value : this.tags,
     createdAt: createdAt ?? this.createdAt,
     transferId: transferId.present ? transferId.value : this.transferId,
+    unitPrice: unitPrice ?? this.unitPrice,
+    quantity: quantity ?? this.quantity,
   );
   Transaction copyWithCompanion(TransactionsTableCompanion data) {
     return Transaction(
@@ -2572,6 +2634,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
       transferId: data.transferId.present
           ? data.transferId.value
           : this.transferId,
+      unitPrice: data.unitPrice.present ? data.unitPrice.value : this.unitPrice,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
     );
   }
 
@@ -2590,7 +2654,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           ..write('isRecurring: $isRecurring, ')
           ..write('tags: $tags, ')
           ..write('createdAt: $createdAt, ')
-          ..write('transferId: $transferId')
+          ..write('transferId: $transferId, ')
+          ..write('unitPrice: $unitPrice, ')
+          ..write('quantity: $quantity')
           ..write(')'))
         .toString();
   }
@@ -2610,6 +2676,8 @@ class Transaction extends DataClass implements Insertable<Transaction> {
     tags,
     createdAt,
     transferId,
+    unitPrice,
+    quantity,
   );
   @override
   bool operator ==(Object other) =>
@@ -2627,7 +2695,9 @@ class Transaction extends DataClass implements Insertable<Transaction> {
           other.isRecurring == this.isRecurring &&
           other.tags == this.tags &&
           other.createdAt == this.createdAt &&
-          other.transferId == this.transferId);
+          other.transferId == this.transferId &&
+          other.unitPrice == this.unitPrice &&
+          other.quantity == this.quantity);
 }
 
 class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
@@ -2644,6 +2714,8 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
   final Value<String?> tags;
   final Value<DateTime> createdAt;
   final Value<int?> transferId;
+  final Value<double> unitPrice;
+  final Value<int> quantity;
   const TransactionsTableCompanion({
     this.id = const Value.absent(),
     this.amount = const Value.absent(),
@@ -2658,6 +2730,8 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     this.tags = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.transferId = const Value.absent(),
+    this.unitPrice = const Value.absent(),
+    this.quantity = const Value.absent(),
   });
   TransactionsTableCompanion.insert({
     this.id = const Value.absent(),
@@ -2673,6 +2747,8 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     this.tags = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.transferId = const Value.absent(),
+    this.unitPrice = const Value.absent(),
+    this.quantity = const Value.absent(),
   }) : amount = Value(amount),
        type = Value(type),
        date = Value(date),
@@ -2691,6 +2767,8 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     Expression<String>? tags,
     Expression<DateTime>? createdAt,
     Expression<int>? transferId,
+    Expression<double>? unitPrice,
+    Expression<int>? quantity,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2706,6 +2784,8 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
       if (tags != null) 'tags': tags,
       if (createdAt != null) 'created_at': createdAt,
       if (transferId != null) 'transfer_id': transferId,
+      if (unitPrice != null) 'unit_price': unitPrice,
+      if (quantity != null) 'quantity': quantity,
     });
   }
 
@@ -2723,6 +2803,8 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     Value<String?>? tags,
     Value<DateTime>? createdAt,
     Value<int?>? transferId,
+    Value<double>? unitPrice,
+    Value<int>? quantity,
   }) {
     return TransactionsTableCompanion(
       id: id ?? this.id,
@@ -2738,6 +2820,8 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
       tags: tags ?? this.tags,
       createdAt: createdAt ?? this.createdAt,
       transferId: transferId ?? this.transferId,
+      unitPrice: unitPrice ?? this.unitPrice,
+      quantity: quantity ?? this.quantity,
     );
   }
 
@@ -2783,6 +2867,12 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
     if (transferId.present) {
       map['transfer_id'] = Variable<int>(transferId.value);
     }
+    if (unitPrice.present) {
+      map['unit_price'] = Variable<double>(unitPrice.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
     return map;
   }
 
@@ -2801,7 +2891,9 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
           ..write('isRecurring: $isRecurring, ')
           ..write('tags: $tags, ')
           ..write('createdAt: $createdAt, ')
-          ..write('transferId: $transferId')
+          ..write('transferId: $transferId, ')
+          ..write('unitPrice: $unitPrice, ')
+          ..write('quantity: $quantity')
           ..write(')'))
         .toString();
   }
@@ -2875,10 +2967,7 @@ final class $$AccountsTableTableReferences
   _transactionsTableRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.transactionsTable,
-        aliasName: $_aliasNameGenerator(
-          db.accountsTable.id,
-          db.transactionsTable.accountId,
-        ),
+        aliasName: 'accounts_table__id__transactions_table__account_id',
       );
 
   $$TransactionsTableTableProcessedTableManager get transactionsTableRefs {
@@ -3258,10 +3347,7 @@ final class $$CategoriesTableTableReferences
   static MultiTypedResultKey<$BudgetsTableTable, List<Budget>>
   _budgetsTableRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
     db.budgetsTable,
-    aliasName: $_aliasNameGenerator(
-      db.categoriesTable.id,
-      db.budgetsTable.categoryId,
-    ),
+    aliasName: 'categories_table__id__budgets_table__category_id',
   );
 
   $$BudgetsTableTableProcessedTableManager get budgetsTableRefs {
@@ -3280,10 +3366,7 @@ final class $$CategoriesTableTableReferences
   _transactionsTableRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.transactionsTable,
-        aliasName: $_aliasNameGenerator(
-          db.categoriesTable.id,
-          db.transactionsTable.categoryId,
-        ),
+        aliasName: 'categories_table__id__transactions_table__category_id',
       );
 
   $$TransactionsTableTableProcessedTableManager get transactionsTableRefs {
@@ -3733,10 +3816,9 @@ final class $$BudgetsTableTableReferences
     extends BaseReferences<_$AppDatabase, $BudgetsTableTable, Budget> {
   $$BudgetsTableTableReferences(super.$_db, super.$_table, super.$_typedResult);
 
-  static $CategoriesTableTable _categoryIdTable(_$AppDatabase db) =>
-      db.categoriesTable.createAlias(
-        $_aliasNameGenerator(db.budgetsTable.categoryId, db.categoriesTable.id),
-      );
+  static $CategoriesTableTable _categoryIdTable(_$AppDatabase db) => db
+      .categoriesTable
+      .createAlias('budgets_table__category_id__categories_table__id');
 
   $$CategoriesTableTableProcessedTableManager get categoryId {
     final $_column = $_itemColumn<int>('category_id')!;
@@ -4077,10 +4159,7 @@ final class $$GoalsTableTableReferences
   _transactionsTableRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.transactionsTable,
-        aliasName: $_aliasNameGenerator(
-          db.goalsTable.id,
-          db.transactionsTable.goalId,
-        ),
+        aliasName: 'goals_table__id__transactions_table__goal_id',
       );
 
   $$TransactionsTableTableProcessedTableManager get transactionsTableRefs {
@@ -4445,6 +4524,8 @@ typedef $$TransactionsTableTableCreateCompanionBuilder =
       Value<String?> tags,
       Value<DateTime> createdAt,
       Value<int?> transferId,
+      Value<double> unitPrice,
+      Value<int> quantity,
     });
 typedef $$TransactionsTableTableUpdateCompanionBuilder =
     TransactionsTableCompanion Function({
@@ -4461,6 +4542,8 @@ typedef $$TransactionsTableTableUpdateCompanionBuilder =
       Value<String?> tags,
       Value<DateTime> createdAt,
       Value<int?> transferId,
+      Value<double> unitPrice,
+      Value<int> quantity,
     });
 
 final class $$TransactionsTableTableReferences
@@ -4472,13 +4555,9 @@ final class $$TransactionsTableTableReferences
     super.$_typedResult,
   );
 
-  static $AccountsTableTable _accountIdTable(_$AppDatabase db) =>
-      db.accountsTable.createAlias(
-        $_aliasNameGenerator(
-          db.transactionsTable.accountId,
-          db.accountsTable.id,
-        ),
-      );
+  static $AccountsTableTable _accountIdTable(_$AppDatabase db) => db
+      .accountsTable
+      .createAlias('transactions_table__account_id__accounts_table__id');
 
   $$AccountsTableTableProcessedTableManager get accountId {
     final $_column = $_itemColumn<int>('account_id')!;
@@ -4494,13 +4573,9 @@ final class $$TransactionsTableTableReferences
     );
   }
 
-  static $CategoriesTableTable _categoryIdTable(_$AppDatabase db) =>
-      db.categoriesTable.createAlias(
-        $_aliasNameGenerator(
-          db.transactionsTable.categoryId,
-          db.categoriesTable.id,
-        ),
-      );
+  static $CategoriesTableTable _categoryIdTable(_$AppDatabase db) => db
+      .categoriesTable
+      .createAlias('transactions_table__category_id__categories_table__id');
 
   $$CategoriesTableTableProcessedTableManager? get categoryId {
     final $_column = $_itemColumn<int>('category_id');
@@ -4517,9 +4592,7 @@ final class $$TransactionsTableTableReferences
   }
 
   static $GoalsTableTable _goalIdTable(_$AppDatabase db) =>
-      db.goalsTable.createAlias(
-        $_aliasNameGenerator(db.transactionsTable.goalId, db.goalsTable.id),
-      );
+      db.goalsTable.createAlias('transactions_table__goal_id__goals_table__id');
 
   $$GoalsTableTableProcessedTableManager? get goalId {
     final $_column = $_itemColumn<int>('goal_id');
@@ -4592,6 +4665,16 @@ class $$TransactionsTableTableFilterComposer
 
   ColumnFilters<int> get transferId => $composableBuilder(
     column: $table.transferId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get unitPrice => $composableBuilder(
+    column: $table.unitPrice,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get quantity => $composableBuilder(
+    column: $table.quantity,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4724,6 +4807,16 @@ class $$TransactionsTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<double> get unitPrice => $composableBuilder(
+    column: $table.unitPrice,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$AccountsTableTableOrderingComposer get accountId {
     final $$AccountsTableTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -4841,6 +4934,12 @@ class $$TransactionsTableTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<double> get unitPrice =>
+      $composableBuilder(column: $table.unitPrice, builder: (column) => column);
+
+  GeneratedColumn<int> get quantity =>
+      $composableBuilder(column: $table.quantity, builder: (column) => column);
+
   $$AccountsTableTableAnnotationComposer get accountId {
     final $$AccountsTableTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -4957,6 +5056,8 @@ class $$TransactionsTableTableTableManager
                 Value<String?> tags = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int?> transferId = const Value.absent(),
+                Value<double> unitPrice = const Value.absent(),
+                Value<int> quantity = const Value.absent(),
               }) => TransactionsTableCompanion(
                 id: id,
                 amount: amount,
@@ -4971,6 +5072,8 @@ class $$TransactionsTableTableTableManager
                 tags: tags,
                 createdAt: createdAt,
                 transferId: transferId,
+                unitPrice: unitPrice,
+                quantity: quantity,
               ),
           createCompanionCallback:
               ({
@@ -4987,6 +5090,8 @@ class $$TransactionsTableTableTableManager
                 Value<String?> tags = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<int?> transferId = const Value.absent(),
+                Value<double> unitPrice = const Value.absent(),
+                Value<int> quantity = const Value.absent(),
               }) => TransactionsTableCompanion.insert(
                 id: id,
                 amount: amount,
@@ -5001,6 +5106,8 @@ class $$TransactionsTableTableTableManager
                 tags: tags,
                 createdAt: createdAt,
                 transferId: transferId,
+                unitPrice: unitPrice,
+                quantity: quantity,
               ),
           withReferenceMapper: (p0) => p0
               .map(
