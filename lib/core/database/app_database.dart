@@ -123,6 +123,6 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'kaku_app.db'));
-    return NativeDatabase.createInBackground(file, logStatements: true);
+    return NativeDatabase.createInBackground(file, logStatements: false);
   });
 }
