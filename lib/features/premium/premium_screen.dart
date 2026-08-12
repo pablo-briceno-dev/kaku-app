@@ -314,5 +314,10 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
       'Historial completo de estadísticas',
       'Analiza tus patrones de gasto en cualquier período pasado',
     ),
+    Feature(
+      '🎨',
+      'Personalizar el color del tema',
+      'Elige un color personalizado y a tu gusto para tu aplicación',
+    ),
   ];
 }

@@ -18,8 +18,14 @@ class KakuApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       routerConfig: router,
       themeMode: themePref.flutterThemeMode,
-      theme: AppTheme.light(themePref.accent),
-      darkTheme: AppTheme.dark(themePref.accent),
+      theme: AppTheme.light(
+        themePref.accent,
+        customColor: themePref.customAccentColor,
+      ),
+      darkTheme: AppTheme.dark(
+        themePref.accent,
+        customColor: themePref.customAccentColor,
+      ),
       localizationsDelegates: const [
         // AppLocalizations.delegate, // tus traducciones
         GlobalMaterialLocalizations.delegate, // widgets Material en español

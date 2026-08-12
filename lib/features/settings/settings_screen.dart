@@ -51,7 +51,9 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               ListTileChild(
                 label: 'Tema de color',
-                subtitle: themeMode.accent.label,
+                subtitle: themeMode.customAccentColor != null
+                    ? 'Personalizado'
+                    : themeMode.accent.label,
                 icon: Icons.palette,
                 onTap: () => AppBottomSheet.show(
                   context,

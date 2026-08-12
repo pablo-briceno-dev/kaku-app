@@ -43,17 +43,28 @@ enum AppThemeMode { dark, light, system }
 class ThemePreference {
   final AppAccent accent;
   final AppThemeMode mode;
+  final Color? customAccentColor;
 
   const ThemePreference({
     this.accent = AppAccent.aurora,
     this.mode = AppThemeMode.dark,
+    this.customAccentColor,
   });
 
-  ThemePreference copyWith({AppAccent? accent, AppThemeMode? mode}) =>
-      ThemePreference(accent: accent ?? this.accent, mode: mode ?? this.mode);
+  ThemePreference copyWith({
+    AppAccent? accent,
+    AppThemeMode? mode,
+    Color? customAccentColor,
+  }) => ThemePreference(
+    accent: accent ?? this.accent,
+    mode: mode ?? this.mode,
+    customAccentColor: customAccentColor ?? this.customAccentColor,
+  );
 
   // Color principal del acento (para botones, barras de progreso, FAB)
-  Color get accentColor => const {
+  Color get accentColor => customAccentColor ?? _accentColorFromEnum;
+
+  Color get _accentColorFromEnum => const {
     AppAccent.aurora: Color(0xFF7CFFD4),
     AppAccent.dusk: Color(0xFFFF9F7C),
     AppAccent.violet: Color(0xFFC87CFF),
@@ -62,13 +73,20 @@ class ThemePreference {
   }[accent]!;
 
   // Color de fondo principal (modo oscuro)
-  Color get darkBackground => const {
-    AppAccent.aurora: Color(0xFF0A1814),
-    AppAccent.dusk: Color(0xFF120C07),
-    AppAccent.violet: Color(0xFF0E0818),
-    AppAccent.mono: Color(0xFF0F0F0F),
-    AppAccent.ocean: Color(0xFF060E1C),
-  }[accent]!;
+  Color get darkBackground {
+    if (customAccentColor != null) {
+      final hsl = HSLColor.fromColor(customAccentColor!);
+      return hsl.withLightness(0.06).withSaturation(0.3).toColor();
+    }
+
+    return const {
+      AppAccent.aurora: Color(0xFF0A1814),
+      AppAccent.dusk: Color(0xFF120C07),
+      AppAccent.violet: Color(0xFF0E0818),
+      AppAccent.mono: Color(0xFF0F0F0F),
+      AppAccent.ocean: Color(0xFF060E1C),
+    }[accent]!;
+  }
 
   // Nombre legible para mostrar en la UI de Settings
   String get accentLabel => const {
@@ -96,16 +114,29 @@ class ThemePreference {
   Map<String, String> toMap() => {
     'accent': accent.name, // 'aurora', etc
     'mode': mode.name,
+    if (customAccentColor != null)
+      'customAccentColor': customAccentColor!
+          .toARGB32()
+          .toRadixString(16)
+          .padLeft(8, '0'),
   };
 
-  factory ThemePreference.fromMap(Map<String, String?> map) => ThemePreference(
-    accent: AppAccent.values.firstWhere(
-      (e) => e.name == map['accent'],
-      orElse: () => AppAccent.aurora,
-    ),
-    mode: AppThemeMode.values.firstWhere(
-      (e) => e.name == map['mode'],
-      orElse: () => AppThemeMode.dark,
-    ),
-  );
+  factory ThemePreference.fromMap(Map<String, String?> map) {
+    final customHex = map['customAccentColor'];
+    final customColor = customHex != null
+        ? Color(int.parse(customHex, radix: 16))
+        : null;
+
+    return ThemePreference(
+      accent: AppAccent.values.firstWhere(
+        (e) => e.name == map['accent'],
+        orElse: () => AppAccent.aurora,
+      ),
+      mode: AppThemeMode.values.firstWhere(
+        (e) => e.name == map['mode'],
+        orElse: () => AppThemeMode.dark,
+      ),
+      customAccentColor: customColor,
+    );
+  }
 }

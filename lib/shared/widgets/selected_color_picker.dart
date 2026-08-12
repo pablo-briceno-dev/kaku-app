@@ -5,12 +5,14 @@ class SelectedColorPicker extends StatefulWidget {
   final Function(Color) onColorSelected;
   final VoidCallback? onCancel;
   final Color initialColor;
+  final double size;
 
   const SelectedColorPicker({
     super.key,
     required this.onColorSelected,
     this.onCancel,
     this.initialColor = Colors.blue,
+    this.size = 40,
   });
 
   @override
@@ -24,6 +26,21 @@ class _SelectedColorPickerState extends State<SelectedColorPicker> {
   void initState() {
     super.initState();
     tempColor = widget.initialColor;
+  }
+
+  @override
+  void didUpdateWidget(covariant SelectedColorPicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialColor.toARGB32() != oldWidget.initialColor.toARGB32()) {
+      debugPrint(
+        '🔄 Color cambiado: ${oldWidget.initialColor} -> ${widget.initialColor}',
+      );
+      setState(() {
+        tempColor = widget.initialColor;
+      });
+    } else {
+      debugPrint('⏭️ Color sin cambios (mismo valor)');
+    }
   }
 
   void _openDialog() {
@@ -71,8 +88,8 @@ class _SelectedColorPickerState extends State<SelectedColorPicker> {
     return InkWell(
       onTap: _openDialog,
       child: Container(
-        width: 40,
-        height: 40,
+        width: widget.size,
+        height: widget.size,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
           color: tempColor,

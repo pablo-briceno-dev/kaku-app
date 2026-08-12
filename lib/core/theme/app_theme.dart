@@ -3,8 +3,8 @@ import 'package:kaku/core/models/theme_model.dart';
 
 abstract class AppTheme {
   // Tema Oscuro
-  static ThemeData dark(AppAccent accent) {
-    final pref = ThemePreference(accent: accent, mode: AppThemeMode.dark);
+  static ThemeData dark(AppAccent accent, {Color? customColor}) {
+    final pref = ThemePreference(accent: accent, mode: AppThemeMode.dark, customAccentColor: customColor);
     final seed = pref.accentColor;
     final bgColor = pref.darkBackground;
 
@@ -88,10 +88,11 @@ abstract class AppTheme {
   }
 
   // Tema Claro
-  static ThemeData light(AppAccent accent) {
+  static ThemeData light(AppAccent accent, {Color? customColor}) {
     final seed = ThemePreference(
       accent: accent,
       mode: AppThemeMode.light,
+      customAccentColor: customColor,
     ).accentColor;
 
     final darkSeed = HSLColor.fromColor(seed)

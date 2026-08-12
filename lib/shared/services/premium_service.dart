@@ -82,6 +82,8 @@ class PremiumService {
         'Has alcanzado el límite de ${PremiumLimits.maxBudgets} presupuestos del plan free',
       PremiumFeature.unlimitedCategories =>
         'Has alcanzado el límite de ${PremiumLimits.maxCustomCategories} categorías personalizadas del plan free',
+      PremiumFeature.customThemeColor =>
+        'Añadir un color personalizado es una función premium. Con el plan free tienes colores predefinidos.',
     };
   }
 }
@@ -105,4 +107,5 @@ enum PremiumFeature {
   unlimitedGoals,
   unlimitedBudgets,
   unlimitedCategories,
+  customThemeColor,
 }
