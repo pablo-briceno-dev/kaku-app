@@ -165,8 +165,8 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                                 if (value == null || value.isEmpty) {
                                   return 'Campo requerido';
                                 }
-                                if (int.parse(value) <= 1) {
-                                  return 'Debe ser mayor a 1';
+                                if (int.parse(value) <= 0) {
+                                  return 'Debe ser mayor o igual a 1';
                                 }
                                 return null;
                               },

@@ -7,6 +7,7 @@ import 'package:kaku/core/models/transaction_type_filter.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:kaku/shared/services/storage_service.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -134,3 +135,10 @@ final storageSubtitleProvider = FutureProvider.autoDispose<String>((ref) async {
   return '${info.sizeLabel} · ${info.count} '
       '${info.count == 1 ? 'foto' : 'fotos'}';
 });
+
+// ════════════════════════════════════════════════════════
+//  packageInfoProvider — reactivo
+// ════════════════════════════════════════════════════════
+final packageInfoProvider = FutureProvider<PackageInfo>(
+  (ref) => PackageInfo.fromPlatform(),
+);

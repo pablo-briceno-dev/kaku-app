@@ -104,7 +104,7 @@ class CardAccountItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    CurrencyFormatter.format(balance, currencyType),
+                    CurrencyFormatter.compact(balance, currencyType),
                     style: ts.titleLarge?.copyWith(fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 2),

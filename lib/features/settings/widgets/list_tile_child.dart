@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class ListTileChild extends StatelessWidget {
   final String label, subtitle;
   final IconData icon;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const ListTileChild({
     super.key,
     required this.label,
     required this.subtitle,
     required this.icon,
-    required this.onTap,
+    this.onTap,
   });
 
   @override
@@ -35,7 +35,9 @@ class ListTileChild extends StatelessWidget {
         ).textTheme.titleSmall?.copyWith(color: scheme.onSurface),
       ),
       subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
-      trailing: Icon(Icons.chevron_right, color: scheme.onSurface, size: 20),
+      trailing: onTap != null
+          ? Icon(Icons.chevron_right, color: scheme.onSurface, size: 20)
+          : null,
       onTap: onTap,
     );
   }

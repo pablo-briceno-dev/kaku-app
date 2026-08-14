@@ -5,13 +5,13 @@ import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/models/theme_model.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/backup_sheet.dart';
-import 'package:kaku/features/settings/danger_zone_sheet.dart';
-import 'package:kaku/features/settings/local_backup_sheet.dart';
-import 'package:kaku/features/settings/security/biometric_toggle.dart';
 import 'package:kaku/features/settings/currency_sheet.dart';
+import 'package:kaku/features/settings/danger_zone_sheet.dart';
 import 'package:kaku/features/settings/export_sheet.dart';
+import 'package:kaku/features/settings/local_backup_sheet.dart';
 import 'package:kaku/features/settings/notifications_toggle.dart';
 import 'package:kaku/features/settings/profile_card.dart';
+import 'package:kaku/features/settings/security/biometric_toggle.dart';
 import 'package:kaku/features/settings/storage_sheet.dart';
 import 'package:kaku/features/settings/theme_color_sheet.dart';
 import 'package:kaku/features/settings/widgets/list_tile_child.dart';
@@ -38,6 +38,7 @@ class SettingsScreen extends ConsumerWidget {
     final budgetsProgress = ref.watch(budgetProgressProvider(selectedMonth));
     final backupSubtitle = ref.watch(lastBackupSubtitleProvider);
     final storageSubtitle = ref.watch(storageSubtitleProvider);
+    final packageInfoAsync = ref.watch(packageInfoProvider);
 
     return Scaffold(
       appBar: CustomAppBar(title: Text('Configuración'), defaultActions: false),
@@ -203,6 +204,20 @@ class SettingsScreen extends ConsumerWidget {
                   // title: 'Borrar datos',
                   child: const DangerZoneSheet(),
                 ),
+              ),
+            ],
+          ),
+          SectionHeader('Acerca de'),
+          SectionCard(
+            children: [
+              ListTileChild(
+                label: 'Versión',
+                subtitle: packageInfoAsync.when(
+                  data: (info) => '${info.version} (${info.buildNumber})',
+                  error: (_, _) => 'No disponible',
+                  loading: () => 'Cargando...',
+                ),
+                icon: Icons.info_outline,
               ),
             ],
           ),

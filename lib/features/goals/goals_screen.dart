@@ -4,17 +4,38 @@ import 'package:kaku/features/goals/goal_form_sheet.dart';
 import 'package:kaku/features/goals/goals_list.dart';
 import 'package:kaku/features/goals/widgets/goals_list_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/premium_service.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
 import 'package:kaku/shared/widgets/premium_gate.dart';
 
-class GoalsScreen extends ConsumerWidget {
+class GoalsScreen extends ConsumerStatefulWidget {
   const GoalsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<GoalsScreen> createState() => _GoalsScreenState();
+}
+
+class _GoalsScreenState extends ConsumerState<GoalsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _preselectAccountIfOnlyOne();
+    });
+  }
+
+  Future<void> _preselectAccountIfOnlyOne() async {
+    final accounts = await ref.read(accountsDaoProvider).getActiveAccounts();
+    if (accounts.length == 1 && mounted) {
+      ref.read(selectedAccountProvider.notifier).state = accounts.first.id;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final allGoalsAsync = ref.watch(allGoalsProvider);

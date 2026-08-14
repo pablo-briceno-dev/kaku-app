@@ -31,14 +31,13 @@ class ChipItem extends ConsumerWidget {
         children: [
           Text(
             title,
-            style: ts.titleSmall?.copyWith(color: cs.onSurfaceVariant),
+            style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
           ),
           Text(
             subtitle,
-            style: ts.titleLarge?.copyWith(
+            style: ts.titleMedium?.copyWith(
               color: color ?? cs.onSurface,
               fontWeight: FontWeight.w800,
-              fontSize: 24,
             ),
           ),
         ],
