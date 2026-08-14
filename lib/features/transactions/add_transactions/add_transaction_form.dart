@@ -94,81 +94,19 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
 
         return Form(
           key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _unitPriceController,
-                  textAlign: TextAlign.center,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                    signed: false,
-                  ),
-                  inputFormatters: [CurrencyFormatter.inputFormatter(currency)],
-                  decoration: InputDecoration(
-                    labelText: 'MONTO O VALOR UNITARIO · ${currency.label}',
-                    hintText: r'$0',
-                    labelStyle: ts.titleLarge?.copyWith(
-                      color: cs.onSurfaceVariant,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Campo requerido';
-                    }
-                    if (CurrencyFormatter.parse(value, currency) <= 0) {
-                      return 'Debe ser mayor a 0';
-                    }
-                    if (selectedType == TransactionType.expense &&
-                        CurrencyFormatter.parse(value, currency) >
-                            (account?.balance ?? 0.0)) {
-                      return 'Saldo insuficiente';
-                    }
-                    return null;
-                  },
-                  style: TextStyle(fontSize: 45),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _quantityController,
-                        textAlign: TextAlign.center,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: false,
-                          signed: false,
-                        ),
-                        inputFormatters: [
-                          // CurrencyFormatter.inputFormatter(currency),
-                        ],
-                        decoration: InputDecoration(
-                          labelText: 'CANTIDAD',
-                          hintText: r'1',
-                          labelStyle: ts.titleLarge?.copyWith(
-                            color: cs.onSurfaceVariant,
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Campo requerido';
-                          }
-                          if (int.parse(value) <= 1) {
-                            return 'Debe ser mayor a 1';
-                          }
-                          return null;
-                        },
-                        // style: TextStyle(fontSize: 15),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: TextFormField(
-                        enabled: false,
-                        controller: _amountController,
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _unitPriceController,
                         textAlign: TextAlign.center,
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
@@ -178,7 +116,8 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                           CurrencyFormatter.inputFormatter(currency),
                         ],
                         decoration: InputDecoration(
-                          labelText: 'TOTAL · ${currency.label}',
+                          labelText:
+                              'MONTO O VALOR UNITARIO · ${currency.label}',
                           hintText: r'$0',
                           labelStyle: ts.titleLarge?.copyWith(
                             color: cs.onSurfaceVariant,
@@ -198,130 +137,218 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                           }
                           return null;
                         },
-                        // style: TextStyle(fontSize: 45),
+                        style: TextStyle(fontSize: 45),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    border: Border.symmetric(
-                      horizontal: BorderSide(color: cs.outline),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'CATEGORÍA',
-                        style: ts.titleMedium?.copyWith(
-                          color: cs.onSurfaceVariant,
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _quantityController,
+                              textAlign: TextAlign.center,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: false,
+                                    signed: false,
+                                  ),
+                              inputFormatters: [
+                                // CurrencyFormatter.inputFormatter(currency),
+                              ],
+                              decoration: InputDecoration(
+                                labelText: 'CANTIDAD',
+                                hintText: r'1',
+                                labelStyle: ts.titleLarge?.copyWith(
+                                  color: cs.onSurfaceVariant,
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Campo requerido';
+                                }
+                                if (int.parse(value) <= 1) {
+                                  return 'Debe ser mayor a 1';
+                                }
+                                return null;
+                              },
+                              // style: TextStyle(fontSize: 15),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: TextFormField(
+                              enabled: false,
+                              controller: _amountController,
+                              textAlign: TextAlign.center,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                    decimal: true,
+                                    signed: false,
+                                  ),
+                              inputFormatters: [
+                                CurrencyFormatter.inputFormatter(currency),
+                              ],
+                              decoration: InputDecoration(
+                                labelText: 'TOTAL · ${currency.label}',
+                                hintText: r'$0',
+                                labelStyle: ts.titleLarge?.copyWith(
+                                  color: cs.onSurfaceVariant,
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Campo requerido';
+                                }
+                                if (CurrencyFormatter.parse(value, currency) <=
+                                    0) {
+                                  return 'Debe ser mayor a 0';
+                                }
+                                if (selectedType == TransactionType.expense &&
+                                    CurrencyFormatter.parse(value, currency) >
+                                        (account?.balance ?? 0.0)) {
+                                  return 'Saldo insuficiente';
+                                }
+                                return null;
+                              },
+                              // style: TextStyle(fontSize: 45),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          border: Border.symmetric(
+                            horizontal: BorderSide(color: cs.outline),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'CATEGORÍA',
+                              style: ts.titleMedium?.copyWith(
+                                color: cs.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            HorizontalChipsCategories(),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      HorizontalChipsCategories(),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _descriptionController,
+                        textAlign: TextAlign.start,
+                        maxLength: 100,
+                        keyboardType: TextInputType.text,
+                        maxLines: 3,
+                        decoration: const InputDecoration(
+                          labelText: 'DESCRIPCIÓN',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: DatePickerField(
+                              selectedDate: _selectedDate,
+                              onChanged: (date) {
+                                setState(() => _selectedDate = date);
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: SelectedAccount(
+                              accountId: selectedAccount,
+                              onTap: (accountId) =>
+                                  ref
+                                          .read(
+                                            selectedAccountProvider.notifier,
+                                          )
+                                          .state =
+                                      accountId,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      ReceiptPicker(
+                        initialPath: _receiptPath,
+                        onChanged: (path) =>
+                            setState(() => _receiptPath = path),
+                      ),
+                      const SizedBox(height: 16),
+                      const Spacer(),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            final valid =
+                                _formKey.currentState?.validate() ?? false;
+
+                            if (!valid) return;
+                            final dao = ref.read(transactionsDaoProvider);
+                            await dao.insertTransaction(
+                              TransactionsTableCompanion.insert(
+                                type: selectedType.name,
+                                amount: CurrencyFormatter.parse(
+                                  _amountController.text,
+                                  currency,
+                                ),
+                                description: drift.Value(
+                                  _descriptionController.text,
+                                ),
+                                categoryId: drift.Value(selectedCategory),
+                                accountId: selectedAccount!,
+                                receiptPath: drift.Value(_receiptPath),
+                                date: _selectedDate,
+                                unitPrice: drift.Value(
+                                  CurrencyFormatter.parse(
+                                    _unitPriceController.text,
+                                    currency,
+                                  ),
+                                ),
+                                quantity: drift.Value(
+                                  int.tryParse(_quantityController.text) ?? 1,
+                                ),
+                              ),
+                            );
+                            final accountDao = ref.read(accountsDaoProvider);
+                            await accountDao.updateBalance(
+                              account!.id,
+                              account.balance +
+                                  BudgetCalculator.balanceDelta(
+                                    selectedType,
+                                    CurrencyFormatter.parse(
+                                      _amountController.text,
+                                      currency,
+                                    ),
+                                  ),
+                            );
+                            if (_receiptPath != null) {
+                              ref
+                                  .read(storageRefreshSignalProvider.notifier)
+                                  .state++;
+                            }
+
+                            if (context.mounted) {
+                              AppSnackbar.success(
+                                context,
+                                '${selectedType.label} guardado',
+                              );
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: Text('Guardar ${selectedType.label}'),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _descriptionController,
-                  textAlign: TextAlign.start,
-                  maxLength: 100,
-                  keyboardType: TextInputType.text,
-                  maxLines: 3,
-                  decoration: const InputDecoration(labelText: 'DESCRIPCIÓN'),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: DatePickerField(
-                        selectedDate: _selectedDate,
-                        onChanged: (date) {
-                          setState(() => _selectedDate = date);
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: SelectedAccount(
-                        accountId: selectedAccount,
-                        onTap: (accountId) =>
-                            ref.read(selectedAccountProvider.notifier).state =
-                                accountId,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                ReceiptPicker(
-                  initialPath: _receiptPath,
-                  onChanged: (path) => setState(() => _receiptPath = path),
-                ),
-                const Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final valid = _formKey.currentState?.validate() ?? false;
-
-                      if (!valid) return;
-                      final dao = ref.read(transactionsDaoProvider);
-                      await dao.insertTransaction(
-                        TransactionsTableCompanion.insert(
-                          type: selectedType.name,
-                          amount: CurrencyFormatter.parse(
-                            _amountController.text,
-                            currency,
-                          ),
-                          description: drift.Value(_descriptionController.text),
-                          categoryId: drift.Value(selectedCategory),
-                          accountId: selectedAccount!,
-                          receiptPath: drift.Value(_receiptPath),
-                          date: _selectedDate,
-                          unitPrice: drift.Value(
-                            CurrencyFormatter.parse(
-                              _unitPriceController.text,
-                              currency,
-                            ),
-                          ),
-                          quantity: drift.Value(
-                            int.tryParse(_quantityController.text) ?? 1,
-                          ),
-                        ),
-                      );
-                      final accountDao = ref.read(accountsDaoProvider);
-                      await accountDao.updateBalance(
-                        account!.id,
-                        account.balance +
-                            BudgetCalculator.balanceDelta(
-                              selectedType,
-                              CurrencyFormatter.parse(
-                                _amountController.text,
-                                currency,
-                              ),
-                            ),
-                      );
-                      if (_receiptPath != null) {
-                        ref.read(storageRefreshSignalProvider.notifier).state++;
-                      }
-
-                      if (context.mounted) {
-                        AppSnackbar.success(
-                          context,
-                          '${selectedType.label} guardado',
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                    child: Text('Guardar ${selectedType.label}'),
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
+              ),
             ),
           ),
         );
