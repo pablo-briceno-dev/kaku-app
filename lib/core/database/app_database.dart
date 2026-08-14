@@ -115,6 +115,8 @@ class AppDatabase extends _$AppDatabase {
       await delete(accountsTable).go();
       // Las categorías del sistema (id=999) se recrean al iniciar
       await delete(categoriesTable).go();
+
+      await _seedDefaultCategories();
     });
   }
 }

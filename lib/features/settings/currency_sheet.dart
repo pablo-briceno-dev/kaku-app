@@ -22,41 +22,47 @@ class CurrencySheet extends ConsumerWidget {
           final currency = CurrencyType.values[index];
           final selected = currency == currencyProv;
 
-          return ListTile(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 2,
-            ),
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: selected
-                    ? scheme.primary.withValues(alpha: 0.12)
-                    : scheme.onSurface.withValues(alpha: 0.06),
-                borderRadius: BorderRadius.circular(10),
+          return Material(
+            type: MaterialType.transparency,
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 2,
               ),
-              child: Center(
-                child: Text(currency.labelCompact, style: textTheme.bodyMedium),
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: selected
+                      ? scheme.primary.withValues(alpha: 0.12)
+                      : scheme.onSurface.withValues(alpha: 0.06),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: Text(
+                    currency.labelCompact,
+                    style: textTheme.bodyMedium,
+                  ),
+                ),
               ),
-            ),
-            title: Text(
-              currency.label,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: selected ? scheme.primary : null,
+              title: Text(
+                currency.label,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: selected ? scheme.primary : null,
+                ),
               ),
+              subtitle: Text(
+                currency.labelComplete,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              trailing: selected
+                  ? Icon(Icons.check_circle, color: scheme.primary, size: 20)
+                  : const SizedBox(width: 20),
+              onTap: () {
+                ref.read(currencyProvider.notifier).setCurrency(currency);
+                Navigator.pop(context);
+              },
             ),
-            subtitle: Text(
-              currency.labelComplete,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            trailing: selected
-                ? Icon(Icons.check_circle, color: scheme.primary, size: 20)
-                : const SizedBox(width: 20),
-            onTap: () {
-              ref.read(currencyProvider.notifier).setCurrency(currency);
-              Navigator.pop(context);
-            },
           );
         },
       ),

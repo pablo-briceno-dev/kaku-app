@@ -29,79 +29,30 @@ class CategoryItem extends ConsumerWidget {
       child: Opacity(
         // Las inactivas se ven translúcidas
         opacity: isActive ? 1.0 : 0.4,
-        child: Slidable(
-          key: ValueKey('slide_${category.id}'),
-          // key: ValueKey(category.id),
-          // key: ObjectKey(category),
-          endActionPane: ActionPane(
-            motion: const DrawerMotion(),
-            extentRatio: 0.62,
-            children: [
-              // ── Editar ──
-              CustomSlidableAction(
-                onPressed: (_) => _openEditForm(context),
-                backgroundColor: cs.primary.withValues(alpha: 0.12),
-                foregroundColor: cs.primary,
-                borderRadius: BorderRadius.circular(12),
-                padding: EdgeInsets.zero,
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.edit_outlined, size: 20),
-                    SizedBox(height: 4),
-                    Text(
-                      'Editar',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // ── Activar / Desactivar ──
-              if (!category.isSystem) ...[
+        child: Material(
+          type: MaterialType.transparency,
+          child: Slidable(
+            key: ValueKey('slide_${category.id}'),
+            // key: ValueKey(category.id),
+            // key: ObjectKey(category),
+            endActionPane: ActionPane(
+              motion: const DrawerMotion(),
+              extentRatio: 0.62,
+              children: [
+                // ── Editar ──
                 CustomSlidableAction(
-                  onPressed: (_) => _toggleActive(context, ref),
-                  backgroundColor: isActive
-                      ? cs.error.withValues(alpha: 0.12)
-                      : cs.primary.withValues(alpha: 0.12),
-                  foregroundColor: isActive ? cs.error : cs.primary,
-                  borderRadius: BorderRadius.circular(12),
-                  padding: EdgeInsets.zero,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        isActive
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        size: 20,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        isActive ? 'Desactivar' : 'Activar',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                CustomSlidableAction(
-                  onPressed: (_) => _tryDelete(context, ref),
-                  backgroundColor: cs.error.withValues(alpha: 0.12),
-                  foregroundColor: cs.error,
+                  onPressed: (_) => _openEditForm(context),
+                  backgroundColor: cs.primary.withValues(alpha: 0.12),
+                  foregroundColor: cs.primary,
                   borderRadius: BorderRadius.circular(12),
                   padding: EdgeInsets.zero,
                   child: const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.delete_outline_rounded, size: 20),
+                      Icon(Icons.edit_outlined, size: 20),
                       SizedBox(height: 4),
                       Text(
-                        'Eliminar',
+                        'Editar',
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
@@ -110,23 +61,75 @@ class CategoryItem extends ConsumerWidget {
                     ],
                   ),
                 ),
+                // ── Activar / Desactivar ──
+                if (!category.isSystem) ...[
+                  CustomSlidableAction(
+                    onPressed: (_) => _toggleActive(context, ref),
+                    backgroundColor: isActive
+                        ? cs.error.withValues(alpha: 0.12)
+                        : cs.primary.withValues(alpha: 0.12),
+                    foregroundColor: isActive ? cs.error : cs.primary,
+                    borderRadius: BorderRadius.circular(12),
+                    padding: EdgeInsets.zero,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          isActive
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          size: 20,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          isActive ? 'Desactivar' : 'Activar',
+                          style: const TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  CustomSlidableAction(
+                    onPressed: (_) => _tryDelete(context, ref),
+                    backgroundColor: cs.error.withValues(alpha: 0.12),
+                    foregroundColor: cs.error,
+                    borderRadius: BorderRadius.circular(12),
+                    padding: EdgeInsets.zero,
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.delete_outline_rounded, size: 20),
+                        SizedBox(height: 4),
+                        Text(
+                          'Eliminar',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
-            ],
-          ),
-          child: CategoryTile(
-            category: category,
-            catColor: catColor,
-            onTap: () {
-              Slidable.of(context)?.close();
+            ),
+            child: CategoryTile(
+              category: category,
+              catColor: catColor,
+              onTap: () {
+                Slidable.of(context)?.close();
 
-              context.push(
-                AppRoutes.toCategory(
-                  category.id,
-                  selectedMonth.month,
-                  selectedMonth.year,
-                ),
-              );
-            },
+                context.push(
+                  AppRoutes.toCategory(
+                    category.id,
+                    selectedMonth.month,
+                    selectedMonth.year,
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
