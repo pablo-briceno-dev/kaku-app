@@ -47,7 +47,9 @@ class LockMethodPicker extends ConsumerWidget {
         await AppPinService.savePin(pin);
         // Asegurar que biometría quede desactivada
         await BiometricService.setEnabled(false);
-        await ref.read(biometricsEnabledProvider.notifier).enableWithMethod(LockMethod.pin);
+        await ref
+            .read(biometricsEnabledProvider.notifier)
+            .enableWithMethod(LockMethod.pin);
         ref.read(authenticationStateProvider.notifier).state = true;
         if (context.mounted) context.go(AppRoutes.root);
       }
@@ -61,7 +63,9 @@ class LockMethodPicker extends ConsumerWidget {
         debugPrint('✅ Biometría activada y guardada en SharedPreferences');
         // Limpiar PIN si existía
         await AppPinService.clearPin();
-        await ref.read(biometricsEnabledProvider.notifier).enableWithMethod(method);
+        await ref
+            .read(biometricsEnabledProvider.notifier)
+            .enableWithMethod(method);
         ref.read(authenticationStateProvider.notifier).state = true;
         if (context.mounted) context.go(AppRoutes.root);
       } else {
