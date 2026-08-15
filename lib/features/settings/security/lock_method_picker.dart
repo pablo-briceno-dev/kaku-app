@@ -45,20 +45,31 @@ class LockMethodPicker extends ConsumerWidget {
       final pin = await PinScreen.createPin(context);
       if (pin != null) {
         await AppPinService.savePin(pin);
-        if (!context.mounted) return;
-        ref.read(biometricsEnabledProvider.notifier).toggle(true, context);
+        // Asegurar que biometría quede desactivada
+        await BiometricService.setEnabled(false);
+        await ref.read(biometricsEnabledProvider.notifier).enableWithMethod(LockMethod.pin);
         ref.read(authenticationStateProvider.notifier).state = true;
-        context.go(AppRoutes.root);
+        if (context.mounted) context.go(AppRoutes.root);
+      }
+    } else {
+      // Biometría (huella o Face ID)
+      final result = await BiometricService.authenticate(
+        reason: 'Activar bloqueo biométrico',
+      );
+      if (result == BiometricResult.success) {
+        await BiometricService.setEnabled(true);
+        debugPrint('✅ Biometría activada y guardada en SharedPreferences');
+        // Limpiar PIN si existía
+        await AppPinService.clearPin();
+        await ref.read(biometricsEnabledProvider.notifier).enableWithMethod(method);
+        ref.read(authenticationStateProvider.notifier).state = true;
+        if (context.mounted) context.go(AppRoutes.root);
       } else {
-        final result = await BiometricService.authenticate(
-          reason: 'Activar bloqueo biométrico',
-        );
-        if (result == BiometricResult.success) {
-          await BiometricService.setEnabled(true);
-          if (!context.mounted) return;
-          ref.read(biometricsEnabledProvider.notifier).toggle(true, context);
-          ref.read(authenticationStateProvider.notifier).state = true;
-          context.go(AppRoutes.root);
+        // Falló la autenticación
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('No se pudo activar: ${result.name}')),
+          );
         }
       }
     }

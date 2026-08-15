@@ -57,13 +57,12 @@ class _AppShellState extends ConsumerState<AppShell>
   @override
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-
-    // Calcula qué tab está activo según la URL actual.
-    // lastIndexWhere prioriza el match más largo, evitando que '/accounts/42'
-    // active '/accounts' en lugar del tab correcto
     int currentIndex = _tabs.lastIndexWhere((t) => location.startsWith(t));
-    if (currentIndex < 0) currentIndex = 0; // fallback al Dashboard
+    if (currentIndex < 0) currentIndex = 0;
     final cs = Theme.of(context).colorScheme;
+
+    // Tamaño fijo para el botón central (entre 48 y 60 dp)
+    const double centerSize = 56.0; // o calcúlalo con MediaQuery si quieres
 
     return Scaffold(
       body: widget.child,
@@ -73,9 +72,9 @@ class _AppShellState extends ConsumerState<AppShell>
         notchMargin: 8,
         shape: const CircularNotchedRectangle(),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // 2 tabs a la izquierda
+            // Grupo izquierdo: Inicio + Estadísticas
             _NavItem(
               icon: Icons.home_outlined,
               selectedIcon: Icons.home,
@@ -93,13 +92,17 @@ class _AppShellState extends ConsumerState<AppShell>
               onTap: () => context.go(_tabs[1]),
             ),
 
-            // Centro
-            _NavCenterItem(
-              icon: Icons.add,
-              onTap: () => context.push(AppRoutes.addTransaction),
+            // Centro (ocupa un espacio fijo)
+            SizedBox(
+              width: centerSize,
+              height: centerSize,
+              child: _NavCenterItem(
+                icon: Icons.add,
+                onTap: () => context.push(AppRoutes.addTransaction),
+              ),
             ),
 
-            // 2 tabs a la derecha
+            // Grupo derecho: Metas + Cuentas
             _NavItem(
               icon: Icons.flag_outlined,
               selectedIcon: Icons.flag,
@@ -123,7 +126,7 @@ class _AppShellState extends ConsumerState<AppShell>
   }
 }
 
-// Widget auxiliar para cada ítem del BottomAppBar
+// --- Ítem normal (ahora con Flexible para que se ajuste sin romper) ---
 class _NavItem extends StatelessWidget {
   final IconData icon, selectedIcon;
   final String label;
@@ -145,31 +148,37 @@ class _NavItem extends StatelessWidget {
     final color = active
         ? Theme.of(context).colorScheme.primary
         : Theme.of(context).colorScheme.onSurfaceVariant;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(active ? selectedIcon : icon, color: color, size: 22),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                color: color,
-                fontWeight: active ? FontWeight.w700 : FontWeight.w400,
+
+    return Flexible(
+      flex: 1, // ambos grupos ocupan el mismo espacio
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(active ? selectedIcon : icon, color: color, size: 22),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: color,
+                  fontWeight: active ? FontWeight.w700 : FontWeight.w400,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
+// --- Botón central (sin cambios, solo se usa dentro del SizedBox) ---
 class _NavCenterItem extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
@@ -182,17 +191,15 @@ class _NavCenterItem extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(30),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
-        width: 55,
-        height: 55,
         decoration: BoxDecoration(
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.circular(20),
           color: cs.primary,
           boxShadow: [
             BoxShadow(
-              color: cs.shadow.withValues(alpha: 0.18),
+              color: cs.shadow.withAlpha(30),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),

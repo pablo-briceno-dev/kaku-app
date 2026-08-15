@@ -35,7 +35,7 @@ class CardBalance extends StatelessWidget {
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -76,7 +76,7 @@ class CardBalance extends StatelessWidget {
                       color: chipItems[i].colorDescription,
                     ),
                   ),
-                  if (i != chipItems.length - 1) const SizedBox(width: 12),
+                  if (i != chipItems.length - 1) const SizedBox(width: 8),
                 ],
               ],
             ),

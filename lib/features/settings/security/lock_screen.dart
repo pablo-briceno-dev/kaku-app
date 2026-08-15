@@ -15,6 +15,8 @@ class LockScreen extends ConsumerStatefulWidget {
 }
 
 class _LockScreenState extends ConsumerState<LockScreen> {
+  bool _isAuthenticating = false;
+
   @override
   void initState() {
     super.initState();
@@ -22,37 +24,63 @@ class _LockScreenState extends ConsumerState<LockScreen> {
   }
 
   Future<void> _authenticate() async {
-    final pinEnabled = await AppPinService.isEnabled();
-    final biometricEnabled = await BiometricService.isEnabled();
+    if (_isAuthenticating) return;
+    setState(() => _isAuthenticating = true);
 
-    if (!mounted) return;
+    try {
+      final pinEnabled = await AppPinService.isEnabled();
+      final biometricEnabled = ref.read(biometricsEnabledProvider);
 
-    // Sin bloqueo → ir directo
-    if (!pinEnabled && !biometricEnabled) {
-      ref.read(authenticationStateProvider.notifier).state =
-          true; // ✅ marcar autenticado
-      context.go(AppRoutes.dashboard);
-      return;
-    }
-
-    if (pinEnabled) {
-      final verified = await PinScreen.verifyPin(context);
-      if (!mounted) return;
-      if (verified) {
-        ref.read(authenticationStateProvider.notifier).state =
-            true; // ✅ marcar autenticado
-        context.go(AppRoutes.dashboard); // ✅ ruta correcta
-      }
-    } else {
-      final result = await BiometricService.authenticate(
-        reason: 'Confirma tu identidad para acceder a Kaku',
+      debugPrint(
+        '🔐 pinEnabled: $pinEnabled, biometricEnabled: $biometricEnabled',
       );
-      if (!mounted) return;
-      if (result == BiometricResult.success) {
-        ref.read(authenticationStateProvider.notifier).state =
-            true; // ✅ marcar autenticado
-        context.go(AppRoutes.dashboard); // ✅ ruta correcta
+
+      if (!pinEnabled && !biometricEnabled) {
+        // Sin bloqueo → ir directo al dashboard
+        ref.read(authenticationStateProvider.notifier).state = true;
+        if (mounted) {
+          context.go(AppRoutes.dashboard);
+        }
+        return;
       }
+
+      bool authenticated = false;
+
+      if (pinEnabled && mounted) {
+        authenticated = await PinScreen.verifyPin(context);
+      } else if (biometricEnabled) {
+        final result = await BiometricService.authenticate(
+          reason: 'Confirma tu identidad para acceder a Kaku',
+        );
+        authenticated = result == BiometricResult.success;
+        if (!authenticated && result == BiometricResult.failed) {
+          // Mostrar mensaje de error
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Autenticación fallida. Intenta de nuevo.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        }
+      }
+
+      if (authenticated && mounted) {
+        ref.read(authenticationStateProvider.notifier).state = true;
+        context.go(AppRoutes.dashboard);
+      } else {
+        // Si falla, no se navega y se queda en la pantalla de bloqueo
+        setState(() => _isAuthenticating = false);
+      }
+    } catch (e) {
+      debugPrint('❌ Error en autenticación: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
+      setState(() => _isAuthenticating = false);
     }
   }
 
@@ -65,7 +93,10 @@ class _LockScreenState extends ConsumerState<LockScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.lock_outline_rounded, size: 56, color: cs.primary),
+            if (_isAuthenticating)
+              const CircularProgressIndicator()
+            else
+              Icon(Icons.lock_outline_rounded, size: 56, color: cs.primary),
             const SizedBox(height: 16),
             Text(
               'Kaku',
@@ -73,6 +104,18 @@ class _LockScreenState extends ConsumerState<LockScreen> {
                 context,
               ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
             ),
+            const SizedBox(height: 8),
+            Text(
+              _isAuthenticating ? 'Verificando...' : 'Desbloqueando...',
+              style: TextStyle(color: cs.onSurfaceVariant),
+            ),
+            const SizedBox(height: 28),
+            if (!_isAuthenticating)
+              FilledButton.icon(
+                onPressed: _authenticate,
+                icon: const Icon(Icons.fingerprint),
+                label: const Text('Reintentar'),
+              ),
           ],
         ),
       ),

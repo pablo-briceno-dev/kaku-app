@@ -117,6 +117,24 @@ class BiometricsNotifier extends StateNotifier<bool> {
     state = false;
     return BiometricToggleResult(success: true);
   }
+
+  // ✅ Método público para activar el bloqueo (desde selector)
+  Future<void> enableWithMethod(LockMethod method) async {
+    if (method == LockMethod.pin) {
+      // Ya se guardó el PIN desde el picker, solo actualizamos estado
+      state = true;
+    } else {
+      // Para biometría, ya se autenticó y se guardó en SharedPreferences
+      state = true;
+    }
+  }
+
+  // ✅ Método para desactivar
+  Future<void> disable() async {
+    await AppPinService.clearPin();
+    await BiometricService.setEnabled(false);
+    state = false;
+  }
 }
 
 class BiometricToggleResult {
@@ -151,24 +169,91 @@ class NotificationsNotifier extends StateNotifier<bool> {
     state = hasPermission && isEnabled;
   }
 
-  Future<NotificationToggleResult> toggle(bool newValue) async {
+  // Nuevo método para activar directamente con un método
+  Future<void> enableWithMethod(LockMethod method) async {
+    if (method == LockMethod.pin) {
+      // Ya se guardó el PIN desde el picker
+      state = true;
+    } else {
+      // Para biometría, ya se autenticó y se llamó a setEnabled(true)
+      state = true;
+    }
+  }
+
+  Future<BiometricToggleResult> toggle(
+    bool newValue,
+    BuildContext context,
+  ) async {
     if (newValue) {
-      // Activar: pedir permiso del sistema si no lo tiene
-      final hasPermission = await NotificationService.hasPermission();
-      if (!hasPermission) {
-        final granted = await NotificationService.requestPermission();
-        if (!granted) {
-          return NotificationToggleResult(
-            success: false,
-            permissionDenied: true,
-          );
-        }
+      // Mostrar selector y esperar método
+      final selected = await AppBottomSheet.show<LockMethod>(
+        context,
+        title: 'Bloqueo de pantalla',
+        subtitle: 'Elige cómo quieres proteger tu app',
+        useRootNavigator: false,
+        isFullScreen: false,
+        child: const LockMethodPicker(),
+      );
+      if (selected == null) {
+        return BiometricToggleResult(success: false);
       }
+      // El picker ya ejecutó la acción, solo actualizamos estado
+      // Pero como el picker llama a toggle de nuevo, evitamos recursión.
+      // Mejor: mover la lógica del picker fuera.
+      return BiometricToggleResult(success: true);
+    } else {
+      return _deactivate(context);
+    }
+  }
+
+  // Future<NotificationToggleResult> toggle(bool newValue) async {
+  //   if (newValue) {
+  //     // Activar: pedir permiso del sistema si no lo tiene
+  //     final hasPermission = await NotificationService.hasPermission();
+  //     if (!hasPermission) {
+  //       final granted = await NotificationService.requestPermission();
+  //       if (!granted) {
+  //         return NotificationToggleResult(
+  //           success: false,
+  //           permissionDenied: true,
+  //         );
+  //       }
+  //     }
+  //   }
+
+  //   await NotificationService.setEnabled(newValue);
+  //   state = newValue;
+  //   return NotificationToggleResult(success: true);
+  // }
+
+  Future<BiometricToggleResult> _deactivate(BuildContext context) async {
+    final pinEnabled = await AppPinService.isEnabled();
+
+    bool verified = false;
+
+    if (pinEnabled) {
+      // Verifica con el PIN propio
+      if (!context.mounted) return BiometricToggleResult(success: false);
+      verified = await PinScreen.verifyPin(context);
+    } else {
+      // Verifica con biometría del sistema
+      final result = await BiometricService.authenticate(
+        reason: 'Confirma tu identidad para desactivar el bloqueo',
+      );
+      verified = result == BiometricResult.success;
     }
 
-    await NotificationService.setEnabled(newValue);
-    state = newValue;
-    return NotificationToggleResult(success: true);
+    if (!verified) {
+      return BiometricToggleResult(
+        success: false,
+        error: 'No se pudo verificar tu identidad.',
+      );
+    }
+
+    await AppPinService.clearPin();
+    await BiometricService.setEnabled(false);
+    state = false;
+    return BiometricToggleResult(success: true);
   }
 }
 
