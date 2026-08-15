@@ -19,6 +19,8 @@ class SelectedAccountGoal extends ConsumerWidget {
               ?.where((e) => selectedAccount != null && e.id == selectedAccount)
               .firstOrNull;
 
+    debugPrint('SelectedAccountGoal: $selectedAccount');
+
     return InkWell(
       onTap: activeAccounts?.length == 1
           ? null

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kaku/core/router/app_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/security/pin_screen.dart';
+import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
 
@@ -29,7 +29,8 @@ class _LockScreenState extends ConsumerState<LockScreen> {
 
     // Sin bloqueo → ir directo
     if (!pinEnabled && !biometricEnabled) {
-      setAuthenticated(); // ✅ marcar autenticado
+      ref.read(authenticationStateProvider.notifier).state =
+          true; // ✅ marcar autenticado
       context.go(AppRoutes.dashboard);
       return;
     }
@@ -38,7 +39,8 @@ class _LockScreenState extends ConsumerState<LockScreen> {
       final verified = await PinScreen.verifyPin(context);
       if (!mounted) return;
       if (verified) {
-        setAuthenticated(); // ✅ marcar autenticado
+        ref.read(authenticationStateProvider.notifier).state =
+            true; // ✅ marcar autenticado
         context.go(AppRoutes.dashboard); // ✅ ruta correcta
       }
     } else {
@@ -47,7 +49,8 @@ class _LockScreenState extends ConsumerState<LockScreen> {
       );
       if (!mounted) return;
       if (result == BiometricResult.success) {
-        setAuthenticated(); // ✅ marcar autenticado
+        ref.read(authenticationStateProvider.notifier).state =
+            true; // ✅ marcar autenticado
         context.go(AppRoutes.dashboard); // ✅ ruta correcta
       }
     }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kaku/core/router/app_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
 
@@ -35,7 +35,7 @@ class _AppShellState extends ConsumerState<AppShell>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
-      resetAuthentication();
+      ref.read(authenticationStateProvider.notifier).state = false;
     }
     if (state == AppLifecycleState.resumed) {
       _checkLock();
@@ -43,6 +43,8 @@ class _AppShellState extends ConsumerState<AppShell>
   }
 
   Future<void> _checkLock() async {
+    if (ref.read(authenticationStateProvider)) return;
+
     final pinEnabled = await AppPinService.isEnabled();
     final biometricEnabled = await BiometricService.isEnabled();
     if (!pinEnabled && !biometricEnabled) return;

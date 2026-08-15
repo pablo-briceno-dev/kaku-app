@@ -81,6 +81,11 @@ class BiometricService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kBiometricsEnabled, value);
   }
+
+  // biometric_service.dart (ampliar)
+  static Future<List<BiometricType>> getAvailableBiometrics() async {
+    return await _auth.getAvailableBiometrics();
+  }
 }
 
 enum BiometricResult { success, failed, notEnrolled, notAvailable, lockedOut }

@@ -16,16 +16,9 @@ import 'package:kaku/features/stats/stats_screen.dart';
 import 'package:kaku/features/transactions/add_transactions/add_transaction_screen.dart';
 import 'package:kaku/features/transactions/transaction_detail_screen.dart';
 import 'package:kaku/features/transactions/transactions_screen.dart';
+import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
-
-bool _authenticated = false;
-
-// Llamado desde AppShell cuando la app vuelve de background
-void resetAuthentication() => _authenticated = false;
-
-// Llamado desde LockScreen cuando el usuario autentica exitosamente
-void setAuthenticated() => _authenticated = true;
 
 // Provider que expone el router a toda la app
 // Se consume en main.dart con: router: ref.watch(routerProvider)
@@ -122,13 +115,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Ya en /lock → no redirigir
       if (isLockRoute) return null;
 
+      final authenticated = ref.watch(authenticationStateProvider);
       // ✅ FIX 2: si ya autenticó en esta sesión → dejar pasar
-      if (_authenticated) return null;
+      if (authenticated) return null;
 
       // Si no hay bloqueo activo → dejar pasar sin pasar por /lock
       final locked = await _isLocked();
       if (!locked) {
-        _authenticated = true; // no tiene bloqueo, marcar como autenticado
+        // no tiene bloqueo, marcar como autenticado
+        ref.read(authenticationStateProvider.notifier).state = true;
         return null;
       }
 
