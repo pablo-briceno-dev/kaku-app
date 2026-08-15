@@ -4,7 +4,6 @@ import 'package:kaku/features/goals/goal_form_sheet.dart';
 import 'package:kaku/features/goals/goals_list.dart';
 import 'package:kaku/features/goals/widgets/goals_list_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
-import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/premium_service.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
@@ -19,21 +18,6 @@ class GoalsScreen extends ConsumerStatefulWidget {
 }
 
 class _GoalsScreenState extends ConsumerState<GoalsScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _preselectAccountIfOnlyOne();
-    });
-  }
-
-  Future<void> _preselectAccountIfOnlyOne() async {
-    final accounts = await ref.read(accountsDaoProvider).getActiveAccounts();
-    if (accounts.length == 1 && mounted) {
-      ref.read(selectedAccountProvider.notifier).state = accounts.first.id;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;

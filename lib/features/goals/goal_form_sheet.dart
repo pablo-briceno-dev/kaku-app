@@ -50,19 +50,6 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
 
     controllers['name']?.addListener(_refresh);
     controllers['targetAmount']?.addListener(_refresh);
-
-    // !Revisar esta parte !!!!
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _preselectAccountIfOnlyOne();
-    });
-  }
-
-  Future<void> _preselectAccountIfOnlyOne() async {
-    final accounts = await ref.read(accountsDaoProvider).getActiveAccounts();
-    debugPrint('preselectAccountIfOnlyOne: ${accounts.length}');
-    if (accounts.length == 1 && mounted) {
-      ref.read(selectedAccountProvider.notifier).state = accounts.first.id;
-    }
   }
 
   void _refresh() {
