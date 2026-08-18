@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:kaku/shared/services/local_backup_service.dart';
 
 class LocalBackupSheet extends ConsumerStatefulWidget {
@@ -16,13 +17,15 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
   bool _restoringBackup = false;
   String? _statusMessage;
   bool _isError = false;
+  final TextEditingController _passwordController = TextEditingController();
+  static const _kPasswordPrefix = 'kaku_local_backup_key';
 
-  // Clave para cifrar/descifrar — usamos un identificador fijo
-  // del dispositivo o un valor guardado en SharedPreferences.
-  // Para simplicidad usamos un string fijo por ahora;
-  // en producción puedes usar el device_info_plus package
-  // para obtener un ID único del dispositivo.
-  static const _backupKey = 'kaku_local_backup_key_v1';
+  @override
+  void initState() {
+    super.initState();
+    _passwordController.text =
+        ref.read(sharedPrefsProvider).getString(_kPasswordPrefix) ?? '';
+  }
 
   Future<void> _createBackup() async {
     setState(() {
@@ -30,8 +33,21 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
       _statusMessage = null;
     });
 
+    final password = _passwordController.text.trim();
+
+    if (password.isEmpty) {
+      setState(() {
+        _statusMessage = 'La contraseña no puede estar vacía';
+        _isError = true;
+        _creatingBackup = false;
+      });
+      return;
+    }
+
+    ref.read(sharedPrefsProvider).setString(_kPasswordPrefix, password);
+
     final result = await LocalBackupService.createBackup(
-      userKey: _backupKey,
+      userKey: password,
       share: true, // abre Share sheet para que el usuario elija destino
     );
 
@@ -57,6 +73,17 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
   }
 
   Future<void> _restoreBackup() async {
+    final password = _passwordController.text.trim();
+
+    if (password.isEmpty) {
+      setState(() {
+        _statusMessage = 'La contraseña no puede estar vacía';
+        _isError = true;
+        _creatingBackup = false;
+      });
+      return;
+    }
+
     // Primero pide confirmación
     final confirm = await showDialog<bool>(
       context: context,
@@ -84,6 +111,8 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
 
     if (confirm != true) return;
 
+    ref.read(sharedPrefsProvider).setString(_kPasswordPrefix, password);
+
     // Abre el file picker para que el usuario seleccione el archivo
     final picked = await FilePicker.pickFiles(
       type: FileType.any,
@@ -104,7 +133,7 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
 
     final result = await LocalBackupService.restoreBackup(
       filePath: filePath,
-      userKey: _backupKey,
+      userKey: password,
     );
 
     if (!mounted) return;
@@ -187,7 +216,8 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
                   child: Text(
                     'El archivo se guarda en tu dispositivo. '
                     'Puedes moverlo a Google Drive, WhatsApp o '
-                    'donde prefieras usando el botón Compartir.',
+                    'donde prefieras usando el botón Compartir. '
+                    'La contraseña es necesaria para descifrarlo y cifrar el backup.',
                     style: TextStyle(
                       fontSize: 12,
                       color: cs.primary,
@@ -196,6 +226,17 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
                   ),
                 ),
               ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _passwordController,
+            // obscureText: true,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              labelText: 'Contraseña',
             ),
           ),
           const SizedBox(height: 16),

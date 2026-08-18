@@ -23,7 +23,6 @@ class BillingService {
     if (!Platform.isAndroid && !Platform.isIOS) return;
 
     // await Purchases.setLogLevel(LogLevel.debug); // TODO: quitar en producción
-    // debugPrint('BillingService.initialize key: $_kRevenueCatAndroidKey');
     await Purchases.configure(PurchasesConfiguration(_kRevenueCatAndroidKey));
 
     // Si el usuario ya era premium (compra previa), sincronizar
