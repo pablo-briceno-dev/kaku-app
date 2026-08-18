@@ -252,6 +252,7 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                         children: [
                           Expanded(
                             child: DatePickerField(
+                              mode: DatePickerFieldMode.past,
                               selectedDate: _selectedDate,
                               onChanged: (date) {
                                 setState(() => _selectedDate = date);

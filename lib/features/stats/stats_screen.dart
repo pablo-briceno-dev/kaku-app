@@ -58,7 +58,7 @@ class StatsScreen extends ConsumerWidget {
       )),
     );
 
-    final monthName = DateFormat('MMMM yyyy')
+    final monthName = DateFormat('MMMM yyyy', 'es')
         .format(DateTime(params.year, params.month))
         .replaceFirstMapped(RegExp(r'^\w'), (m) => m[0]!.toUpperCase());
 
@@ -174,6 +174,7 @@ class StatsScreen extends ConsumerWidget {
                           title: 'Mes vs anterior',
                           subtitle: DateFormat(
                             'MMMM',
+                            'es',
                           ).format(DateTime(prevParams.year, prevParams.month)),
                         ),
                         _buildComparison(

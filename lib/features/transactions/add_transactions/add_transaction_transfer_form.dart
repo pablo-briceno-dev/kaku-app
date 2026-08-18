@@ -243,6 +243,7 @@ class _AddTransactionTransferFormState
                       ),
                       const SizedBox(height: 16),
                       DatePickerField(
+                        mode: DatePickerFieldMode.past,
                         selectedDate: _selectedDate,
                         onChanged: (date) {
                           setState(() => _selectedDate = date);

@@ -49,7 +49,6 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
 
   Future<void> _preselectAccountIfOnlyOne() async {
     final accounts = await ref.read(accountsDaoProvider).getActiveAccounts();
-    debugPrint('preselectAccountIfOnlyOne: ${accounts.length}');
     if (accounts.length == 1 && mounted) {
       ref.read(selectedAccountProvider.notifier).state = accounts.first.id;
     }

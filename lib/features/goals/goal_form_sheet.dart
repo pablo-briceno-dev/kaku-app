@@ -154,6 +154,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
           const SizedBox(height: 16),
           DatePickerField(
             label: 'Fecha límite (opcional)',
+            mode: DatePickerFieldMode.future,
             selectedDate: _deadline,
             onChanged: (date) {
               setState(() => _deadline = date);
