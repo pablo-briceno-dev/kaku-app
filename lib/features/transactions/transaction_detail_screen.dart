@@ -101,6 +101,7 @@ class TransactionDetailScreen extends ConsumerWidget {
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // ─── Encabezado (Emoji, monto, categoría, tipo) ───
               Center(
                 child: Column(
                   children: [
@@ -194,87 +195,119 @@ class TransactionDetailScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              TransactionDetailList(
-                list: [
-                  TransactionDetailListConfig(
-                    title: 'Descripción',
-                    subtitle:
-                        transaction.description ?? category?.name ?? ' - ',
+
+              // ─── Parte scrolleable (lista + botones) ───
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 4,
                   ),
-                  TransactionDetailListConfig(
-                    title: 'Categoría',
-                    subtitle:
-                        '${category?.emoji ?? ''} ${category?.name ?? ' - '}',
-                  ),
-                  TransactionDetailListConfig(
-                    title: 'Cuenta',
-                    subtitle:
-                        '${account?.icon ?? ''} ${account?.name ?? ' - '}',
-                  ),
-                  TransactionDetailListConfig(
-                    title: 'Fecha y hora',
-                    subtitle: DateFormatter.fullDateTime(transaction.date),
-                  ),
-                  TransactionDetailListConfig(
-                    title: 'Recurrente',
-                    subtitle: transaction.isRecurring ? 'Si' : 'No',
-                  ),
-                  TransactionDetailListConfig(
-                    title: 'Foto de recibo',
-                    subtitle: transaction.receiptPath,
-                    isImage: true,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    width: 200,
-                    child: OutlinedButton.icon(
-                      icon: Icon(Icons.edit, color: cs.primary),
-                      label: const Text('Editar'),
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: cs.primary.withValues(alpha: 0.1),
-                        foregroundColor: cs.primary,
-                        side: BorderSide(color: cs.primary),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      TransactionDetailList(
+                        list: [
+                          TransactionDetailListConfig(
+                            title: 'Descripción',
+                            subtitle:
+                                transaction.description ??
+                                category?.name ??
+                                ' - ',
+                          ),
+                          TransactionDetailListConfig(
+                            title: 'Categoría',
+                            subtitle:
+                                '${category?.emoji ?? ''} ${category?.name ?? ' - '}',
+                          ),
+                          TransactionDetailListConfig(
+                            title: 'Cuenta',
+                            subtitle:
+                                '${account?.icon ?? ''} ${account?.name ?? ' - '}',
+                          ),
+                          TransactionDetailListConfig(
+                            title: 'Fecha y hora',
+                            subtitle: DateFormatter.fullDateTime(
+                              transaction.date,
+                            ),
+                          ),
+                          TransactionDetailListConfig(
+                            title: 'Recurrente',
+                            subtitle: transaction.isRecurring ? 'Si' : 'No',
+                          ),
+                          TransactionDetailListConfig(
+                            title: 'Foto de recibo',
+                            subtitle: transaction.receiptPath,
+                            isImage: true,
+                          ),
+                        ],
                       ),
-                      onPressed: () {
-                        ref.watch(selectedAccountProvider.notifier).state =
-                            transaction.accountId;
-                        ref.watch(selectedCategoryProvider.notifier).state =
-                            transaction.categoryId;
-                        AppBottomSheet.show(
-                          context,
-                          title: 'Editar transacción #${transaction.id}',
-                          isFullScreen: true,
-                          useRootNavigator: true,
-                          child: EditTransactionSheet(transaction: transaction),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  SizedBox(
-                    width: 200,
-                    child: OutlinedButton.icon(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      label: const Text('Eliminar'),
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.red.withValues(alpha: 0.1),
-                        foregroundColor: Colors.red,
-                        side: BorderSide(color: Colors.red),
+                      const SizedBox(height: 16),
+                      // Botones centrados y con espacio
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 150,
+                            child: OutlinedButton.icon(
+                              icon: Icon(Icons.edit, color: cs.primary),
+                              label: const Text('Editar'),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: cs.primary.withValues(
+                                  alpha: 0.1,
+                                ),
+                                foregroundColor: cs.primary,
+                                side: BorderSide(color: cs.primary),
+                              ),
+                              onPressed: () {
+                                ref
+                                        .watch(selectedAccountProvider.notifier)
+                                        .state =
+                                    transaction.accountId;
+                                ref
+                                    .watch(selectedCategoryProvider.notifier)
+                                    .state = transaction
+                                    .categoryId;
+                                AppBottomSheet.show(
+                                  context,
+                                  title:
+                                      'Editar transacción #${transaction.id}',
+                                  isFullScreen: true,
+                                  useRootNavigator: true,
+                                  child: EditTransactionSheet(
+                                    transaction: transaction,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          SizedBox(
+                            width: 150,
+                            child: OutlinedButton.icon(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              label: const Text('Eliminar'),
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.red.withValues(
+                                  alpha: 0.1,
+                                ),
+                                foregroundColor: Colors.red,
+                                side: BorderSide(color: Colors.red),
+                              ),
+                              onPressed: () => _onDelete(
+                                context,
+                                ref,
+                                transaction,
+                                account?.balance ?? 0.0,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      onPressed: () => _onDelete(
-                        context,
-                        ref,
-                        transaction,
-                        account?.balance ?? 0.0,
-                      ),
-                    ),
+                      const SizedBox(height: 20), // espacio extra al final
+                    ],
                   ),
-                ],
+                ),
               ),
             ],
           ),
