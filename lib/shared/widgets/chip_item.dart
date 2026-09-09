@@ -35,9 +35,9 @@ class ChipItem extends ConsumerWidget {
           ),
           Text(
             subtitle,
-            style: ts.titleMedium?.copyWith(
+            style: ts.titleSmall?.copyWith(
               color: color ?? cs.onSurface,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

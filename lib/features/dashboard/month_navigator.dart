@@ -44,7 +44,7 @@ class _MonthNavigatorState extends ConsumerState<MonthNavigator> {
         Expanded(
           child: Text(
             capitalize(monthName),
-            style: Theme.of(context).textTheme.titleLarge,
+            style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
         Expanded(
