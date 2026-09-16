@@ -9,9 +9,11 @@ import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/core/models/transaction_type_filter.dart';
 import 'package:kaku/core/receipt_storage.dart';
 import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/features/transactions/edit_transaction_sheet.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/utils/undo_delete.dart';
+import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
 import 'package:kaku/shared/widgets/transaction_item.dart';
 
@@ -121,6 +123,27 @@ class TransactionsListFilter extends ConsumerWidget {
                         AppRoutes.toTransaction(txWithCat.transaction.id),
                       ),
                       slideActions: [
+                        SlideAction(
+                          icon: Icons.edit_outlined,
+                          label: 'Editar',
+                          color: Theme.of(context).colorScheme.primary,
+                          onTap: () {
+                            ref.watch(selectedAccountProvider.notifier).state =
+                                txWithCat.transaction.accountId;
+                            ref.watch(selectedCategoryProvider.notifier).state =
+                                txWithCat.transaction.categoryId;
+                            AppBottomSheet.show(
+                              context,
+                              title:
+                                  'Editar transacción #${txWithCat.transaction.id}',
+                              isFullScreen: true,
+                              useRootNavigator: true,
+                              child: EditTransactionSheet(
+                                transaction: txWithCat.transaction,
+                              ),
+                            );
+                          },
+                        ),
                         SlideAction(
                           icon: Icons.delete_outline_rounded,
                           label: 'Eliminar',

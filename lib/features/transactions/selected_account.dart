@@ -39,22 +39,33 @@ class SelectedAccount extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.credit_card_rounded,
-              size: 25,
-              color: cs.onSurfaceVariant,
+            Expanded(
+              child: Icon(
+                Icons.credit_card_rounded,
+                size: 25,
+                color: cs.onSurfaceVariant,
+              ),
             ),
             const SizedBox(width: 8),
-            Text(
-              account?.name ?? 'Cuenta',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: cs.onSurface,
+            Expanded(
+              flex: 4,
+              child: Text(
+                account?.name ?? 'Cuenta',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: cs.onSurface,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const Spacer(),
-            Icon(Icons.arrow_drop_down_rounded, color: cs.onSurfaceVariant),
+            Expanded(
+              child: Icon(
+                Icons.arrow_drop_down_rounded,
+                color: cs.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ),

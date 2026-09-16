@@ -88,25 +88,38 @@ class DatePickerField extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.calendar_today_rounded,
-              size: 16,
-              color: cs.onSurfaceVariant,
+            Expanded(
+              flex: 1,
+              child: Icon(
+                Icons.calendar_today_rounded,
+                size: 16,
+                color: cs.onSurfaceVariant,
+              ),
             ),
             const SizedBox(width: 8),
-            Text(
-              label != null &&
-                      DateFormatter.isSameDay(selectedDate, DateTime.now())
-                  ? label!
-                  : DateFormatter.relative(selectedDate),
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: cs.onSurface,
+            Expanded(
+              flex: 6,
+              child: Text(
+                label != null &&
+                        DateFormatter.isSameDay(selectedDate, DateTime.now())
+                    ? label!
+                    : DateFormatter.relative(selectedDate),
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: cs.onSurface,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             const Spacer(),
-            Icon(Icons.arrow_drop_down_rounded, color: cs.onSurfaceVariant),
+            Expanded(
+              flex: 1,
+              child: Icon(
+                Icons.arrow_drop_down_rounded,
+                color: cs.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ),
