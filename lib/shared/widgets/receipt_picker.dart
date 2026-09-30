@@ -42,12 +42,12 @@ class _ReceiptPickerState extends State<ReceiptPicker>
   }
 
   Future<bool> _requestPermission(ImageSource source) async {
-    final permission = source == ImageSource.camera
-        ? Permission.camera
-        : Permission.photos;
-    final status = await permission.request();
+    if (source == ImageSource.gallery) return true;
+
+    final status = await Permission.camera.request();
+    if (!mounted) return false; // ← agregar esto también
     if (status.isGranted) return true;
-    if (status.isPermanentlyDenied && mounted) _showSettingsDialog(source);
+    if (status.isPermanentlyDenied) _showSettingsDialog(source);
     return false;
   }
 
@@ -80,7 +80,7 @@ class _ReceiptPickerState extends State<ReceiptPicker>
 
   Future<void> _pick(ImageSource source) async {
     final granted = await _requestPermission(source);
-    if (!granted) return;
+    if (!mounted || !granted) return;
 
     setState(() => _isLoading = true);
 
@@ -91,36 +91,36 @@ class _ReceiptPickerState extends State<ReceiptPicker>
         maxWidth: 1200,
       );
 
+      if (!mounted) return;
+
       if (file == null) {
         setState(() => _isLoading = false);
         return;
       }
 
-      // ✅ CAMBIO CLAVE: copiar al almacenamiento persistente
-      // antes de guardar la ruta en el estado.
-      // file.path es temporal — savedPath es permanente.
       final savedPath = await ReceiptStorage.save(file.path);
 
+      if (!mounted) return;
+
       setState(() {
-        _currentPath = savedPath; // ← ruta permanente, no la temporal
+        _currentPath = savedPath;
         _isLoading = false;
       });
 
       _animCtrl.forward();
-      widget.onChanged(savedPath); // ← le pasas la ruta permanente al padre
+      widget.onChanged(savedPath);
     } catch (e) {
+      if (!mounted) return;
       setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'No se pudo abrir la '
-              '${source == ImageSource.camera ? 'cámara' : 'galería'}',
-            ),
-            behavior: SnackBarBehavior.floating,
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'No se pudo abrir la '
+            '${source == ImageSource.camera ? 'cámara' : 'galería'}',
           ),
-        );
-      }
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
 
