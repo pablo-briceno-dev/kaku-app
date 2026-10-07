@@ -22,8 +22,7 @@ enum AccountType {
 }
 
 extension AccountTypeL10n on AccountType {
-  String label(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+  String label(AppLocalizations l10n) {
     return switch (this) {
       AccountType.cash => l10n.accountTypeCash,
       AccountType.debit => l10n.accountTypeDebit,

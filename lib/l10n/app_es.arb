@@ -4,6 +4,33 @@
   "accountTypeDebit": "Débito",
   "accountTypeCredit": "Crédito",
   "accountTypeSavings": "Ahorro",
+  "accountDetail": "Detalle de la cuenta",
+  "accountNotFound": "Cuenta no encontrada",
+  "myAccountName": "Mi cuenta",
+  "accountType": "Tipo de cuenta",
+  "accountBalanceMessage": "Este es el saldo actual de tu cuenta. Las transacciones futuras ajustarán este valor",
+  "accountUpdateSuccess": "Cuenta actualizada",
+  "accountCreateSuccess": "Cuenta creada",
+  "accountArchiveSuccess": "Cuenta archivada",
+  "accountsErrorLoading": "Error al cargar las cuentas",
+  "accountsNotCreated": "No has creado ninguna cuenta",
+  "myAccounts": "Mis cuentas",
+  "accountNew": "Nueva cuenta",
+  "currentBalance": "Saldo actual",
+  "accountEntry": "Entrada",
+  "accountExit": "Salida",
+  "balanceTotal": "Balance total",
+  "accountsActive": "{count, plural, =1 {1 cuenta activa} other {{count} cuentas activas}}",
+  "@accountsActive": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "thisMonth": "este mes",
+  "savings": "Ahorro",
 
   // Currency
   "currencyCopLabel": "Peso colombiano",
@@ -11,6 +38,7 @@
   "currencyEurLabel": "Euro",
   "currencyArsLabel": "Peso argentino",
   "currencyMxnLabel": "Peso mexicano",
+  "currencySelect": "Moneda",
 
   // Theme
   "accentAurora": "Aurora",
@@ -52,6 +80,7 @@
       }
     }
   },
+  "transactionsHistoryEmpty": "Historial de transacciones vacío",
 
   // UserProfile
   "userDisplayName": "Usuario",
@@ -111,7 +140,6 @@
   "exportCsvHeader": "Fecha,Descripción,Categoría,Tipo,Cantidad,M.Unitario,Total",
   "exportPdfHeader": "Fecha,Descripción,Categoría,Tipo,Cant.,M. Unit.,Total",
   "exportUncategorized": "Sin categoría",
-  "exportNoDescription": "Sin descripción",
   "exportBalance": "Balance",
   "exportDate": "Fecha",
   "exportDescription": "Descripción",
@@ -167,6 +195,66 @@
     }
   }
 
+  // Premium features
+  "premiumBlockedBackupDrive": "El backup a Google Drive es una función premium.\nCon el plan free puedes hacer backup local.",
+  "premiumBlockedExportPdfWithReceipts": "El PDF con imágenes de recibos es una función premium.\nCon el plan free puedes exportar CSV o PDF básico.",
+  "premiumBlockedExportCustomRange": "El rango personalizado de fechas es premium.\nCon el plan free puedes exportar el mes actual.",
+  "premiumBlockedViewHistory": "El historial de más de un mes es una función premium.",
+  "premiumBlockedPinLock": "El bloqueo por PIN o biometría es una función premium.",
+  "premiumBlockedUnlimitedGoals": "Has alcanzado el límite de {max} metas del plan free.",
+  "premiumBlockedUnlimitedBudgets": "Has alcanzado el límite de {max} presupuestos del plan free.",
+  "premiumBlockedUnlimitedCategories": "Has alcanzado el límite de {max} categorías personalizadas del plan free.",
+
+  // Receipt Picker
+  "permissionTitle": "Permiso de {source}",
+  "@permissionTitle": {
+    "placeholders": {
+      "source": {
+        "type": "String",
+        "example": "Cámara"
+      }
+    }
+  },
+  "permissionDesc": "Kaku necesita acceso a tu {source} para adjuntar recibos. Habilítalo en los Ajustes del dispositivo.",
+  "@permissionDesc": {
+    "placeholders": {
+      "source": {
+        "type": "String",
+        "example": "Cámara"
+      }
+    }
+  },
+  "messageNoReceipt": "No se pudo abrir la {source}",
+  "@messageNoReceipt": {
+    "placeholders": {
+      "source": {
+        "type": "String",
+        "example": "Cámara"
+      }
+    }
+  },
+  "attachedReceipt": "Recibo adjunto",
+
+  // Receipt Viewer
+  "receiptName": "Recibo · {name}",
+  "@receiptName": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Kaku.pdf"
+      }
+    }
+  },
+  "toPinchToZoom": "Pellizca para hacer zoom",
+  "receiptNotFound": "No se pudo cargar el recibo",
+
+  // Form
+  "formRequired": "Campo requerido",
+  "formName": "Nombre",
+  "formBalanceInitial": "Saldo inicial",
+  "formColor": "Color",
+  "formIcon": "Ícono",
+
   "balance": "Balance",
   "errorInsufficientFunds": "Fondos insuficientes para esta transacción",
   "errorAccountNotFound": "Cuenta no encontrada",
@@ -175,5 +263,42 @@
   "errorInvalidAmount": "Cantidad no válida",
   "errorNetworkError": "Error de red",
   "today": "Hoy",
-  "yesterday": "Ayer"
+  "yesterday": "Ayer",
+
+  // ===== General =====
+  // Buttons/Actions
+  "undo": "Deshacer",
+  "btnClose": "Cerrar",
+  "archived": "Archivada",
+  "btnConfiguration": "Configuración",
+  "btnCancel": "Cancelar",
+  "btnViewPremium": "Ver Premium",
+  "btnOpenSettings": "Abrir Ajustes",
+  "btnResetZoom": "Restablecer zoom",
+  "btnAdd": "Añadir",
+  "btnEdit": "Editar",
+  "btnUpdate": "Actualizar",
+  "btnCreate": "Crear",
+  "btnArchive": "Archivar o Inactivar",
+  "btnViewDetail": "Ver detalle",
+  "btnNew": "{femenine, select, true {Nueva} false {Nuevo}}",
+  "@btnNew": {
+    "placeholders": {
+      "femenine": {
+        "type": "bool",
+        "example": "true"
+      }
+    }
+  },
+
+  // Texts
+  "emojiLabel": "Emoji",
+  "emojiHint": "Elige un emoji",
+  "emojiHintSearch": "Buscar emoji...",
+  "premiumLimitReached": "Límite alcanzado",
+  "camera": "Cámara",
+  "galery": "Galería",
+  "selectedColor": "Selecciona un color",
+  "noDescription": "Sin descripción",
+  "history": "Historial",
 }

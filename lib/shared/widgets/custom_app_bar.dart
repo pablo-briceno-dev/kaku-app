@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/widgets/app_bar_button.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -31,6 +32,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AppBar(
       title: title,
       leading: leading,
@@ -44,7 +47,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         if (defaultActions) ...[
           AppBarButton(
             icon: Icons.settings,
-            tooltip: 'Configuración',
+            tooltip: l10n.btnConfiguration,
             onPressed: () => context.push(AppRoutes.settings),
           ),
         ],

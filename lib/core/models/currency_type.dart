@@ -40,8 +40,7 @@ enum CurrencyType {
 }
 
 extension CurrencyTypeL10n on CurrencyType {
-  String labelComplete(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+  String labelComplete(AppLocalizations l10n) {
     return switch (this) {
       CurrencyType.cop => l10n.currencyCopLabel,
       CurrencyType.usd => l10n.currencyUsdLabel,

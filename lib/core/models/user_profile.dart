@@ -15,9 +15,8 @@ class UserProfile {
         isPremium: isPremium ?? this.isPremium,
       );
 
-  String displayName(BuildContext context) {
+  String displayName(AppLocalizations l10n) {
     if (name != null && name!.trim().isNotEmpty) return name!.trim();
-    final l10n = AppLocalizations.of(context)!;
     return l10n.userDisplayName;
   }
 

@@ -52,7 +52,7 @@ class CategoryItem extends ConsumerWidget {
                       Icon(Icons.edit_outlined, size: 20),
                       SizedBox(height: 4),
                       Text(
-                        'Editar',
+                        l10n.btnEdit,
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,

@@ -3,4 +3,5 @@ enum AppErrorCode {
   accountNotFound,
   invalidAmount,
   networkError,
+  messageNoReceipt,
 }

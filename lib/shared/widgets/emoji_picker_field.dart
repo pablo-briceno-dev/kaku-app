@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/widgets/emoji_picker_sheet.dart';
 
 class EmojiPickerField extends StatelessWidget {
@@ -14,12 +15,13 @@ class EmojiPickerField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Emoji',
+          l10n.emojiLabel,
           style: TextStyle(
             fontSize: 13,
             letterSpacing: 0.5,

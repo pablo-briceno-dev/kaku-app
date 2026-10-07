@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:kaku/core/errors/app_error.dart';
+import 'package:kaku/core/helpers/error_localizer.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:kaku/core/receipt_storage.dart';
 
@@ -41,45 +44,45 @@ class _ReceiptPickerState extends State<ReceiptPicker>
     super.dispose();
   }
 
-  Future<bool> _requestPermission(ImageSource source) async {
+  Future<bool> _requestPermission(
+    AppLocalizations l10n,
+    ImageSource source,
+  ) async {
     if (source == ImageSource.gallery) return true;
 
     final status = await Permission.camera.request();
-    if (!mounted) return false; // ← agregar esto también
+    if (!mounted || !context.mounted) return false; // ← agregar esto también
     if (status.isGranted) return true;
-    if (status.isPermanentlyDenied) _showSettingsDialog(source);
+    if (status.isPermanentlyDenied) _showSettingsDialog(l10n, source);
     return false;
   }
 
-  void _showSettingsDialog(ImageSource source) {
-    final resource = source == ImageSource.camera ? 'cámara' : 'galería';
+  void _showSettingsDialog(AppLocalizations l10n, ImageSource source) {
+    final resource = source == ImageSource.camera ? l10n.camera : l10n.galery;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Permiso de $resource'),
-        content: Text(
-          'Kaku necesita acceso a tu $resource para adjuntar recibos. '
-          'Habilítalo en los Ajustes del dispositivo.',
-        ),
+        title: Text(l10n.permissionTitle(source: resource)),
+        content: Text(l10n.permissionDesc(source: resource)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
+            child: Text(l10n.btnCancel),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
               openAppSettings();
             },
-            child: const Text('Abrir Ajustes'),
+            child: Text(l10n.btnOpenSettings),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _pick(ImageSource source) async {
-    final granted = await _requestPermission(source);
+  Future<void> _pick(AppLocalizations l10n, ImageSource source) async {
+    final granted = await _requestPermission(l10n, source);
     if (!mounted || !granted) return;
 
     setState(() => _isLoading = true);
@@ -109,14 +112,19 @@ class _ReceiptPickerState extends State<ReceiptPicker>
 
       _animCtrl.forward();
       widget.onChanged(savedPath);
-    } catch (e) {
+    } on AppException catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'No se pudo abrir la '
-            '${source == ImageSource.camera ? 'cámara' : 'galería'}',
+            localizeError(
+              context,
+              e.code,
+              messageComplement: source == ImageSource.camera
+                  ? l10n.camera.toLowerCase()
+                  : l10n.galery.toLowerCase(),
+            ),
           ),
           behavior: SnackBarBehavior.floating,
         ),
@@ -140,6 +148,8 @@ class _ReceiptPickerState extends State<ReceiptPicker>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       switchInCurve: Curves.easeOut,
@@ -154,8 +164,8 @@ class _ReceiptPickerState extends State<ReceiptPicker>
           : _PickerButtons(
               key: const ValueKey('buttons'),
               isLoading: _isLoading,
-              onGallery: () => _pick(ImageSource.gallery),
-              onCamera: () => _pick(ImageSource.camera),
+              onGallery: () => _pick(l10n, ImageSource.gallery),
+              onCamera: () => _pick(l10n, ImageSource.camera),
             ),
     );
   }
@@ -179,6 +189,8 @@ class _PickerButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.5)),
@@ -201,7 +213,7 @@ class _PickerButtons extends StatelessWidget {
                 Expanded(
                   child: _PickerButton(
                     icon: Icons.photo_library_outlined,
-                    label: 'Galería',
+                    label: l10n.galery,
                     onTap: onGallery,
                     isLeft: true,
                   ),
@@ -216,7 +228,7 @@ class _PickerButtons extends StatelessWidget {
                 Expanded(
                   child: _PickerButton(
                     icon: Icons.camera_alt_outlined,
-                    label: 'Cámara',
+                    label: l10n.camera,
                     onTap: onCamera,
                     isLeft: false,
                   ),
@@ -287,6 +299,7 @@ class _PreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final file = File(path);
+    final l10n = AppLocalizations.of(context)!;
 
     return FadeTransition(
       opacity: fadeAnim,
@@ -339,7 +352,7 @@ class _PreviewCard extends StatelessWidget {
                   ),
                   SizedBox(width: 4),
                   Text(
-                    'Recibo adjunto',
+                    l10n.attachedReceipt,
                     style: TextStyle(
                       fontSize: 11,
                       color: Colors.white70,

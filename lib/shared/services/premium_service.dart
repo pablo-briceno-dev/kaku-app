@@ -61,27 +61,21 @@ class PremiumService {
   }
 
   // Verificar si puede realizar una acción
-  static Future<String?> canDo(PremiumFeature feature) async {
+  static Future<PremiumBlockReason?> canDo(PremiumFeature feature) async {
     final premium = await isPremium();
     if (premium) return null; // premium puede todo
 
     return switch (feature) {
-      PremiumFeature.backupDrive =>
-        'El backup a Google Drive es una función premium.\nCon el plan free puedes hacer backup local.',
+      PremiumFeature.backupDrive => PremiumBlockReason.backupDrive,
       PremiumFeature.exportPdfWithReceipts =>
-        'El PDF con imágenes de recibos es una función premium.\nCon el plan free puedes exportar CSV o PDF básico.',
-      PremiumFeature.exportCustomRange =>
-        'El rango personalizado de fechas es premium.\nCon el plan free puedes exportar el mes actual.',
-      PremiumFeature.viewHistory =>
-        'El historial de más de un mes es una función premium.',
-      PremiumFeature.pinLock =>
-        'El bloqueo por PIN o biometría es una función premium',
-      PremiumFeature.unlimitedGoals =>
-        'Has alcanzado el límite de ${PremiumLimits.maxGoals} metas del plan free',
-      PremiumFeature.unlimitedBudgets =>
-        'Has alcanzado el límite de ${PremiumLimits.maxBudgets} presupuestos del plan free',
+        PremiumBlockReason.exportPdfWithReceipts,
+      PremiumFeature.exportCustomRange => PremiumBlockReason.exportCustomRange,
+      PremiumFeature.viewHistory => PremiumBlockReason.viewHistory,
+      PremiumFeature.pinLock => PremiumBlockReason.pinLock,
+      PremiumFeature.unlimitedGoals => PremiumBlockReason.unlimitedGoals,
+      PremiumFeature.unlimitedBudgets => PremiumBlockReason.unlimitedBudgets,
       PremiumFeature.unlimitedCategories =>
-        'Has alcanzado el límite de ${PremiumLimits.maxCustomCategories} categorías personalizadas del plan free',
+        PremiumBlockReason.unlimitedCategories,
     };
   }
 }
@@ -97,6 +91,19 @@ class PremiumInfo {
 
 // ── Features que requieren premium ───────────────────────
 enum PremiumFeature {
+  backupDrive,
+  exportPdfWithReceipts,
+  exportCustomRange,
+  viewHistory,
+  pinLock,
+  unlimitedGoals,
+  unlimitedBudgets,
+  unlimitedCategories,
+}
+
+/// Razones por las que una acción está bloqueada.
+/// Cada una corresponde a una clave ARB en inglés.
+enum PremiumBlockReason {
   backupDrive,
   exportPdfWithReceipts,
   exportCustomRange,

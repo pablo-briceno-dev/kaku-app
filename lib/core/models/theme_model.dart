@@ -72,18 +72,18 @@ class ThemePreference {
   }[accent]!;
 
   // Nombre legible para mostrar en la UI de Settings
-  String accentLabel(BuildContext context) => {
-    AppAccent.aurora: AppLocalizations.of(context)!.accentAurora,
-    AppAccent.dusk: AppLocalizations.of(context)!.accentDusk,
-    AppAccent.violet: AppLocalizations.of(context)!.accentViolet,
-    AppAccent.mono: AppLocalizations.of(context)!.accentMono,
-    AppAccent.ocean: AppLocalizations.of(context)!.accentOcean,
+  String accentLabel(AppLocalizations l10n) => {
+    AppAccent.aurora: l10n.accentAurora,
+    AppAccent.dusk: l10n.accentDusk,
+    AppAccent.violet: l10n.accentViolet,
+    AppAccent.mono: l10n.accentMono,
+    AppAccent.ocean: l10n.accentOcean,
   }[accent]!;
 
-  String modeLabel(BuildContext context) => {
-    AppThemeMode.dark: AppLocalizations.of(context)!.themeDark,
-    AppThemeMode.light: AppLocalizations.of(context)!.themeLight,
-    AppThemeMode.system: AppLocalizations.of(context)!.themeSystem,
+  String modeLabel(AppLocalizations l10n) => {
+    AppThemeMode.dark: l10n.themeDark,
+    AppThemeMode.light: l10n.themeLight,
+    AppThemeMode.system: l10n.themeSystem,
   }[mode]!;
 
   // Convierte al ThemeMode de Flutter (para MaterialApp.themeMode)

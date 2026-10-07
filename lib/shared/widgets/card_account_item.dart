@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/models/account_type.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class CardAccountItem extends StatelessWidget {
   final String emoji;
@@ -33,6 +34,7 @@ class CardAccountItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final ts = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -89,7 +91,7 @@ class CardAccountItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${type.label} ${isActive ? '' : '  ·  Archivada'}',
+                    '${type.label} ${isActive ? '' : '  ·  ${l10n.archived}'}',
                     style: ts.titleSmall?.copyWith(
                       color: cs.onSurfaceVariant.withValues(alpha: 0.5),
                     ),

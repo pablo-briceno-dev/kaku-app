@@ -6,6 +6,7 @@ import 'package:kaku/core/colors_plates.dart';
 import 'package:kaku/core/models/account_type.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/widgets/card_account_item.dart';
 import 'package:kaku/features/accounts/widgets/account_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
@@ -18,6 +19,7 @@ class AccountsList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final activeAccountsAsync = ref.watch(activeAccountsProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return activeAccountsAsync.when(
       loading: () => SizedBox(
@@ -35,16 +37,16 @@ class AccountsList extends ConsumerWidget {
         height: 120,
         child: Center(
           child: Text(
-            'Error al cargar las cuentas',
+            l10n.accountsErrorLoading,
             style: TextStyle(fontSize: 12, color: cs.error),
           ),
         ),
       ),
       data: (accounts) {
         if (accounts.isEmpty) {
-          return const ContentWidgetEmpty(
+          return ContentWidgetEmpty(
             title: '💸​',
-            message: 'Sin cuentas creadas',
+            message: l10n.accountsNotCreated,
           );
         }
 
@@ -80,13 +82,13 @@ class AccountsList extends ConsumerWidget {
                             details.globalPosition.dy,
                           ),
                           items: [
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'view-detail',
-                              child: Text('Ver detalle'),
+                              child: Text(l10n.btnViewDetail),
                             ),
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'archive',
-                              child: Text('Archivar o Inactivar'),
+                              child: Text(l10n.btnArchive),
                             ),
                           ],
                         );

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/card_balance.dart';
@@ -12,6 +13,7 @@ class CardBalanceAccounts extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final totalBalance = ref.watch(totalBalanceProvider);
     final activeAccounts = ref.watch(activeAccountsProvider).value?.length;
@@ -36,12 +38,12 @@ class CardBalanceAccounts extends ConsumerWidget {
     final savingsRate = BudgetCalculator.savingsRate(income, expense);
 
     return CardBalance(
-      title: 'balance total',
+      title: l10n.balanceTotal,
       amount: totalBalance.value ?? 0,
-      subtitle: '${activeAccounts ?? 0} cuentas activas · ${currency.label}',
+      subtitle: '${l10n.accountsActive(count: activeAccounts)} · ${currency.label}',
       chipItems: [
         ChipItemConfig(
-          title: 'este mes',
+          title: l10n.thisMonth,
           description: CurrencyFormatter.withSign(
             income,
             compact: true,
@@ -50,7 +52,7 @@ class CardBalanceAccounts extends ConsumerWidget {
           colorDescription: Colors.green,
         ),
         ChipItemConfig(
-          title: 'GASTOS',
+          title: l10n.transactionTypeExpense(count: 2),
           description: CurrencyFormatter.withSign(
             expense,
             compact: true,
@@ -59,7 +61,7 @@ class CardBalanceAccounts extends ConsumerWidget {
           colorDescription: cs.error,
         ),
         ChipItemConfig(
-          title: 'AHORRO',
+          title: l10n.savings,
           description: CurrencyFormatter.percentage(savingsRate),
           colorDescription: cs.primary,
         ),

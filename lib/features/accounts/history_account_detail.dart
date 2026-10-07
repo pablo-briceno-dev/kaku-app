@@ -7,6 +7,7 @@ import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/dashboard/widgets/transactions_list_skeleton.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
 import 'package:kaku/shared/widgets/transaction_item.dart';
@@ -18,6 +19,7 @@ class HistoryAccountDetail extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final txAsync = ref.watch(transactionsByAccountProvider(account.id));
@@ -27,9 +29,9 @@ class HistoryAccountDetail extends ConsumerWidget {
       error: (e, _) => const SizedBox.shrink(),
       data: (transactions) {
         if (transactions.isEmpty) {
-          return const ContentWidgetEmpty(
+          return ContentWidgetEmpty(
             title: '🫙',
-            message: 'Historial de transacciones vacío',
+            message: l10n.transactionsHistoryEmpty,
           );
         }
         // Agrupar por día usando groupKey como clave
@@ -48,7 +50,7 @@ class HistoryAccountDetail extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Historial',
+                    l10n.history,
                     style: ts.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),

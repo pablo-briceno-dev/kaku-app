@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kaku/core/date_formatter.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 
 enum DatePickerFieldMode { future, past, unrestricted }
 
@@ -53,8 +54,7 @@ class DatePickerField extends StatelessWidget {
       initialDate: initialDate,
       firstDate: firstDate,
       lastDate: lastDate,
-      //! Usar el idioma local del dispositivo cuando se implemente
-      locale: const Locale('es'),
+      locale: Localizations.localeOf(context),
       initialEntryMode: DatePickerEntryMode.calendar,
       builder: (context, child) => child!,
     );
@@ -103,7 +103,7 @@ class DatePickerField extends StatelessWidget {
                 label != null &&
                         DateFormatter.isSameDay(selectedDate, DateTime.now())
                     ? label!
-                    : DateFormatter.relative(selectedDate),
+                    : context.dates.relative(selectedDate),
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,

@@ -125,7 +125,7 @@ class TransactionsListFilter extends ConsumerWidget {
                       slideActions: [
                         SlideAction(
                           icon: Icons.edit_outlined,
-                          label: 'Editar',
+                          label: l10n.btnEdit,
                           color: Theme.of(context).colorScheme.primary,
                           onTap: () {
                             ref.watch(selectedAccountProvider.notifier).state =

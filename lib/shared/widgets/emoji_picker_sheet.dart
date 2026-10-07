@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class EmojiPickerSheet extends StatefulWidget {
   final String initialEmoji;
@@ -28,6 +29,7 @@ class _EmojiPickerSheetState extends State<EmojiPickerSheet> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       decoration: BoxDecoration(
@@ -65,7 +67,7 @@ class _EmojiPickerSheetState extends State<EmojiPickerSheet> {
               child: Row(
                 children: [
                   Text(
-                    'Elige un emoji',
+                    l10n.emojiHint,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
@@ -137,7 +139,7 @@ class _EmojiPickerSheetState extends State<EmojiPickerSheet> {
                     searchViewConfig: SearchViewConfig(
                       backgroundColor: cs.surface,
                       buttonIconColor: cs.primary,
-                      hintText: 'Buscar emoji...',
+                      hintText: l10n.emojiHintSearch,
                       inputTextStyle: TextStyle(color: cs.onSurface),
                       hintTextStyle: TextStyle(
                         color: cs.onSurfaceVariant.withValues(alpha: 0.5),

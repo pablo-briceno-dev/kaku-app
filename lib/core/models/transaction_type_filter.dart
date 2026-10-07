@@ -1,11 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:kaku/l10n/app_localizations.dart';
 
 enum TransactionTypeFilter { all, income, expense, transfer, byCategory }
 
 extension TransactionTypeFilterL10n on TransactionTypeFilter {
-  String label(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+  String label(AppLocalizations l10n) {
     return switch (this) {
       TransactionTypeFilter.all => l10n.transactionTypeFilterAll,
       TransactionTypeFilter.income => l10n.transactionTypeIncome(count: 2),

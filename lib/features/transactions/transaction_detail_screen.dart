@@ -251,7 +251,7 @@ class TransactionDetailScreen extends ConsumerWidget {
                             width: 150,
                             child: OutlinedButton.icon(
                               icon: Icon(Icons.edit, color: cs.primary),
-                              label: const Text('Editar'),
+                              label: const Text(l10n.btnEdit),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: cs.primary.withValues(
                                   alpha: 0.1,

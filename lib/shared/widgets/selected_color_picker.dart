@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class SelectedColorPicker extends StatefulWidget {
   final Function(Color) onColorSelected;
@@ -26,11 +27,13 @@ class _SelectedColorPickerState extends State<SelectedColorPicker> {
     tempColor = widget.initialColor;
   }
 
-  void _openDialog() {
+  void _openDialog(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Selecciona un color'),
+        title: Text(l10n.selectedColor),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -52,14 +55,14 @@ class _SelectedColorPickerState extends State<SelectedColorPicker> {
               widget.onCancel?.call();
               Navigator.pop(ctx);
             },
-            child: Text('Cancelar'),
+            child: Text(l10n.btnCancel),
           ),
           ElevatedButton(
             onPressed: () {
               widget.onColorSelected(tempColor);
               Navigator.pop(ctx);
             },
-            child: Text('Añadir'),
+            child: Text(l10n.btnAdd),
           ),
         ],
       ),
@@ -69,7 +72,7 @@ class _SelectedColorPickerState extends State<SelectedColorPicker> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: _openDialog,
+      onTap: () => _openDialog(context),
       child: Container(
         width: 40,
         height: 40,

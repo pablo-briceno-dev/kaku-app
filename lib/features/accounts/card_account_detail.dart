@@ -4,6 +4,7 @@ import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/models/account_type.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/card_balance.dart';
@@ -15,6 +16,7 @@ class CardAccountDetail extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final selectedMonth = ref.watch(selectedMonthProvider);
     final monthTransactions = ref.watch(
@@ -46,10 +48,10 @@ class CardAccountDetail extends ConsumerWidget {
       title:
           '${account.icon} ${account.name} · ${AccountType.values[account.type].label}',
       amount: account.balance,
-      subtitle: 'Saldo actual',
+      subtitle: l10n.currentBalance,
       chipItems: [
         ChipItemConfig(
-          title: 'entrada',
+          title: l10n.accountEntry,
           description: CurrencyFormatter.withSign(
             income,
             compact: true,
@@ -58,7 +60,7 @@ class CardAccountDetail extends ConsumerWidget {
           colorDescription: Colors.green,
         ),
         ChipItemConfig(
-          title: 'salida',
+          title: l10n.accountExit,
           description: CurrencyFormatter.withSign(
             expense,
             compact: true,

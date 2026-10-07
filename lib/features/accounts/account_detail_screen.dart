@@ -4,6 +4,7 @@ import 'package:kaku/features/accounts/account_form_sheet.dart';
 import 'package:kaku/features/accounts/card_account_detail.dart';
 import 'package:kaku/features/accounts/history_account_detail.dart';
 import 'package:kaku/features/accounts/widgets/account_detail_skeleton.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
@@ -16,6 +17,7 @@ class AccountDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final account = ref.watch(accountByIdProvider(id));
 
     return account.when(
@@ -24,10 +26,10 @@ class AccountDetailScreen extends ConsumerWidget {
       data: (account) {
         if (account == null) {
           return Scaffold(
-            appBar: CustomAppBar(title: Text('Detalle de la cuenta')),
+            appBar: CustomAppBar(title: Text(l10n.accountDetail)),
             body: ContentWidgetEmpty(
               title: '💸​',
-              message: 'Cuenta no encontrada',
+              message: l10n.accountNotFound,
             ),
           );
         }
@@ -40,13 +42,13 @@ class AccountDetailScreen extends ConsumerWidget {
               TextButton.icon(
                 onPressed: () => AppBottomSheet.show(
                   context,
-                  title: 'Editar',
+                  title: l10n.btnEdit,
                   isFullScreen: true,
                   useRootNavigator: true,
                   child: AccountFormSheet(account: account),
                 ),
                 icon: Icon(Icons.edit),
-                label: Text('Editar'),
+                label: Text(l10n.btnEdit),
               ),
             ],
           ),

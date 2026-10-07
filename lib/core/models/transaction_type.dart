@@ -30,8 +30,7 @@ enum TransactionType {
 }
 
 extension TransactionTypeL10n on TransactionType {
-  String label(BuildContext context, int count) {
-    final l10n = AppLocalizations.of(context)!;
+  String label(AppLocalizations l10n, int count) {
     switch (this) {
       case TransactionType.expense:
         return l10n.transactionTypeExpense(count: count);

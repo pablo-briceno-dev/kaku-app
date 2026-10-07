@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class ReceiptViewer extends StatefulWidget {
   final String filePath;
@@ -121,6 +122,7 @@ class _ReceiptViewerState extends State<ReceiptViewer>
   @override
   Widget build(BuildContext context) {
     final file = File(widget.filePath);
+    final l10n = AppLocalizations.of(context)!;
 
     // ✅ Wrap con PopScope para restaurar la UI del sistema
     // si el usuario usa el gesto de "atrás" del sistema.
@@ -163,7 +165,7 @@ class _ReceiptViewerState extends State<ReceiptViewer>
               child: _CircleButton(
                 icon: Icons.close_rounded,
                 onTap: () => Navigator.of(context, rootNavigator: true).pop(),
-                tooltip: 'Cerrar',
+                tooltip: l10n.btnClose,
               ),
             ),
 
@@ -176,7 +178,7 @@ class _ReceiptViewerState extends State<ReceiptViewer>
               child: _CircleButton(
                 icon: Icons.zoom_out_map_rounded,
                 onTap: _resetZoom,
-                tooltip: 'Restablecer zoom',
+                tooltip: l10n.btnResetZoom,
               ),
             ),
 
@@ -233,6 +235,8 @@ class _BottomLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fileName = filePath.split('/').last;
+    final l10n = AppLocalizations.of(context)!;
+
     return Center(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -250,14 +254,14 @@ class _BottomLabel extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             Text(
-              'Recibo · $fileName',
+              l10n.receiptName(name: fileName),
               style: const TextStyle(color: Colors.white60, fontSize: 12),
             ),
             const SizedBox(width: 8),
             const Icon(Icons.pinch_rounded, color: Colors.white38, size: 14),
             const SizedBox(width: 4),
-            const Text(
-              'Pellizca para hacer zoom',
+            Text(
+              l10n.toPinchToZoom,
               style: TextStyle(color: Colors.white38, fontSize: 11),
             ),
           ],
@@ -272,6 +276,8 @@ class _ErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -282,7 +288,7 @@ class _ErrorWidget extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'No se pudo cargar el recibo',
+          l10n.receiptNotFound,
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.5),
             fontSize: 14,

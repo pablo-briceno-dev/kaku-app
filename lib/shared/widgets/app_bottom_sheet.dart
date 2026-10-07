@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class AppBottomSheet extends StatelessWidget {
   final String? title;
@@ -184,6 +185,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 4, 12, 12),
@@ -225,7 +227,7 @@ class _Header extends StatelessWidget {
                 size: 30,
               ),
               visualDensity: VisualDensity.compact,
-              tooltip: 'Cerrar',
+              tooltip: l10n.btnClose,
             ),
         ],
       ),

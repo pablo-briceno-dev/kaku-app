@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 // ════════════════════════════════════════════════════════
 //  showUndoDelete — función principal
@@ -20,6 +21,7 @@ Future<void> showUndoDelete({
   VoidCallback? onUndo,
   int seconds = 4,
 }) async {
+  final l10n = AppLocalizations.of(context)!;
   // Timer que ejecutará el delete cuando expire
   Timer? deleteTimer;
   // Flag para saber si el usuario presionó Deshacer
@@ -39,7 +41,7 @@ Future<void> showUndoDelete({
     content: _UndoContent(label: label, seconds: seconds),
 
     action: SnackBarAction(
-      label: 'Deshacer',
+      label: l10n.undo,
       onPressed: () {
         undone = true;
         deleteTimer?.cancel();

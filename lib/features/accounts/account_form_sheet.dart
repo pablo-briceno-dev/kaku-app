@@ -8,6 +8,7 @@ import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/models/account_type.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/features/accounts/widgets/card_account_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/widgets/selected_color_picker.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
@@ -48,7 +49,6 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
         ),
       );
     } else {
-      controllers['name']?.text = 'Mi Cuenta';
       controllers['type']?.text = '1';
       controllers['currency']?.text = ref.read(currencyProvider).label;
       controllers['icon']?.text = AccountType.values[1].icon;
@@ -78,6 +78,7 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final accountType =
@@ -107,11 +108,11 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
             controller: controllers['name'],
             keyboardType: TextInputType.text,
             maxLength: 50,
-            validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-            decoration: const InputDecoration(labelText: 'Nombre*'),
+            validator: (value) => value!.isEmpty ? l10n.formRequired : null,
+            decoration: const InputDecoration(labelText: '${l10n.formName}*'),
           ),
           const SizedBox(height: 16),
-          Text('Tipo de Cuenta', style: ts.titleMedium),
+          Text(l10n.accountType, style: ts.titleMedium),
           const SizedBox(height: 4),
           GridView.builder(
             shrinkWrap: true,
@@ -129,7 +130,7 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
               return CardAccountType(
                 cardConfig: CardAccountTypeConfig(
                   icon: accountType.icon,
-                  title: accountType.label,
+                  title: accountType.label(l10n),
                   color: hexToColor(controllers['colorHex']?.text ?? '#7cffd4'),
                 ),
                 isSelected: isSelected,
@@ -155,14 +156,14 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
                 ),
               ),
             ],
-            decoration: const InputDecoration(
-              labelText: 'Saldo Inicial*',
+            decoration: InputDecoration(
+              labelText: '${l10n.formBalanceInitial}*',
               hintText: r'$0',
             ),
           ),
           const SizedBox(height: 6),
           Text(
-            'Este es el saldo actual de tu cuenta. Las transacciones futuras ajustarán este valor',
+            l10n.accountBalanceMessage,
             style: ts.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
             textAlign: TextAlign.justify,
           ),
@@ -186,8 +187,8 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
                       () => controllers['currency']?.text = value!.label,
                     );
                   },
-                  decoration: const InputDecoration(
-                    labelText: 'Moneda',
+                  decoration: InputDecoration(
+                    labelText: l10n.currencySelect,
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -197,7 +198,7 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
                 flex: 1,
                 child: Row(
                   children: [
-                    Text('Color', style: ts.titleMedium),
+                    Text(l10n.formColor, style: ts.titleMedium),
                     const SizedBox(width: 20),
                     SelectedColorPicker(
                       onColorSelected: (color) => setState(
@@ -274,15 +275,15 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
                         AppSnackbar.success(
                           context,
                           widget.account != null
-                              ? 'Cuenta actualizada'
-                              : 'Cuenta creada',
+                              ? l10n.accountUpdateSuccess
+                              : l10n.accountCreateSuccess,
                         );
                         Navigator.pop(context);
                       }
                     },
               child: widget.account != null
-                  ? const Text('Actualizar')
-                  : const Text('Crear Cuenta'),
+                  ? Text(l10n.btnUpdate)
+                  : Text(l10n.btnCreate),
             ),
           ),
         ],

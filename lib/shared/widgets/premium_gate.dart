@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:kaku/core/l10n/premium_reason_x.dart';
 import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/premium_provider.dart';
 import 'package:kaku/shared/services/premium_service.dart';
 
@@ -102,6 +104,7 @@ class PremiumLimitChecker {
     required int currentCount,
     required int limit,
   }) async {
+    final l10n = AppLocalizations.of(context)!;
     final premium = await PremiumService.isPremium();
     if (premium) return false; // premium → no bloqueado
 
@@ -112,7 +115,9 @@ class PremiumLimitChecker {
     if (context.mounted) {
       showDialog(
         context: context,
-        builder: (_) => _LimitReachedDialog(reason: reason ?? ''),
+        builder: (_) => _LimitReachedDialog(
+          reason: reason == null ? '' : reason.label(l10n),
+        ),
       );
     }
     return true; // bloqueado
@@ -125,21 +130,23 @@ class _LimitReachedDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AlertDialog(
       icon: const Text('👑', style: TextStyle(fontSize: 32)),
-      title: const Text('Límite alcanzado'),
+      title: Text(l10n.premiumLimitReached),
       content: Text(reason),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar'),
+          child: Text(l10n.btnCancel),
         ),
         FilledButton(
           onPressed: () {
             Navigator.pop(context);
             context.push(AppRoutes.premium);
           },
-          child: const Text('Ver Premium'),
+          child: Text(l10n.btnViewPremium),
         ),
       ],
     );
