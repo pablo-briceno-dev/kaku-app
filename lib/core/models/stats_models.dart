@@ -25,12 +25,10 @@ class MonthPoint {
   final int month;
   final int year;
   final double totalExpenses;
-  final String label; // 'Ene', 'Feb', etc
 
   MonthPoint({
     required this.month,
     required this.year,
     required this.totalExpenses,
-    required this.label,
   });
 }

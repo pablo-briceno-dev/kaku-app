@@ -69,20 +69,6 @@ final multiMonthExpensesProvider = FutureProvider.autoDispose
       params,
     ) async {
       final txDao = ref.watch(transactionsDaoProvider);
-      final monthLabels = [
-        'Ene',
-        'Feb',
-        'Mar',
-        'Abr',
-        'May',
-        'Jun',
-        'Jul',
-        'Ago',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dic',
-      ];
 
       final points = <MonthPoint>[];
       var current = (month: params.month, year: params.year);
@@ -95,7 +81,6 @@ final multiMonthExpensesProvider = FutureProvider.autoDispose
             month: current.month,
             year: current.year,
             totalExpenses: total,
-            label: monthLabels[current.month - 1],
           ),
         );
         current = BudgetCalculator.previousMonth(current.year, current.month);

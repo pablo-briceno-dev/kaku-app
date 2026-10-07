@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
+
 enum CurrencyType {
   cop,
   usd,
@@ -20,21 +23,6 @@ enum CurrencyType {
     }
   }
 
-  String get labelComplete {
-    switch (this) {
-      case CurrencyType.cop:
-        return 'Peso colombiano';
-      case CurrencyType.usd:
-        return 'Dólar estadounidense';
-      case CurrencyType.eur:
-        return 'Euro';
-      case CurrencyType.mxn:
-        return 'Peso mexicano';
-      case CurrencyType.ars:
-        return 'Peso argentino';
-    }
-  }
-
   String get labelCompact {
     switch (this) {
       case CurrencyType.cop:
@@ -48,5 +36,18 @@ enum CurrencyType {
       case CurrencyType.ars:
         return 'AR';
     }
+  }
+}
+
+extension CurrencyTypeL10n on CurrencyType {
+  String labelComplete(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return switch (this) {
+      CurrencyType.cop => l10n.currencyCopLabel,
+      CurrencyType.usd => l10n.currencyUsdLabel,
+      CurrencyType.eur => l10n.currencyEurLabel,
+      CurrencyType.mxn => l10n.currencyMxnLabel,
+      CurrencyType.ars => l10n.currencyArsLabel,
+    };
   }
 }

@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
-import 'package:kaku/core/date_formatter.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/services/premium_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -26,29 +28,31 @@ class ExportService {
 
   // ── Exportar CSV ─────────────────────────────────────────
   static Future<void> exportCsv({
+    required BuildContext context,
     required List<TransactionWithCategory> transactions,
     required CurrencyType currency,
   }) async {
+    final l10n = AppLocalizations.of(context)!;
     final buffer = StringBuffer();
-    buffer.writeln(
-      'Fecha,Descripcion,Categoria,Tipo,Cantidad,M.Unitario,Total',
-    );
+    buffer.writeln(l10n.exportCsvHeader);
 
     for (final txc in transactions) {
       final tx = txc.transaction;
-      final cat = txc.category?.name ?? 'Sin categoría';
+      final cat = txc.category?.name ?? l10n.exportUncategorized;
       // ✅ Usa relative() + time() que sabemos que existen
       final date =
-          '${DateFormatter.relative(tx.date)} ${DateFormatter.time(tx.date)}';
+          '${context.dates.relative(tx.date)} ${context.dates.time(tx.date)}';
       final desc = (tx.description ?? cat).replaceAll(',', ' ');
-      final type = tx.type == 'expense' ? 'Gasto' : 'Ingreso';
+      final type = tx.type == 'expense'
+          ? l10n.transactionTypeExpense(count: 1)
+          : l10n.transactionTypeIncome(count: 1);
       final amt = CurrencyFormatter.format(tx.amount, currency);
       final quantity = tx.quantity.toString();
       final unitPrice = CurrencyFormatter.format(tx.unitPrice, currency);
       buffer.writeln('$date,$desc,$cat,$type,$quantity,$unitPrice,$amt');
     }
 
-    final dateLabel = DateFormatter.abbrMonthDayYear(DateTime.now());
+    final dateLabel = context.dates.abbrMonthDayYear(DateTime.now());
 
     final dir = await getApplicationDocumentsDirectory();
     final file = File('${dir.path}/kaku_export_$dateLabel.csv');
@@ -56,7 +60,7 @@ class ExportService {
 
     await SharePlus.instance.share(
       ShareParams(
-        text: 'Kaku - Exportación de transacciones',
+        text: l10n.exportCsvShareText,
         files: [XFile(file.path, mimeType: 'text/csv')],
       ),
     );
@@ -64,11 +68,23 @@ class ExportService {
 
   // ── Exportar PDF ─────────────────────────────────────────
   static Future<void> exportPdf({
+    required BuildContext buildContext,
     required List<TransactionWithCategory> transactions,
     required CurrencyType currency,
     required String periodLabel,
     bool withReceipts = false, // ← true solo para premium
   }) async {
+    final l10n = AppLocalizations.of(buildContext)!;
+    // Extraer todas las etiquetas ANTES de construir el PDF
+    final List<String> headers = [
+      l10n.exportDate,
+      l10n.exportDescription,
+      l10n.exportCategory,
+      l10n.exportType,
+      l10n.exportAmount,
+      l10n.exportUnitAmount,
+      l10n.exportTotal,
+    ];
     final doc = pw.Document();
 
     final totalExpenses = transactions
@@ -92,7 +108,7 @@ class ExportService {
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
-                'Kaku - Reporte $periodLabel',
+                l10n.exportReportTitle(period: periodLabel),
                 style: pw.TextStyle(
                   fontSize: 16,
                   fontWeight: pw.FontWeight.bold,
@@ -115,17 +131,17 @@ class ExportService {
               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
               children: [
                 _summaryItem(
-                  'Ingresos',
+                  l10n.transactionTypeIncome(count: 2),
                   CurrencyFormatter.format(totalIncome, currency),
                   PdfColors.green700,
                 ),
                 _summaryItem(
-                  'Gastos',
+                  l10n.transactionTypeExpense(count: 2),
                   CurrencyFormatter.format(totalExpenses, currency),
                   PdfColors.red700,
                 ),
                 _summaryItem(
-                  'Balance',
+                  l10n.exportBalance,
                   CurrencyFormatter.format(
                     totalIncome - totalExpenses,
                     currency,
@@ -154,41 +170,36 @@ class ExportService {
               // Cabecera
               pw.TableRow(
                 decoration: const pw.BoxDecoration(color: PdfColors.grey200),
-                children:
-                    [
-                          'Fecha',
-                          'Descripción',
-                          'Categoría',
-                          'Tipo',
-                          'Cant.',
-                          'M. Unit.',
-                          'Total',
-                        ]
-                        .map(
-                          (h) => pw.Padding(
-                            padding: const pw.EdgeInsets.all(6),
-                            child: pw.Text(
-                              h,
-                              style: pw.TextStyle(
-                                fontWeight: pw.FontWeight.bold,
-                                fontSize: 9,
-                              ),
-                            ),
+                children: headers
+                    .map(
+                      (h) => pw.Padding(
+                        padding: const pw.EdgeInsets.all(6),
+                        child: pw.Text(
+                          h,
+                          style: pw.TextStyle(
+                            fontWeight: pw.FontWeight.bold,
+                            fontSize: 9,
                           ),
-                        )
-                        .toList(),
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
               // Filas
               ...transactions.map((txc) {
                 final tx = txc.transaction;
                 final isExp = tx.type == 'expense';
-                final dateStr = DateFormatter.dayMonth(tx.date);
+                final dateStr = buildContext.dates.dayMonth(tx.date);
                 return pw.TableRow(
                   children: [
                     _cell(dateStr),
                     _cell(tx.description ?? txc.category?.name ?? '—'),
-                    _cell(txc.category?.name ?? 'Sin categoría'),
-                    _cell(isExp ? 'Gasto' : 'Ingreso'),
+                    _cell(txc.category?.name ?? l10n.exportUncategorized),
+                    _cell(
+                      isExp
+                          ? l10n.transactionTypeExpense(count: 1)
+                          : l10n.transactionTypeIncome(count: 1),
+                    ),
                     _cell(tx.quantity.toString()),
                     _cell(CurrencyFormatter.format(tx.unitPrice, currency)),
                     pw.Padding(
@@ -221,8 +232,9 @@ class ExportService {
 
         final imageBytes = await receiptFile.readAsBytes();
         final image = pw.MemoryImage(imageBytes);
-        final dateStr = DateFormatter.dayMonth(tx.date);
-        final desc = tx.description ?? txc.category?.name ?? 'Sin descripción';
+        if (!buildContext.mounted) return;
+        final dateStr = buildContext.dates.dayMonth(tx.date);
+        final desc = tx.description ?? txc.category?.name ?? l10n.exportUncategorized;
 
         doc.addPage(
           pw.Page(
@@ -242,7 +254,7 @@ class ExportService {
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
                       pw.Text(
-                        'Recibo - $desc',
+                        l10n.exportReceiptTitle(desc),
                         style: pw.TextStyle(
                           fontWeight: pw.FontWeight.bold,
                           fontSize: 12,
@@ -267,7 +279,7 @@ class ExportService {
       }
     }
 
-    final dateLabel = DateFormatter.abbrMonthDayYear(DateTime.now());
+    final dateLabel = buildContext.dates.abbrMonthDayYear(DateTime.now());
 
     final bytes = await doc.save();
     final dir = await getApplicationDocumentsDirectory();
@@ -276,7 +288,7 @@ class ExportService {
 
     await SharePlus.instance.share(
       ShareParams(
-        text: 'Kaku - Reporte $periodLabel',
+        text: l10n.exportReportTitle(period: periodLabel),
         files: [XFile(file.path, mimeType: 'application/pdf')],
       ),
     );
@@ -285,6 +297,7 @@ class ExportService {
   // ── PDF con imágenes de recibos (PREMIUM) ─────────────────
   // Mantiene compatibilidad - delega a exportPdf con withReceipts: true
   static Future<void> exportPdfWithReceipts({
+    required BuildContext context,
     required List<TransactionWithCategory> transactions,
     required CurrencyType currency,
     required String periodLabel,
@@ -293,8 +306,10 @@ class ExportService {
       PremiumFeature.exportPdfWithReceipts,
     );
     if (canExport != null) throw Exception(canExport);
+    if (!context.mounted) return;
 
     await exportPdf(
+      buildContext: context,
       transactions: transactions,
       currency: currency,
       periodLabel: periodLabel,

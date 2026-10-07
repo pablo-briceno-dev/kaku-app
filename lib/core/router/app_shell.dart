@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
@@ -60,6 +61,7 @@ class _AppShellState extends ConsumerState<AppShell>
     int currentIndex = _tabs.lastIndexWhere((t) => location.startsWith(t));
     if (currentIndex < 0) currentIndex = 0;
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     // Tamaño fijo para el botón central (entre 48 y 60 dp)
     const double centerSize = 56.0; // o calcúlalo con MediaQuery si quieres
@@ -78,7 +80,7 @@ class _AppShellState extends ConsumerState<AppShell>
             _NavItem(
               icon: Icons.home_outlined,
               selectedIcon: Icons.home,
-              label: 'Inicio',
+              label: l10n.appShellTabDashboard,
               index: 0,
               current: currentIndex,
               onTap: () => context.go(_tabs[0]),
@@ -86,7 +88,7 @@ class _AppShellState extends ConsumerState<AppShell>
             _NavItem(
               icon: Icons.bar_chart_outlined,
               selectedIcon: Icons.bar_chart,
-              label: 'Estadísticas',
+              label: l10n.appShellTabStats,
               index: 1,
               current: currentIndex,
               onTap: () => context.go(_tabs[1]),
@@ -106,7 +108,7 @@ class _AppShellState extends ConsumerState<AppShell>
             _NavItem(
               icon: Icons.flag_outlined,
               selectedIcon: Icons.flag,
-              label: 'Metas',
+              label: l10n.appShellTabGoals,
               index: 2,
               current: currentIndex,
               onTap: () => context.go(_tabs[2]),
@@ -114,7 +116,7 @@ class _AppShellState extends ConsumerState<AppShell>
             _NavItem(
               icon: Icons.account_balance_wallet_outlined,
               selectedIcon: Icons.account_balance_wallet,
-              label: 'Cuentas',
+              label: l10n.appShellTabAccounts,
               index: 3,
               current: currentIndex,
               onTap: () => context.go(_tabs[3]),

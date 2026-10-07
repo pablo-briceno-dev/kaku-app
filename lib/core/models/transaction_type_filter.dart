@@ -1,22 +1,17 @@
-enum TransactionTypeFilter {
-  all,
-  income,
-  expense,
-  transfer,
-  byCategory;
+import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
-  String get label {
-    switch (this) {
-      case TransactionTypeFilter.all:
-        return 'Todos';
-      case TransactionTypeFilter.income:
-        return 'Ingresos';
-      case TransactionTypeFilter.expense:
-        return 'Gastos';
-      case TransactionTypeFilter.transfer:
-        return 'Transferencias';
-      case TransactionTypeFilter.byCategory:
-        return 'Por categoría';
-    }
+enum TransactionTypeFilter { all, income, expense, transfer, byCategory }
+
+extension TransactionTypeFilterL10n on TransactionTypeFilter {
+  String label(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return switch (this) {
+      TransactionTypeFilter.all => l10n.transactionTypeFilterAll,
+      TransactionTypeFilter.income => l10n.transactionTypeIncome(count: 2),
+      TransactionTypeFilter.expense => l10n.transactionTypeExpense(count: 2),
+      TransactionTypeFilter.transfer => l10n.transactionTypeTransfer(count: 2),
+      TransactionTypeFilter.byCategory => l10n.transactionTypeFilterByCategory,
+    };
   }
 }

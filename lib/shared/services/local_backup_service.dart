@@ -5,6 +5,8 @@ import 'dart:typed_data';
 import 'package:archive/archive_io.dart';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart' as enc;
+import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
@@ -22,10 +24,12 @@ class LocalBackupService {
   //    share: false → guarda directo en Downloads
   // ════════════════════════════════════════════════════
   static Future<LocalBackupResult> createBackup({
+    required BuildContext context,
     required String userKey, // email o cualquier string único del usuario
     bool share = true,
   }) async {
     try {
+      final l10n = AppLocalizations.of(context)!;
       final appDir = await getApplicationDocumentsDirectory();
       final dbFile = File('${appDir.path}/kaku_app.db');
 
@@ -45,7 +49,7 @@ class LocalBackupService {
         // Opción A: Share sheet — el usuario elige dónde guardarlo
         await SharePlus.instance.share(
           ShareParams(
-            text: 'Backup de Kaku — ${_dateLabel()}',
+            text: l10n.backupShareText(date: _dateLabel()),
             files: [
               XFile(
                 tempFile.path,

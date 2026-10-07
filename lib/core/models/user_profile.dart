@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
+
 class UserProfile {
   final String? name;
   final String? avatarPath;
@@ -12,9 +15,10 @@ class UserProfile {
         isPremium: isPremium ?? this.isPremium,
       );
 
-  String get displayName {
+  String displayName(BuildContext context) {
     if (name != null && name!.trim().isNotEmpty) return name!.trim();
-    return "Usuario";
+    final l10n = AppLocalizations.of(context)!;
+    return l10n.userDisplayName;
   }
 
   String get initials {

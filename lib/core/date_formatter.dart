@@ -1,77 +1,114 @@
 import 'package:intl/intl.dart';
 
 class DateFormatter {
-  // Formateadores reutilizables (instanciarlos es costoso)
-  static final _dayMonth = DateFormat('d \'de\' MMMM', 'es');
-  static final _dayMonthYear = DateFormat('d \'de\' MMMM \'de\' y', 'es');
-  static final _monthYear = DateFormat('MMMM y', 'es'); // "mayo 2026"
-  static final _shortDate = DateFormat('d MMM', 'es'); // "20 may"
-  static final _time = DateFormat('h:mm a', 'es'); // "3:45 PM"
-  static final _fullDateTime = DateFormat("d 'de' MMMM 'de' y, h:mm a", 'es');
-  static final _abbrMonthDayYear = DateFormat('d-MMM-y', 'es'); // "20-may-26"
+  // Cache de formatters por "patrón|locale" - evita recrearlos en cada llamada
+  static final Map<String, DateFormat> _formatters = {};
 
-  // "Hoy", "Ayer" o la fecha completa
-  static String relative(DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final day = DateTime(date.year, date.month, date.day);
+  static DateFormat _skeleton(
+    DateFormat Function(String locale) builder,
+    String localeCode,
+    String cacheKey,
+  ) => _formatters.putIfAbsent(
+    '$cacheKey|$localeCode',
+    () => builder(localeCode),
+  );
 
-    final diff = today.difference(day).inDays;
-
-    if (diff == 0) return 'Hoy';
-    if (diff == 1) return 'Ayer';
-    if (date.year == now.year) return _dayMonth.format(date);
-
-    return _dayMonthYear.format(date);
+  // "20 de mayo" (es) / "May 20" (en)
+  static String dayMonth(DateTime date, String localeCode) {
+    final f = _skeleton(DateFormat.MMMMd, localeCode, 'dayMonth');
+    return f.format(date);
   }
 
-  // Versión compacta para espacios reducidos
-  static String relativeShort(DateTime date) {
+  // "20 de mayo de 2026" (es) / "May 20, 2026" (en)
+  static String dayMonthYear(DateTime date, String localeCode) {
+    final f = _skeleton(DateFormat.yMMMMd, localeCode, 'dayMonthYear');
+    return f.format(date);
+  }
+
+  // "mayo 2026" (es) / "May 2026" (en)
+  static String monthYear(int year, int month, String localeCode) {
+    final f = _skeleton(DateFormat.yMMMM, localeCode, 'monthYear');
+    final raw = f.format(DateTime(year, month));
+    // La mayúscula inicial solo hace falta en español (el inglés ya la trae)
+    return localeCode == 'es' ? raw[0].toUpperCase() + raw.substring(1) : raw;
+  }
+
+  // "20 may" (es) / "May 20" (en)
+  static String shortDate(DateTime date, String localeCode) {
+    final f = _skeleton(DateFormat.MMMd, localeCode, 'shortDate');
+    return f.format(date);
+  }
+
+  // "3:45 PM" — formato de hora según el locale (algunos usan 24h por defecto)
+  static String time(DateTime date, String localeCode) {
+    final f = _skeleton(DateFormat.jm, localeCode, 'time');
+    return f.format(date);
+  }
+
+  // Fecha y hora completas
+  static String fullDateTime(DateTime date, String localeCode) {
+    final datePart = dayMonthYear(date, localeCode);
+    final timePart = time(date, localeCode);
+    return '$datePart, $timePart';
+  }
+
+  // "20-may-2026" — usado para nombres de archivo, no se traduce al usuario
+  static String abbrMonthDayYear(DateTime date, String localeCode) {
+    final f = _skeleton(DateFormat.yMMMd, localeCode, 'abbr');
+    return f.format(date).replaceAll('/', '-'); // normaliza separador
+  }
+
+  static String fileFriendlyDate(DateTime date, String localeCode) {
+    return abbrMonthDayYear(date, localeCode).replaceAll(' ', '_');
+  }
+
+  // Relativo: necesita las palabras "Hoy"/"Ayer" traducidas — ver punto 3
+  static String relative(
+    DateTime date,
+    String localeCode, {
+    required String todayLabel,
+    required String yesterdayLabel,
+  }) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final day = DateTime(date.year, date.month, date.day);
-
     final diff = today.difference(day).inDays;
 
-    if (diff == 0) return 'hoy';
-    if (diff == 1) return 'ayer';
+    if (diff == 0) return todayLabel;
+    if (diff == 1) return yesterdayLabel;
+    if (date.year == now.year) return dayMonth(date, localeCode);
 
-    final short = _shortDate.format(date);
+    return dayMonthYear(date, localeCode);
+  }
+
+  static String relativeShort(
+    DateTime date,
+    String localeCode, {
+    required String todayLabel,
+    required String yesterdayLabel,
+  }) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final day = DateTime(date.year, date.month, date.day);
+    final diff = today.difference(day).inDays;
+
+    if (diff == 0) return todayLabel;
+    if (diff == 1) return yesterdayLabel;
+
+    final short = shortDate(date, localeCode);
     if (date.year != now.year) return '$short ${date.year}';
-
     return short;
   }
 
-  // Día y Mes sin año
-  static String dayMonth(DateTime date) => _dayMonth.format(date);
-
-  // Mes y año para el selector del Dashboard
-  static String monthYear(int year, int month) {
-    final raw = _monthYear.format(DateTime(year, month));
-    return raw[0].toUpperCase() + raw.substring(1);
+  static String monthLabelShort(int year, int month, String localeCode) {
+    final f = _skeleton(DateFormat.MMM, localeCode, 'monthLabelShort');
+    return f.format(DateTime(year, month));
   }
 
-  // Solo la hora
-  static String time(DateTime date) => _time.format(date);
-
-  // Fecha y hora completas
-  static String fullDateTime(DateTime date) => _fullDateTime.format(date);
-
-  // Clave para agrupar transacciones por día
+  // Estos no cambian — no dependen del idioma
   static String groupKey(DateTime date) =>
       '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
-  // Compara dos fechas ignorando la hora
   static bool isSameDay(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month && a.day == b.day;
-
-  /// Devuelve la fecha en formato "20-Ago-2026" (mes abreviado en español)
-  static String abbrMonthDayYear(DateTime date) => _abbrMonthDayYear.format(date);
-
-  /// Versión segura para nombres de archivo (sin espacios ni caracteres especiales)
-  static String fileFriendlyDate(DateTime date) {
-    // Usamos el mismo formato pero reemplazamos espacios por "_" (aunque no los tiene)
-    // y aseguramos que sea válido para nombres de archivo
-    return abbrMonthDayYear(date).replaceAll(' ', '_');
-  }
 }

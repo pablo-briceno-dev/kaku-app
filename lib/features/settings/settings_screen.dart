@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/date_formatter.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/theme_model.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/backup_sheet.dart';
@@ -18,6 +19,7 @@ import 'package:kaku/features/settings/widgets/list_tile_child.dart';
 import 'package:kaku/features/settings/widgets/section_card.dart';
 import 'package:kaku/features/settings/widgets/section_header.dart';
 import 'package:kaku/features/settings/widgets/switch_list_tile_child.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
@@ -39,6 +41,7 @@ class SettingsScreen extends ConsumerWidget {
     final backupSubtitle = ref.watch(lastBackupSubtitleProvider);
     final storageSubtitle = ref.watch(storageSubtitleProvider);
     final packageInfoAsync = ref.watch(packageInfoProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: CustomAppBar(title: Text('Configuración'), defaultActions: false),
@@ -129,8 +132,11 @@ class SettingsScreen extends ConsumerWidget {
                 child: ListTileChild(
                   label: 'Backup Google Drive',
                   subtitle: backupSubtitle.when(
-                    data: (s) => s,
-                    error: (e, _) => 'Sin sincronizar',
+                    data: (date) {
+                      if (date == null) return l10n.notSynced;
+                      return l10n.syncLastBackup(context.dates.relative(date));
+                    },
+                    error: (e, _) => l10n.notSynced,
                     loading: () => 'Cargando...',
                   ),
                   icon: Icons.backup,

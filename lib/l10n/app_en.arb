@@ -5,5 +5,7 @@
   "categoryFood": "Food",
   "categoryServices": "Services",
   "errorInvalidAmount": "Invalid amount",
-  "errorNetworkError": "Network error"
+  "errorNetworkError": "Network error",
+  "today": "Today",
+  "yesterday": "Yesterday"
 }

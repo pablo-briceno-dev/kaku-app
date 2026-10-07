@@ -1,9 +1,179 @@
 {
+  // Accounts
+  "accountTypeCash": "Efectivo",
+  "accountTypeDebit": "Débito",
+  "accountTypeCredit": "Crédito",
+  "accountTypeSavings": "Ahorro",
+
+  // Currency
+  "currencyCopLabel": "Peso colombiano",
+  "currencyUsdLabel": "Dólar estadounidense",
+  "currencyEurLabel": "Euro",
+  "currencyArsLabel": "Peso argentino",
+  "currencyMxnLabel": "Peso mexicano",
+
+  // Theme
+  "accentAurora": "Aurora",
+  "accentDusk": "Atardecer",
+  "accentViolet": "Violeta",
+  "accentMono": "Monocromático",
+  "accentOcean": "Océano",
+  "themeDark": "Oscuro",
+  "themeLight": "Claro",
+  "themeSystem": "Sistema",
+
+  // Transactions
+  "transactionTypeFilterAll": "Todos",
+  "transactionTypeFilterByCategory": "Por categoría",
+  "transactionTypeExpense": "{count, plural, =1{Gasto} other{Gastos}}",
+  "@transactionTypeExpense": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "transactionTypeIncome": "{count, plural, =1{Ingreso} other{Ingresos}}",
+  "@transactionTypeIncome": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "transactionTypeTransfer": "{count, plural, =1{Transferencia} other{Transferencias}}",
+  "@transactionTypeTransfer": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+
+  // UserProfile
+  "userDisplayName": "Usuario",
+
+  // AppShell
+  "appSheelTabDashboard": "Inicio",
+  "appShellTabStats": "Estadísticas",
+  "appShellTabGoals": "Metas",
+  "appShellTabAccounts": "Cuentas",
+
+  // BudgetCalculator
+  "budgetCalculatorSavingsRateMenorCero": "Gastaste más de lo que ganaste",
+  "budgetCalculatorSavingsRateMenor20": "Puedes mejorar",
+  "budgetCalculatorSavingsRateMenor50": "Vas bien 👍",
+  "budgetCalculatorSavingsRateMayor50": "Buen mes 🎉",
+  "estimateTimeMonths": "{months, plural, =1{1 mes} other{{months} meses}}",
+  "@estimateTimeMonths": {
+    "placeholders": {
+      "months": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "estimateTimeDays": "{days, plural, =1{1 día} other{{days} días}}",
+  "@estimateTimeDays": {
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "noEstimate": "Sin estimación",
+
+  // Security
+  "securityBiometrics": "Bloqueo de pantalla",
+  "securityBiometricsSubtitle": "Elige cómo quieres proteger tu app",
+  "securityPin": "PIN",
+  "securityFingerprint": "Huella digital",
+  "securityFaceId": "Face ID",
+  "securityUnlockConfirm": "Confirma tu identidad para desactivar el bloqueo",
+  "securityError": "No se pudo verificar tu identidad.",
+
+  // Sync
+  "notSynced": "Sin sincronizar",
+  "syncLastBackup": "Última sincronización: {relative}",
+  "@syncLastBackup": {
+    "placeholders": {
+      "relative": {
+        "type": "String",
+      }
+    }
+  },
+
+  // Exports
+  "exportCsvHeader": "Fecha,Descripción,Categoría,Tipo,Cantidad,M.Unitario,Total",
+  "exportPdfHeader": "Fecha,Descripción,Categoría,Tipo,Cant.,M. Unit.,Total",
+  "exportUncategorized": "Sin categoría",
+  "exportNoDescription": "Sin descripción",
+  "exportBalance": "Balance",
+  "exportDate": "Fecha",
+  "exportDescription": "Descripción",
+  "exportCategory": "Categoría",
+  "exportType": "Tipo",
+  "exportAmount": "Cant.",
+  "exportUnitAmount": "M. Unit.",
+  "exportTotal": "Total",
+  "exportReportTitle": "Kaku - Reporte {period}",
+  "@exportReportTitle": {
+    "placeholders": { "period": { "type": "String" } }
+  },
+  "exportCsvShareText": "Kaku - Exportación de transacciones",
+  "exportReceiptTitle": "Recibo - {desc}",
+  "@exportReceiptTitle": {
+    "placeholders": { "desc": { "type": "String" } }
+  },
+
+  // Backup
+  "backupShareText": "Backup de Kaku — {date}",
+  "@backupShareText": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+
+  // Notifications
+  "notifBudgetExceededTitle": "{emoji} Presupuesto excedido",
+  "@notifBudgetExceededTitle": {
+    "placeholders": {
+      "emoji": { "type": "String" }
+    }
+  },
+  "notifBudgetWarningTitle": "{emoji} Presupuesto al {percent}%",
+  "@notifBudgetWarningTitle": {
+    "placeholders": {
+      "emoji": { "type": "String" },
+      "percent": { "type": "String" }
+    }
+  },
+  "notifBudgetExceededBody": "Gastaste {spent} de {limit} en {category} este mes",
+  "@notifBudgetExceededBody": {
+    "placeholders": {
+      "spent": { "type": "String" },
+      "limit": { "type": "String" },
+      "category": { "type": "String" }
+    }
+  },
+  "notifBudgetWarningBody": "Llevas {spent} de {limit} en {category}",
+  "@notifBudgetWarningBody": {
+    "placeholders": {
+      "spent": { "type": "String" },
+      "limit": { "type": "String" },
+      "category": { "type": "String" }
+    }
+  }
+
   "balance": "Balance",
   "errorInsufficientFunds": "Fondos insuficientes para esta transacción",
   "errorAccountNotFound": "Cuenta no encontrada",
   "categoryFood": "Comida",
   "categoryServices": "Servicios",
   "errorInvalidAmount": "Cantidad no válida",
-  "errorNetworkError": "Error de red"
+  "errorNetworkError": "Error de red",
+  "today": "Hoy",
+  "yesterday": "Ayer"
 }

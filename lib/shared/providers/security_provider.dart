@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/features/settings/security/lock_method_picker.dart';
 import 'package:kaku/features/settings/security/pin_screen.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
 import 'package:kaku/shared/services/notification_service.dart';
@@ -42,11 +43,12 @@ class BiometricsNotifier extends StateNotifier<bool> {
 
   // ── Activar: intenta biometría del sistema, si no → PIN propio ──
   Future<BiometricToggleResult> _activate(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     // Mostrar el selector de métodos
     final selected = await AppBottomSheet.show<LockMethod>(
       context,
-      title: 'Bloqueo de pantalla',
-      subtitle: 'Elige cómo quieres proteger tu app',
+      title: l10n.securityBiometrics,
+      subtitle: l10n.securityBiometricsSubtitle,
       useRootNavigator: false,
       isFullScreen: false,
       child: const LockMethodPicker(),
@@ -57,38 +59,10 @@ class BiometricsNotifier extends StateNotifier<bool> {
     // El método ya se maneja dentro del picker, pero podemos devolver éxito
     return BiometricToggleResult(success: true);
   }
-  // Future<BiometricToggleResult> _activate(BuildContext context) async {
-  //   final systemAvailable = await BiometricService.isAvailable();
-
-  //   if (systemAvailable) {
-  //     // Intenta con biometría/PIN del sistema
-  //     final result = await BiometricService.authenticate(
-  //       reason: 'Confirma tu identidad para activar el bloqueo',
-  //     );
-  //     if (result == BiometricResult.success) {
-  //       await BiometricService.setEnabled(true);
-  //       state = true;
-  //       return BiometricToggleResult(success: true);
-  //     }
-  //   }
-
-  //   // Fallback: crear PIN propio de la app
-  //   if (!context.mounted) return BiometricToggleResult(success: false);
-  //   final pin = await PinScreen.createPin(context);
-  //   if (pin == null) {
-  //     return BiometricToggleResult(
-  //       success: false,
-  //       error: null, // el usuario canceló — no mostrar error
-  //     );
-  //   }
-
-  //   await AppPinService.savePin(pin);
-  //   state = true;
-  //   return BiometricToggleResult(success: true);
-  // }
 
   // ── Desactivar: pide verificación antes ──────────────
   Future<BiometricToggleResult> _deactivate(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final pinEnabled = await AppPinService.isEnabled();
 
     bool verified = false;
@@ -100,16 +74,13 @@ class BiometricsNotifier extends StateNotifier<bool> {
     } else {
       // Verifica con biometría del sistema
       final result = await BiometricService.authenticate(
-        reason: 'Confirma tu identidad para desactivar el bloqueo',
+        reason: l10n.securityUnlockConfirm,
       );
       verified = result == BiometricResult.success;
     }
 
     if (!verified) {
-      return BiometricToggleResult(
-        success: false,
-        error: 'No se pudo verificar tu identidad.',
-      );
+      return BiometricToggleResult(success: false, error: l10n.securityError);
     }
 
     await AppPinService.clearPin();
@@ -185,11 +156,12 @@ class NotificationsNotifier extends StateNotifier<bool> {
     BuildContext context,
   ) async {
     if (newValue) {
+      final l10n = AppLocalizations.of(context)!;
       // Mostrar selector y esperar método
       final selected = await AppBottomSheet.show<LockMethod>(
         context,
-        title: 'Bloqueo de pantalla',
-        subtitle: 'Elige cómo quieres proteger tu app',
+        title: l10n.securityBiometrics,
+        subtitle: l10n.securityBiometricsSubtitle,
         useRootNavigator: false,
         isFullScreen: false,
         child: const LockMethodPicker(),
@@ -206,27 +178,8 @@ class NotificationsNotifier extends StateNotifier<bool> {
     }
   }
 
-  // Future<NotificationToggleResult> toggle(bool newValue) async {
-  //   if (newValue) {
-  //     // Activar: pedir permiso del sistema si no lo tiene
-  //     final hasPermission = await NotificationService.hasPermission();
-  //     if (!hasPermission) {
-  //       final granted = await NotificationService.requestPermission();
-  //       if (!granted) {
-  //         return NotificationToggleResult(
-  //           success: false,
-  //           permissionDenied: true,
-  //         );
-  //       }
-  //     }
-  //   }
-
-  //   await NotificationService.setEnabled(newValue);
-  //   state = newValue;
-  //   return NotificationToggleResult(success: true);
-  // }
-
   Future<BiometricToggleResult> _deactivate(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final pinEnabled = await AppPinService.isEnabled();
 
     bool verified = false;
@@ -238,16 +191,13 @@ class NotificationsNotifier extends StateNotifier<bool> {
     } else {
       // Verifica con biometría del sistema
       final result = await BiometricService.authenticate(
-        reason: 'Confirma tu identidad para desactivar el bloqueo',
+        reason: l10n.securityUnlockConfirm,
       );
       verified = result == BiometricResult.success;
     }
 
     if (!verified) {
-      return BiometricToggleResult(
-        success: false,
-        error: 'No se pudo verificar tu identidad.',
-      );
+      return BiometricToggleResult(success: false, error: l10n.securityError);
     }
 
     await AppPinService.clearPin();
@@ -292,15 +242,13 @@ extension LockMethodExtension on LockMethod {
     }
   }
 
-  String get label {
-    switch (this) {
-      case LockMethod.pin:
-        return 'PIN';
-      case LockMethod.fingerprint:
-        return 'Huella digital';
-      case LockMethod.faceId:
-        return 'Face ID';
-    }
+  String label(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return switch (this) {
+      LockMethod.pin => l10n.securityPin,
+      LockMethod.fingerprint => l10n.securityFingerprint,
+      LockMethod.faceId => l10n.securityFaceId,
+    };
   }
 }
 

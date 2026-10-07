@@ -139,6 +139,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Error de red'**
   String get errorNetworkError;
+
+  /// No description provided for @today.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayer'**
+  String get yesterday;
 }
 
 class _AppLocalizationsDelegate

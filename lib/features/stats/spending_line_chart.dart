@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:kaku/core/currency_formatter.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/stats_models.dart';
 
@@ -42,7 +43,10 @@ class SpendingLineChart extends StatelessWidget {
                     return const SizedBox.shrink();
                   }
                   return Text(
-                    points[i].label,
+                    context.dates.monthLabelShort(
+                      points[i].year,
+                      points[i].month,
+                    ),
                     style: TextStyle(
                       fontSize: 10,
                       color: Colors.white.withValues(alpha: 0.35),
@@ -60,7 +64,7 @@ class SpendingLineChart extends StatelessWidget {
               getTooltipItems: (spots) => spots.map((spot) {
                 final point = points[spot.x.toInt()];
                 return LineTooltipItem(
-                  '${point.label} ${point.year}\n${CurrencyFormatter.compact(point.totalExpenses, currency)}',
+                  '${context.dates.monthLabelShort(point.year, point.month)} ${point.year}\n${CurrencyFormatter.compact(point.totalExpenses, currency)}',
                   const TextStyle(
                     color: Colors.white,
                     fontSize: 11,

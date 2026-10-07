@@ -56,31 +56,21 @@ class NotificationService {
   // Llámalo desde budgetProgressProvider cuando progress >= 0.8
   static Future<void> showBudgetAlert({
     required String categoryName,
-    required String categoryEmoji,
-    required double percentage,
-    required String spent,
-    required String limit,
+    required String title,
+    required String body,
   }) async {
     if (!await isEnabled()) return;
     if (!await hasPermission()) return;
 
-    final isExceeded = percentage >= 1.0;
-    final title = isExceeded
-        ? '$categoryEmoji Presupuesto excedido'
-        : '$categoryEmoji Presupuesto al ${(percentage * 100).toStringAsFixed(0)}%';
-    final body = isExceeded
-        ? 'Gastaste $spent de $limit en $categoryName este mes'
-        : 'Llevas $spent de $limit en $categoryName';
-
     await _plugin.show(
-      id: categoryName.hashCode, // id único por categoría
+      id: categoryName.hashCode,
       title: title,
       body: body,
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'budget_alerts', // channel id
-          'Alertas de presupuesto', // channel name
-          channelDescription: 'Avisos cuando te acercas al límite mensual',
+          'Kaku', // channel name
+          channelDescription: 'Budget alerts',
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',

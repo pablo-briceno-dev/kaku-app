@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/date_formatter.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/dashboard/widgets/transactions_list_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
@@ -67,7 +68,7 @@ class HistoryAccountDetail extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8, top: 4),
                     child: Text(
-                      DateFormatter.relative(date),
+                      context.dates.relative(date),
                       style: ts.labelMedium?.copyWith(
                         color: cs.onSurfaceVariant,
                         fontWeight: FontWeight.w600,

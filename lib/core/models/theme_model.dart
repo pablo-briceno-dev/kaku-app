@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 enum AppAccent {
   aurora, // Verde esmeralda #7CFFD4
@@ -71,18 +72,18 @@ class ThemePreference {
   }[accent]!;
 
   // Nombre legible para mostrar en la UI de Settings
-  String get accentLabel => const {
-    AppAccent.aurora: 'Aurora',
-    AppAccent.dusk: 'Dusk',
-    AppAccent.violet: 'Violet',
-    AppAccent.mono: 'Mono',
-    AppAccent.ocean: 'Ocean',
+  String accentLabel(BuildContext context) => {
+    AppAccent.aurora: AppLocalizations.of(context)!.accentAurora,
+    AppAccent.dusk: AppLocalizations.of(context)!.accentDusk,
+    AppAccent.violet: AppLocalizations.of(context)!.accentViolet,
+    AppAccent.mono: AppLocalizations.of(context)!.accentMono,
+    AppAccent.ocean: AppLocalizations.of(context)!.accentOcean,
   }[accent]!;
 
-  String get modeLabel => const {
-    AppThemeMode.dark: 'Oscuro',
-    AppThemeMode.light: 'Claro',
-    AppThemeMode.system: 'Sistema',
+  String modeLabel(BuildContext context) => {
+    AppThemeMode.dark: AppLocalizations.of(context)!.themeDark,
+    AppThemeMode.light: AppLocalizations.of(context)!.themeLight,
+    AppThemeMode.system: AppLocalizations.of(context)!.themeSystem,
   }[mode]!;
 
   // Convierte al ThemeMode de Flutter (para MaterialApp.themeMode)

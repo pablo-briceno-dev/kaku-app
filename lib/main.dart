@@ -7,6 +7,7 @@ import 'package:kaku/shared/services/backup_service.dart';
 import 'package:kaku/shared/services/billing_service.dart';
 import 'package:kaku/shared/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +18,8 @@ void main() async {
   await BackupService.initialize();
   await NotificationService.initialize();
   await BillingService.initialize();
+  await initializeDateFormatting('es');
+  await initializeDateFormatting('en');
 
   runApp(
     ProviderScope(

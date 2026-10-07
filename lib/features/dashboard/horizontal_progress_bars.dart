@@ -6,6 +6,7 @@ import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/dashboard/widgets/progress_bar_item.dart';
 import 'package:kaku/features/dashboard/widgets/budget_bar_skeleton.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/notification_service.dart';
@@ -18,6 +19,7 @@ class HorizontalProgressBars extends ConsumerWidget {
     final cs = Theme.of(context).colorScheme;
     final selectedMonth = ref.watch(selectedMonthProvider);
     final budgetAsync = ref.watch(budgetProgressProvider(selectedMonth));
+    final l10n = AppLocalizations.of(context)!;
 
     return budgetAsync.when(
       loading: () => SizedBox(
@@ -53,12 +55,32 @@ class HorizontalProgressBars extends ConsumerWidget {
             itemBuilder: (context, index) {
               final budget = budgetProgress[index];
               if (budget.progress >= 0.8) {
+                final isExceeded = budget.progress >= 1.0;
+                final percentStr = (budget.progress * 100).toStringAsFixed(0);
+
+                final title = isExceeded
+                    ? l10n.notifBudgetExceededTitle(budget.category.emoji)
+                    : l10n.notifBudgetWarningTitle(
+                        budget.category.emoji,
+                        percentStr,
+                      );
+
+                final body = isExceeded
+                    ? l10n.notifBudgetExceededBody(
+                        CurrencyFormatter.compact(budget.spent),
+                        CurrencyFormatter.compact(budget.effectiveLimit),
+                        budget.category.name,
+                      )
+                    : l10n.notifBudgetWarningBody(
+                        CurrencyFormatter.compact(budget.spent),
+                        CurrencyFormatter.compact(budget.effectiveLimit),
+                        budget.category.name,
+                      );
+
                 NotificationService.showBudgetAlert(
                   categoryName: budget.category.name,
-                  categoryEmoji: budget.category.emoji,
-                  percentage: budget.progress,
-                  spent: CurrencyFormatter.compact(budget.spent),
-                  limit: CurrencyFormatter.compact(budget.effectiveLimit),
+                  title: title,
+                  body: body,
                 );
               }
               return Padding(

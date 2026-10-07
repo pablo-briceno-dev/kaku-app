@@ -29,4 +29,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorNetworkError => 'Network error';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
 }

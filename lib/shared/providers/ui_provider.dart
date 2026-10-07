@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
-import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/core/models/transaction_type_filter.dart';
@@ -99,7 +98,7 @@ final backupRefreshSignalProvider = StateProvider<int>((ref) => 0);
 // Señal para el almacenamiento — se incrementa al adjuntar/borrar recibos
 final storageRefreshSignalProvider = StateProvider<int>((ref) => 0);
 
-final lastBackupSubtitleProvider = FutureProvider.autoDispose<String>((
+final lastBackupSubtitleProvider = FutureProvider.autoDispose<DateTime?>((
   ref,
 ) async {
   // Observar la señal — cuando cambie este provider se recalcula
@@ -107,12 +106,9 @@ final lastBackupSubtitleProvider = FutureProvider.autoDispose<String>((
 
   final prefs = await SharedPreferences.getInstance();
   final raw = prefs.getString('last_backup_date');
-  if (raw == null) return 'Sin sincronizar';
+  if (raw == null) return null;
 
-  final date = DateTime.tryParse(raw);
-  if (date == null) return 'Sin sincronizar';
-
-  return 'Última sync: ${DateFormatter.relative(date)}';
+  return DateTime.tryParse(raw);
 });
 
 // ════════════════════════════════════════════════════════

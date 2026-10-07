@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:kaku/core/models/budget_progress.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class BudgetCalculator {
   // ════════════════════════════════════════════════════
@@ -124,11 +126,12 @@ class BudgetCalculator {
   /// Ejemplo: savingsRateLabel(59.0) → "Buen mes 🎉"
   /// Ejemplo: savingsRateLabel(12.0) → "Puedes mejorar"
   /// Ejemplo: savingsRateLabel(-5.0) → "Gastaste más de lo que ganaste"
-  static String savingsRateLabel(double rate) {
-    if (rate < 0) return 'Gastaste más de lo que ganaste';
-    if (rate < 20) return 'Puedes mejorar';
-    if (rate < 50) return 'Vas bien 👍';
-    return 'Buen mes 🎉';
+  static String savingsRateLabel(BuildContext context, double rate) {
+    final l10n = AppLocalizations.of(context)!;
+    if (rate < 0) return l10n.budgetCalculatorSavingsRateMenorCero;
+    if (rate < 20) return l10n.budgetCalculatorSavingsRateMenor20;
+    if (rate < 50) return l10n.budgetCalculatorSavingsRateMenor50;
+    return l10n.budgetCalculatorSavingsRateMayor50;
   }
 
   /// Variación porcentual entre el gasto de este mes y el anterior.
@@ -340,7 +343,12 @@ class BudgetCalculator {
 
   /// Obtiene los meses/días estimados para completar la meta
   /// Usado en GoalsScreen para mostrar "Estimado: 5 meses" o "Estimado: 1 día" real
-  static String getEstimatedTime(DateTime startDate, DateTime endDate) {
+  static String getEstimatedTime(
+    BuildContext context,
+    DateTime startDate,
+    DateTime endDate,
+  ) {
+    final l10n = AppLocalizations.of(context)!;
     int months =
         (endDate.year - startDate.year) * 12 +
         (endDate.month - startDate.month);
@@ -351,16 +359,17 @@ class BudgetCalculator {
     }
 
     if (months >= 1) {
-      return months == 1 ? '1 mes' : '$months meses';
+      return l10n.estimateTimeMonths(months: months);
     } else {
       final days = endDate.difference(startDate).inDays;
-      return days == 1 ? '1 día' : '$days días';
+      return l10n.estimateTimeDays(days: days);
     }
   }
 
   /// Obtiene la estimación de tiempo para completar la meta
   /// Usado en GoalsScreen para mostrar "Estimado: 5 meses" o "Estimado: 1 día" real
   static String getEstimatedSavingTime(
+    BuildContext context,
     double remaining,
     double avgMonthlySavings, {
     DateTime? deadline,
@@ -368,12 +377,12 @@ class BudgetCalculator {
     if (deadline != null) {
       final startDate = DateTime.now();
       final endDate = deadline;
-      return getEstimatedTime(startDate, endDate);
+      return getEstimatedTime(context, startDate, endDate);
     }
     final months = estimatedMonths(remaining, avgMonthlySavings);
 
     if (months == null) {
-      return 'Sin estimación';
+      return AppLocalizations.of(context)!.noEstimate;
     }
 
     final startDate = DateTime.now();
@@ -387,6 +396,6 @@ class BudgetCalculator {
       startDate.day + extraDays,
     );
 
-    return getEstimatedTime(startDate, endDate);
+    return getEstimatedTime(context, startDate, endDate);
   }
 }
