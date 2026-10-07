@@ -1,7 +1,7 @@
 name: kaku
 description: "Budget Application"
 publish_to: 'none'
-version: 1.0.14+16
+version: 1.1.0+17
 
 environment:
   sdk: ^3.11.5

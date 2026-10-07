@@ -1,0 +1,9 @@
+{
+  "balance": "Balance",
+  "errorInsufficientFunds": "Insufficient funds for this transaction",
+  "errorAccountNotFound": "Account not found",
+  "categoryFood": "Food",
+  "categoryServices": "Services",
+  "errorInvalidAmount": "Invalid amount",
+  "errorNetworkError": "Network error"
+}
