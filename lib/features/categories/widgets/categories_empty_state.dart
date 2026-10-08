@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class CategoriesEmptyState extends StatelessWidget {
   const CategoriesEmptyState({super.key});
@@ -6,6 +7,7 @@ class CategoriesEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Center(
       child: Column(
@@ -13,13 +15,13 @@ class CategoriesEmptyState extends StatelessWidget {
         children: [
           const Text('🗂️', style: TextStyle(fontSize: 44)),
           const SizedBox(height: 12),
-          const Text(
-            'Sin categorías',
+          Text(
+            l10n.categoryEmptyTitle,
             style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Text(
-            'Toca "+ Nueva" para crear tu primera categoría',
+            l10n.categoryEmptySubtitle,
             style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
           ),
         ],

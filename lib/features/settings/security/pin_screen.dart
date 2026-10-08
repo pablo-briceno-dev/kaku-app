@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 
 enum PinMode { create, confirm, verify }
@@ -25,12 +26,13 @@ class PinScreen extends StatefulWidget {
   // Crea un PIN nuevo (dos pasos: ingresar + confirmar)
   // Devuelve el PIN si se completó, null si canceló
   static Future<String?> createPin(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final pin = await Navigator.of(context, rootNavigator: true).push<String>(
       MaterialPageRoute(
         builder: (_) => const PinScreen(
           mode: PinMode.create,
-          title: 'Crear PIN',
-          subtitle: 'Elige un PIN de 4 dígitos',
+          title: l10n.createPin,
+          subtitle: l10n.createPinSubtitle,
         ),
       ),
     );
@@ -43,8 +45,8 @@ class PinScreen extends StatefulWidget {
             builder: (_) => PinScreen(
               mode: PinMode.confirm,
               pinToConfirm: pin,
-              title: 'Confirmar PIN',
-              subtitle: 'Ingresa el PIN nuevamente',
+              title: l10n.confirmPin,
+              subtitle: l10n.confirmPinSubtitle,
             ),
           ),
         );
@@ -54,11 +56,12 @@ class PinScreen extends StatefulWidget {
   // Verifica el PIN existente
   // Devuelve true si fue correcto
   static Future<bool> verifyPin(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final result = await Navigator.of(context, rootNavigator: true).push<bool>(
       MaterialPageRoute(
         builder: (_) => const PinScreen(
           mode: PinMode.verify,
-          title: 'Ingresa tu PIN',
+          title: l10n.pinConfirmTitle,
           canDismiss: false,
         ),
       ),
@@ -133,7 +136,7 @@ class _PinScreenState extends State<PinScreen>
           _shake();
           setState(() {
             _pin = '';
-            _errorMessage = 'Los PINs no coinciden. Intenta de nuevo.';
+            _errorMessage = AppLocalizations.of(context)!.pinMismatchSubtitle;
           });
         }
 
@@ -147,8 +150,8 @@ class _PinScreenState extends State<PinScreen>
           setState(() {
             _pin = '';
             _errorMessage = _attempts >= 3
-                ? 'PIN incorrecto ($_attempts intentos fallidos)'
-                : 'PIN incorrecto. Intenta de nuevo.';
+                ? AppLocalizations.of(context)!.pinIncorrect(_attempts)
+                : AppLocalizations.of(context)!.pinIncorrectSubtitle;
           });
         }
     }

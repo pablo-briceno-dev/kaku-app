@@ -118,18 +118,16 @@ final lastBackupSubtitleProvider = FutureProvider.autoDispose<DateTime?>((
 //  También observa las transacciones para detectar cuando
 //  se adjunta o elimina una foto de recibo.
 // ════════════════════════════════════════════════════════
-final storageSubtitleProvider = FutureProvider.autoDispose<String>((ref) async {
+final storageSubtitleProvider = FutureProvider.autoDispose<StorageInfo?>((ref) async {
   // Señal manual (al limpiar recibos desde el sheet)
   ref.watch(storageRefreshSignalProvider);
 
   // También se recalcula cuando cambian las transacciones
-  // porque adjuntar/eliminar una foto modifica el conteo
   ref.watch(activeAccountsProvider);
 
   final info = await StorageService.getInfo();
-  if (info.count == 0) return 'Sin recibos guardados';
-  return '${info.sizeLabel} · ${info.count} '
-      '${info.count == 1 ? 'foto' : 'fotos'}';
+  if (info.count == 0) return null; // ← sin recibos
+  return info;
 });
 
 // ════════════════════════════════════════════════════════

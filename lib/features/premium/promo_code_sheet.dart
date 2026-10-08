@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/services/promo_code_service.dart';
 
 class PromoCodeSheet extends StatefulWidget {
@@ -21,7 +22,7 @@ class _PromoCodeSheetState extends State<PromoCodeSheet> {
     super.dispose();
   }
 
-  Future<void> _redeem() async {
+  Future<void> _redeem(AppLocalizations l10n) async {
     if (_ctrl.text.trim().isEmpty) return;
     setState(() {
       _loading = true;
@@ -37,18 +38,15 @@ class _PromoCodeSheetState extends State<PromoCodeSheet> {
       case RedeemResult.success:
         widget.onSuccess();
       case RedeemResult.invalid:
-        setState(
-          () => _error = 'Código no válido. Verifica e intenta de nuevo.',
-        );
+        setState(() => _error = l10n.redeemCodeErrorInvalid);
       case RedeemResult.alreadyUsed:
-        setState(
-          () => _error = 'Este código ya fue canjeado en este dispositivo.',
-        );
+        setState(() => _error = l10n.redeemCodeErrorAlreadyUsed);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
 
     return Container(
@@ -81,14 +79,14 @@ class _PromoCodeSheetState extends State<PromoCodeSheet> {
           const SizedBox(height: 16),
 
           Text(
-            '🎁 Canjear código',
+            '🎁 ${l10n.redeemCode}',
             style: Theme.of(
               context,
             ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 4),
           Text(
-            'Ingresa tu código de descuento o acceso premium',
+            l10n.redeemCodeSubtitle,
             style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
           ),
           const SizedBox(height: 20),
@@ -110,7 +108,7 @@ class _PromoCodeSheetState extends State<PromoCodeSheet> {
           const SizedBox(height: 16),
 
           FilledButton(
-            onPressed: _loading ? null : _redeem,
+            onPressed: _loading ? null : () => _redeem(l10n),
             child: _loading
                 ? const SizedBox(
                     width: 18,
@@ -120,7 +118,7 @@ class _PromoCodeSheetState extends State<PromoCodeSheet> {
                       color: Colors.white,
                     ),
                   )
-                : const Text('Canjear código'),
+                : Text(l10n.redeemCode),
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kaku/core/database/app_database.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
 import 'package:kaku/features/categories/transaction_count.dart';
 
 class CategoryTile extends StatelessWidget {
@@ -36,7 +37,7 @@ class CategoryTile extends StatelessWidget {
         child: Text(category.emoji, style: const TextStyle(fontSize: 20)),
       ),
       title: Text(
-        category.name,
+        category.displayName(context),
         style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700),
       ),
       subtitle: TransactionCount(categoryId: category.id),

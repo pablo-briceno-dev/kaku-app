@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/security/pin_screen.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
@@ -12,11 +13,12 @@ class LockMethodPicker extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final methodsAsync = ref.watch(availableLockMethodsProvider);
 
     return methodsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (_, _) => const Center(child: Text('Error al cargar opciones')),
+      error: (_, _) => Center(child: Text(l10n.errorLoadLockMethods)),
       data: (methods) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -26,8 +28,8 @@ class LockMethodPicker extends ConsumerWidget {
               type: MaterialType.transparency,
               child: ListTile(
                 leading: Icon(method.icon),
-                title: Text(method.label),
-                onTap: () => _selectMethod(context, ref, method),
+                title: Text(method.label(context)),
+                onTap: () => _selectMethod(context, l10n, ref, method),
               ),
             ),
           ),
@@ -38,6 +40,7 @@ class LockMethodPicker extends ConsumerWidget {
 
   Future<void> _selectMethod(
     BuildContext context,
+    AppLocalizations l10n,
     WidgetRef ref,
     LockMethod method,
   ) async {
@@ -56,11 +59,10 @@ class LockMethodPicker extends ConsumerWidget {
     } else {
       // Biometría (huella o Face ID)
       final result = await BiometricService.authenticate(
-        reason: 'Activar bloqueo biométrico',
+        reason: l10n.enableBiometricLockReason,
       );
       if (result == BiometricResult.success) {
         await BiometricService.setEnabled(true);
-        debugPrint('✅ Biometría activada y guardada en SharedPreferences');
         // Limpiar PIN si existía
         await AppPinService.clearPin();
         await ref
@@ -72,7 +74,7 @@ class LockMethodPicker extends ConsumerWidget {
         // Falló la autenticación
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('No se pudo activar: ${result.name}')),
+            SnackBar(content: Text(l10n.errorEnableBiometricLock(result.name))),
           );
         }
       }

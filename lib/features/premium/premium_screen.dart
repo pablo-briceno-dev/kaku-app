@@ -5,6 +5,7 @@ import 'package:kaku/features/premium/widgets/feature_tile.dart';
 import 'package:kaku/features/premium/widgets/hero_section.dart';
 import 'package:kaku/features/premium/widgets/price_card.dart';
 import 'package:kaku/features/premium/widgets/section_label.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/premium_provider.dart';
 import 'package:kaku/shared/services/billing_service.dart';
 
@@ -53,7 +54,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
   }
 
   // ── Simulación de compra — en Paso 4 se conecta a Google Play ──
-  Future<void> _onPurchase() async {
+  Future<void> _onPurchase(AppLocalizations l10n) async {
     setState(() => _isPurchasing = true);
 
     final result = await BillingService.purchase();
@@ -67,8 +68,8 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
         ref.read(premiumNotifierProvider.notifier).activate('purchase');
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('🎉 ¡Bienvenido a Kaku Premium!'),
+          SnackBar(
+            content: Text(l10n.welcomeToPremium),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -78,10 +79,8 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
 
       case BillingResult.pending:
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Pago pendiente. Te notificaremos cuando se confirme.',
-            ),
+          SnackBar(
+            content: Text(l10n.billingPending),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -93,13 +92,10 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
         Navigator.of(context).pop();
 
       case BillingResult.productNotFound:
-        _showError(
-          'No se encontró el producto en la tienda. '
-          'Verifica tu conexión e intenta de nuevo.',
-        );
+        _showError(l10n, l10n.billingProductNotFound);
 
       case BillingResult.failed:
-        _showError('Error al procesar el pago. Intenta de nuevo.');
+        _showError(l10n, l10n.billingFailed);
 
       default:
         break;
@@ -123,6 +119,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -155,9 +152,9 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
                     const SizedBox(height: 36),
 
                     // ── Features ──────────────────────────
-                    SectionLabel(label: 'TODO LO QUE DESBLOQUEAS'),
+                    SectionLabel(label: l10n.labelUnlockTitle),
                     const SizedBox(height: 12),
-                    ..._features(cs).map((f) => FeatureTile(feature: f)),
+                    ..._features(l10n, cs).map((f) => FeatureTile(feature: f)),
 
                     const SizedBox(height: 32),
 
@@ -165,7 +162,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
                     PriceCard(
                       isPurchasing: _isPurchasing,
                       localizedPrice: _localizedPrice,
-                      onPurchase: _onPurchase,
+                      onPurchase: () => _onPurchase(l10n),
                     ),
 
                     const SizedBox(height: 16),
@@ -173,9 +170,9 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
                     // ── Restaurar compra ───────────────────
                     Center(
                       child: TextButton(
-                        onPressed: _onRestore,
+                        onPressed: () => _onRestore(l10n),
                         child: Text(
-                          'Restaurar compra',
+                          l10n.billingRestorePurchase,
                           style: TextStyle(
                             fontSize: 13,
                             color: cs.onSurfaceVariant,
@@ -194,7 +191,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
                           color: cs.primary,
                         ),
                         label: Text(
-                          '¿Tienes un código de descuento?',
+                          l10n.billingCodePromo,
                           style: TextStyle(fontSize: 13, color: cs.primary),
                         ),
                       ),
@@ -204,7 +201,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
 
                     // ── Nota legal ─────────────────────────
                     Text(
-                      'Pago único · Sin suscripción · Sin cobros recurrentes',
+                      l10n.billingNoteLegal,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 11,
@@ -221,10 +218,10 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
     );
   }
 
-  Future<void> _onRestore() async {
+  Future<void> _onRestore(AppLocalizations l10n) async {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Verificando compra...'),
+        content: Text(l10n.verifyingPurchase),
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 10),
       ),
@@ -241,78 +238,76 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
         ref.read(premiumNotifierProvider.notifier).activate('restore');
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('✅ Compra restaurada correctamente'),
+          SnackBar(
+            content: Text(l10n.verifyingPurchaseSuccess),
             behavior: SnackBarBehavior.floating,
           ),
         );
 
       case BillingResult.notFound:
-        _showError(
-          'No se encontró ninguna compra previa asociada a tu cuenta de Google.',
-        );
+        _showError(l10n, l10n.billingRestorePurchaseNotFound);
 
       default:
-        _showError('Error al restaurar. Intenta de nuevo.');
+        _showError(l10n, l10n.billingRestorePurchaseError);
     }
   }
 
-  void _showError(String message) {
+  void _showError(AppLocalizations l10n, String message) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Error'),
+        title: Text(l10n.error),
         content: Text(message),
         actions: [
           FilledButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Entendido'),
+            child: Text(l10n.btnUnderstood),
           ),
         ],
       ),
     );
   }
 
-  List<Feature> _features(ColorScheme cs) => [
+  List<Feature> _features(AppLocalizations l10n, ColorScheme cs) => [
     Feature(
       '☁️',
-      'Backup automático a Google Drive',
-      'Sincroniza tu base de datos y recibos en la nube con un toque',
+      l10n.premiumFeatureBackupDrive,
+      l10n.premiumFeatureBackupDriveSubtitle,
     ),
     Feature(
       '📄',
-      'PDF con fotos de recibos',
-      'Exporta reportes completos con las imágenes adjuntas de cada compra',
+      l10n.premiumFeatureExportPdf,
+      l10n.premiumFeatureExportPdfSubtitle,
     ),
     Feature(
       '📅',
-      'Rango de fechas personalizado',
-      'Exporta cualquier período de tiempo, no solo el mes actual',
+      l10n.premiumFeatureExportCustomRange,
+      l10n.premiumFeatureExportCustomRangeSubtitle,
     ),
     Feature(
       '🎯',
-      'Metas ilimitadas',
-      'Crea todas las metas de ahorro que necesites sin restricciones',
+      l10n.premiumFeatureUnlimitedGoals,
+      l10n.premiumFeatureUnlimitedGoalsSubtitle,
     ),
     Feature(
       '📊',
-      'Presupuestos ilimitados',
-      'Asigna límites a todas tus categorías, no solo 3',
+      l10n.premiumFeatureUnlimitedBudgets,
+      l10n.premiumFeatureUnlimitedBudgetsSubtitle,
     ),
     Feature(
       '🗂️',
-      'Categorías personalizadas ilimitadas',
-      'Organiza tus gastos con todas las categorías que quieras',
+      l10n.premiumFeatureUnlimitedCategories,
+      l10n.premiumFeatureUnlimitedCategoriesSubtitle,
     ),
     Feature(
       '🔒',
-      'Bloqueo con PIN o biometría',
-      'Protege tu información financiera con huella, Face ID o PIN propio',
+      l10n.premiumFeaturePinLock,
+      l10n.premiumFeaturePinLockSubtitle,
     ),
     Feature(
       '📈',
-      'Historial completo de estadísticas',
-      'Analiza tus patrones de gasto en cualquier período pasado',
+      l10n.premiumFeatureViewHistory,
+      l10n.premiumFeatureViewHistorySubtitle,
     ),
   ];
 }

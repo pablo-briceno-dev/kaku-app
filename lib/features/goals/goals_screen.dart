@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/features/goals/goal_form_sheet.dart';
 import 'package:kaku/features/goals/goals_list.dart';
 import 'package:kaku/features/goals/widgets/goals_list_skeleton.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/services/premium_service.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
@@ -20,6 +21,7 @@ class GoalsScreen extends ConsumerStatefulWidget {
 class _GoalsScreenState extends ConsumerState<GoalsScreen> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final allGoalsAsync = ref.watch(allGoalsProvider);
@@ -31,34 +33,34 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Metas'),
+            Text(l10n.goalsTitle),
             Row(
               children: [
                 activeGoalsAsync.when(
                   data: (activeGoal) => Text(
-                    '${activeGoal.length} activas · ',
+                    l10n.goalsActive(count: activeGoal.length),
                     style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                   error: (e, _) => Text(
-                    '0 activas · ',
+                    l10n.goalsActive(count: 0),
                     style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                   loading: () => Text(
-                    'Cargando...',
+                    l10n.loading,
                     style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                 ),
                 completedGoalsAsync.when(
                   data: (completedGoal) => Text(
-                    '${completedGoal.length} completadas',
+                    l10n.goalComplete(count: completedGoal.length),
                     style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                   error: (e, _) => Text(
-                    '0 completadas',
+                    l10n.goalComplete(count: 0),
                     style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                   loading: () => Text(
-                    'Cargando...',
+                    l10n.loading,
                     style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                 ),
@@ -85,15 +87,15 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
               if (context.mounted) {
                 AppBottomSheet.show(
                   context,
-                  title: 'Nueva Meta',
+                  title: l10n.newGoalTitle,
                   useRootNavigator: true,
                   isFullScreen: true,
-                  child: GoalFormSheet(),
+                  child: GoalFormSheet(defaultName: l10n.newGoalTitle),
                 );
               }
             },
             icon: Icon(Icons.add),
-            label: Text('Nueva'),
+            label: Text(l10n.btnNew(femenine: true)),
           ),
         ],
       ),
@@ -107,7 +109,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
               if (goals.isEmpty) {
                 return const ContentWidgetEmpty(
                   title: '🎯',
-                  message: 'Sin metas activas',
+                  message: l10n.goalsNoActive,
                 );
               }
               return GoalsList(

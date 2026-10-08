@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 
@@ -13,7 +14,9 @@ class MiniStatsByCategory extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
+    final ts = Theme.of(context).textTheme;
     final selectedMonth = ref.watch(selectedMonthProvider);
     final transactionsAsync = ref.watch(
       monthTransactionsProvider(selectedMonth),
@@ -60,9 +63,8 @@ class MiniStatsByCategory extends ConsumerWidget {
           child: Column(
             children: [
               Text(
-                'Transacciones'.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 15,
+                l10n.transactionTitle(plural: true).toUpperCase(),
+                style: ts.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: cs.onSurfaceVariant,
                 ),
@@ -70,7 +72,9 @@ class MiniStatsByCategory extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(
                 '${transactions?.length ?? 0}',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                style: ts.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -87,9 +91,8 @@ class MiniStatsByCategory extends ConsumerWidget {
           child: Column(
             children: [
               Text(
-                'Promedio'.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 15,
+                l10n.average.toUpperCase(),
+                style: ts.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: cs.onSurfaceVariant,
                 ),
@@ -97,7 +100,9 @@ class MiniStatsByCategory extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(
                 CurrencyFormatter.compact(average, currency),
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                style: ts.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
@@ -114,9 +119,8 @@ class MiniStatsByCategory extends ConsumerWidget {
           child: Column(
             children: [
               Text(
-                'Mayor gasto'.toUpperCase(),
-                style: TextStyle(
-                  fontSize: 15,
+                l10n.majorSpending.toUpperCase(),
+                style: ts.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: cs.onSurfaceVariant,
                 ),
@@ -124,7 +128,9 @@ class MiniStatsByCategory extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(
                 CurrencyFormatter.compact(higherSpending, currency),
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                style: ts.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),

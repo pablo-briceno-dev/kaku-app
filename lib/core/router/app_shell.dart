@@ -108,7 +108,7 @@ class _AppShellState extends ConsumerState<AppShell>
             _NavItem(
               icon: Icons.flag_outlined,
               selectedIcon: Icons.flag,
-              label: l10n.appShellTabGoals,
+              label: l10n.appShellTabPersonal,
               index: 2,
               current: currentIndex,
               onTap: () => context.go(_tabs[2]),

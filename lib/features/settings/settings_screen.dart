@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/l10n/date_context_x.dart';
+import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/theme_model.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/backup_sheet.dart';
@@ -44,23 +45,26 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: CustomAppBar(title: Text('Configuración'), defaultActions: false),
+      appBar: CustomAppBar(
+        title: Text(l10n.settingsTitle),
+        defaultActions: false,
+      ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         children: [
           ProfileCard(),
           const SizedBox(height: 20),
-          SectionHeader('Apariencia'),
+          SectionHeader(l10n.appearanceTitle),
           SectionCard(
             children: [
               ListTileChild(
-                label: 'Tema de color',
+                label: l10n.themeTitle,
                 subtitle: themeMode.accent.label,
                 icon: Icons.palette,
                 onTap: () => AppBottomSheet.show(
                   context,
-                  title: 'Tema de color',
-                  subtitle: 'Elige el color de acento de la app',
+                  title: l10n.themeTitle,
+                  subtitle: l10n.themeSubtitle,
                   useRootNavigator: true,
                   isFullScreen: false,
                   child: ThemeColorSheet(),
@@ -68,9 +72,8 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const Divider(height: 1),
               SwitchListTileChild(
-                label: 'Modo oscuro',
-                subtitle:
-                    'Activa el modo oscuro o desactivalo para usar el tema claro',
+                label: l10n.themeModeTitle,
+                subtitle: l10n.themeModeSubtitle,
                 icon: Icons.light_mode_outlined,
                 value: themeMode.mode == AppThemeMode.dark,
                 onChanged: (v) {
@@ -83,16 +86,16 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
-          SectionHeader('Regional'),
+          SectionHeader(l10n.regionalTitle),
           SectionCard(
             children: [
               ListTileChild(
-                label: 'Moneda',
-                subtitle: '${currency.label} - ${currency.labelComplete}',
+                label: l10n.currencyTitle,
+                subtitle: '${currency.label} - ${currency.labelComplete(l10n)}',
                 icon: Icons.monetization_on,
                 onTap: () => AppBottomSheet.show(
                   context,
-                  title: 'Moneda',
+                  title: l10n.currencyTitle,
                   useRootNavigator: false,
                   isFullScreen: false,
                   child: CurrencySheet(),
@@ -100,93 +103,109 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const Divider(height: 1),
               ListTileChild(
-                label: 'Categorías',
+                label: l10n.categoriesTitle(femenine: true),
                 subtitle: categoriesAsync.when(
-                  data: (categories) => '${categories.length} activas',
-                  error: (_, _) => '0 activas',
-                  loading: () => 'Cargando...',
+                  data: (categories) =>
+                      l10n.countActiveCategories(count: categories.length),
+                  error: (_, _) => l10n.countActiveCategories(count: 0),
+                  loading: () => l10n.loading,
                 ),
                 icon: Icons.category,
                 onTap: () => context.push(AppRoutes.categories),
               ),
             ],
           ),
-          SectionHeader('Presupuestos'),
+          SectionHeader(l10n.budgetTitle),
           SectionCard(
             children: [
               ListTileChild(
-                label: 'Presupuestos por categorías',
-                subtitle:
-                    '${DateFormatter.monthYear(selectedMonth.year, selectedMonth.month)} - ${budgetsProgress.when(data: (budgets) => '${budgets.length} configurados', error: (e, _) => '0 configurados', loading: () => 'Cargando...')}',
+                label: l10n.budgetByCategoryTitle,
+                subtitle: l10n.budgetByCategorySubtitle(
+                  monthYear: context.dates.monthYear(
+                    selectedMonth.year,
+                    selectedMonth.month,
+                  ),
+                  count: budgetsProgress.when(
+                    data: (budgets) => budgets.length,
+                    error: (e, _) => 0,
+                    loading: () => 0,
+                  ),
+                ),
                 icon: Icons.bar_chart,
                 onTap: () => context.push(AppRoutes.budgets),
               ),
             ],
           ),
-          SectionHeader('Datos'),
+          SectionHeader(l10n.dataTitle),
           SectionCard(
             children: [
               PremiumGate(
                 feature: PremiumFeature.backupDrive,
                 showLockBadge: true,
                 child: ListTileChild(
-                  label: 'Backup Google Drive',
+                  label: l10n.backupGoogleDriveTitle,
                   subtitle: backupSubtitle.when(
                     data: (date) {
                       if (date == null) return l10n.notSynced;
                       return l10n.syncLastBackup(context.dates.relative(date));
                     },
                     error: (e, _) => l10n.notSynced,
-                    loading: () => 'Cargando...',
+                    loading: () => l10n.loading,
                   ),
                   icon: Icons.backup,
                   onTap: () => AppBottomSheet.show(
                     context,
-                    title: 'Backup',
+                    title: l10n.backupTitle,
                     child: const BackupSheet(),
                   ),
                 ),
               ),
               const Divider(height: 1),
               ListTileChild(
-                label: 'Backup local',
-                subtitle: 'Gratis · Comparte el archivo donde quieras',
+                label: l10n.backupLocalTitle,
+                subtitle: l10n.backupSubtitle,
                 icon: Icons.save_outlined,
                 onTap: () => AppBottomSheet.show(
                   context,
-                  title: 'Backup local',
+                  title: l10n.backupLocalTitle,
                   child: const LocalBackupSheet(),
                 ),
               ),
               const Divider(height: 1),
               ListTileChild(
-                label: 'Exportar datos',
-                subtitle: 'CSV · PDF',
+                label: l10n.exportTitle,
+                subtitle: l10n.exportSubtitle,
                 icon: Icons.upload_file,
                 onTap: () => AppBottomSheet.show(
                   context,
-                  title: 'Exportar datos',
+                  title: l10n.exportTitle,
                   child: const ExportSheet(),
                 ),
               ),
               const Divider(height: 1),
               ListTileChild(
-                label: 'Almacenamiento local',
+                label: l10n.storageLocalTitle,
                 subtitle: storageSubtitle.when(
-                  data: (s) => s,
-                  error: (e, _) => 'No disponible',
-                  loading: () => 'Cargando...',
+                  data: (info) {
+                    if (info == null) return l10n.storageNoReceipts;
+                    return l10n.storageSummary(
+                      size: info.sizeLabel,
+                      count: info.count,
+                    );
+                  },
+                  error: (e, _) => l10n.notAvailable,
+                  loading: () => l10n.loading,
                 ),
                 icon: Icons.storage,
                 onTap: () => AppBottomSheet.show(
                   context,
-                  title: 'Almacenamiento',
+                  title: l10n.storageLocalTitle,
                   child: const StorageSheet(),
                 ),
               ),
             ],
           ),
-          SectionHeader('Seguridad'),
+          SectionHeader(l10n.securityTitle),
           SectionCard(
             children: [
               PremiumGate(
@@ -198,30 +217,29 @@ class SettingsScreen extends ConsumerWidget {
               NotificationsToggle(),
             ],
           ),
-          SectionHeader('Zona peligrosa'),
+          SectionHeader(l10n.dangerZoneTitle),
           SectionCard(
             children: [
               ListTileChild(
-                label: 'Borrar todos los datos',
-                subtitle: 'Elimina todos los datos de la app',
+                label: l10n.deleteDataAllTitle,
+                subtitle: l10n.deleteDataAllSubtitle,
                 icon: Icons.delete,
                 onTap: () => AppBottomSheet.show(
                   context,
-                  // title: 'Borrar datos',
                   child: const DangerZoneSheet(),
                 ),
               ),
             ],
           ),
-          SectionHeader('Acerca de'),
+          SectionHeader(l10n.aboutTitle),
           SectionCard(
             children: [
               ListTileChild(
-                label: 'Versión',
+                label: l10n.versionTitle,
                 subtitle: packageInfoAsync.when(
                   data: (info) => '${info.version} (${info.buildNumber})',
-                  error: (_, _) => 'No disponible',
-                  loading: () => 'Cargando...',
+                  error: (_, _) => l10n.notAvailable,
+                  loading: () => l10n.loading,
                 ),
                 icon: Icons.info_outline,
               ),

@@ -1,37 +1,4 @@
 {
-  // Accounts
-  "accountTypeCash": "Efectivo",
-  "accountTypeDebit": "Débito",
-  "accountTypeCredit": "Crédito",
-  "accountTypeSavings": "Ahorro",
-  "accountDetail": "Detalle de la cuenta",
-  "accountNotFound": "Cuenta no encontrada",
-  "myAccountName": "Mi cuenta",
-  "accountType": "Tipo de cuenta",
-  "accountBalanceMessage": "Este es el saldo actual de tu cuenta. Las transacciones futuras ajustarán este valor",
-  "accountUpdateSuccess": "Cuenta actualizada",
-  "accountCreateSuccess": "Cuenta creada",
-  "accountArchiveSuccess": "Cuenta archivada",
-  "accountsErrorLoading": "Error al cargar las cuentas",
-  "accountsNotCreated": "No has creado ninguna cuenta",
-  "myAccounts": "Mis cuentas",
-  "accountNew": "Nueva cuenta",
-  "currentBalance": "Saldo actual",
-  "accountEntry": "Entrada",
-  "accountExit": "Salida",
-  "balanceTotal": "Balance total",
-  "accountsActive": "{count, plural, =1 {1 cuenta activa} other {{count} cuentas activas}}",
-  "@accountsActive": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "thisMonth": "este mes",
-  "savings": "Ahorro",
-
   // Currency
   "currencyCopLabel": "Peso colombiano",
   "currencyUsdLabel": "Dólar estadounidense",
@@ -50,45 +17,13 @@
   "themeLight": "Claro",
   "themeSystem": "Sistema",
 
-  // Transactions
-  "transactionTypeFilterAll": "Todos",
-  "transactionTypeFilterByCategory": "Por categoría",
-  "transactionTypeExpense": "{count, plural, =1{Gasto} other{Gastos}}",
-  "@transactionTypeExpense": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "transactionTypeIncome": "{count, plural, =1{Ingreso} other{Ingresos}}",
-  "@transactionTypeIncome": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "transactionTypeTransfer": "{count, plural, =1{Transferencia} other{Transferencias}}",
-  "@transactionTypeTransfer": {
-    "placeholders": {
-      "count": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
-  "transactionsHistoryEmpty": "Historial de transacciones vacío",
-
   // UserProfile
   "userDisplayName": "Usuario",
 
   // AppShell
   "appSheelTabDashboard": "Inicio",
   "appShellTabStats": "Estadísticas",
-  "appShellTabGoals": "Metas",
+  "appShellTabPersonal": "Metas",
   "appShellTabAccounts": "Cuentas",
 
   // BudgetCalculator
@@ -124,6 +59,45 @@
   "securityFaceId": "Face ID",
   "securityUnlockConfirm": "Confirma tu identidad para desactivar el bloqueo",
   "securityError": "No se pudo verificar tu identidad.",
+  "biometricLockTitle": "Kaku bloqueado",
+  "biometricLockSubtitle": "Usa tu biometría para continuar",
+  "biometricLockUnlock": "Desbloquear",
+  "biometricLockVerifying": "Verificando...",
+  "biometricAuthReason": "Confirma tu identidad para acceder a Kaku",
+  "biometricEnableSubtitle": "Activo · Se pide al abrir la app",
+  "biometricDisableSubtitle": "Inactivo · La app no pide confirmación",
+  "biometricNotConfigured": "No se logró configurar",
+  "errorLoadLockMethods": "Error al cargar métodos de bloqueo",
+  "enableBiometricLockReason": "Activar bloqueo biométrico",
+  "errorEnableBiometricLock": "No se logró activar: {name}",
+  "@errorEnableBiometricLock": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Face ID"
+      }
+    }
+  },
+  "biometricAuthFailed": "Autenticación fallida. Intenta de nuevo."
+  "biometricAuthUnlocking": "Desbloqueando...",
+  "createPin": "Crear PIN",
+  "createPinSubtitle": "Elige un PIN de 4 dígitos",
+  "confirmPin": "Confirmar PIN",
+  "confirmPinSubtitle": "Ingresa el PIN nuevamente",
+  "pinMismatch": "PIN no coincide",
+  "pinMismatchSubtitle": "Los PIN no coinciden. Intenta de nuevo.",
+  "pinConfirmTitle": "Ingresa tu PIN",
+  "pinIncorrect": "PIN incorrecto ({attempts} intentos fallidos)",
+  "@pinIncorrect": {
+    "placeholders": {
+      "attempts": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "pinIncorrectSubtitle": "PIN incorrecto. Intenta de nuevo.",
+  "securityTitle": "Seguridad",
 
   // Sync
   "notSynced": "Sin sincronizar",
@@ -157,12 +131,41 @@
   "@exportReceiptTitle": {
     "placeholders": { "desc": { "type": "String" } }
   },
+  "exportTitle": "Exportar datos",
+  "exportSubtitle": "CSV · PDF",
 
   // Backup
   "backupShareText": "Backup de Kaku — {date}",
   "@backupShareText": {
     "placeholders": { "date": { "type": "String" } }
   },
+  "backupGoogleDriveTitle": "Copia de seguridad Google Drive",
+  "backupTitle": "Copia de seguridad",
+  "backupLocalTitle": "Copia de seguridad local",
+  "backupSubtitle": "Gratis · Comparte el archivo donde quieras",
+  "backupConnectedAs": "✅ Conectado como {email}",
+  "backupConnectFailed": "No se pudo conectar con Google",
+  "backupCompleted": "✅ Backup completado — DB + recibos cifrados",
+  "backupSignInFirst": "Inicia sesión con Google primero",
+  "backupDbNotFound": "No se encontró la base de datos",
+  "backupErrorGeneric": "Error al realizar el backup. Intenta de nuevo.",
+  "restoreDialogTitle": "Restaurar backup",
+  "restoreDialogContent": "Se reemplazarán todos los datos actuales con los del backup.\n\nEsta acción no se puede deshacer.",
+  "restoreDialogCancel": "Cancelar",
+  "restoreDialogConfirm": "Restaurar",
+  "restoreSuccess": "✅ Datos restaurados correctamente",
+  "restoreNoBackupFound": "No se encontró ningún backup en Drive",
+  "restoreErrorGeneric": "Error al restaurar. Intenta de nuevo.",
+  "backupIncludesTitle": "El backup incluye:",
+  "backupIncludesDatabase": "Base de datos (transacciones, cuentas, metas)",
+  "backupIncludesReceipts": "Fotos de recibos",
+  "backupIncludesEncryption": "Cifrado AES-256 con tu cuenta de Google",
+  "backupSignOut": "Salir",
+  "backupConnectGoogle": "Conectar con Google",
+  "backupUploading": "Subiendo...",
+  "backupDoNow": "Hacer backup ahora",
+  "backupRestoring": "Restaurando...",
+  "backupRestoreFromDrive": "Restaurar desde Drive"
 
   // Notifications
   "notifBudgetExceededTitle": "{emoji} Presupuesto excedido",
@@ -254,12 +257,362 @@
   "formBalanceInitial": "Saldo inicial",
   "formColor": "Color",
   "formIcon": "Ícono",
+  "formAmountMajor": "Debe ser mayor a 0",
+  "formContributeMajorTotal": "No puedes aportar más que el total",
+  "formAccountNoBalance": "Cuenta sin saldo suficiente",
+
+  // Accounts
+  "accountsTitle": "{plural, select, true {Cuentas} false {Cuenta}}",
+  "@accountsTitle": {
+    "placeholders": {
+      "plural": {
+        "type": "bool",
+        "example": "true"
+      }
+    }
+  },
+  "accountTypeCash": "Efectivo",
+  "accountTypeDebit": "Débito",
+  "accountTypeCredit": "Crédito",
+  "accountTypeSavings": "Ahorro",
+  "accountDetail": "Detalle de la cuenta",
+  "accountNotFound": "Cuenta no encontrada",
+  "myAccountName": "Mi cuenta",
+  "accountType": "Tipo de cuenta",
+  "accountBalanceMessage": "Este es el saldo actual de tu cuenta. Las transacciones futuras ajustarán este valor",
+  "accountUpdateSuccess": "Cuenta actualizada",
+  "accountCreateSuccess": "Cuenta creada",
+  "accountArchiveSuccess": "Cuenta archivada",
+  "accountsErrorLoading": "Error al cargar las cuentas",
+  "accountsNotCreated": "No has creado ninguna cuenta",
+  "myAccounts": "Mis cuentas",
+  "accountNew": "Nueva cuenta",
+  "currentBalance": "Saldo actual",
+  "accountEntry": "Entrada",
+  "accountExit": "Salida",
+  "balanceTotal": "Balance total",
+  "accountsActive": "{count, plural, =1 {1 cuenta activa} other {{count} cuentas activas}}",
+  "@accountsActive": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "thisMonth": "este mes",
+  "savings": "Ahorro",
+
+  // Categories
+  "categoryFood": "Comida",
+  "categoryTransport": "Transporte",
+  "categoryHome": "Casa",
+  "categoryHealth": "Salud",
+  "categoryLeisure": "Ocio",
+  "categoryEducation": "Educación",
+  "categoryShopping": "Compras",
+  "categoryServices": "Servicios",
+  "categorySavings": "Ahorro",
+  "categorySalary": "Salario",
+  "categoryFreelance": "Freelance",
+  "categorySales": "Ventas",
+  "categoryGifts": "Regalos",
+  "categoryInvestments": "Inversiones",
+  "categoryOtherIncome": "Otros ingresos",
+  "notSetBudgetCategory": "Sin presupuesto definido para esta categoría",
+  "spentInMonth": "Gasto en {month}",
+  "@spentInMonth": {
+    "placeholders": {
+      "month": { "type": "String" }
+    }
+  },
+  "categoryLimit": "Límite",
+  "categorySpentUsed": "{spent} usado",
+  "@categorySpentUsed": {
+    "placeholders": {
+      "spent": { "type": "int" }
+    }
+  },
+  "categorySpentLeft": "Quedan {spent}",
+  "@categorySpentLeft": {
+    "placeholders": {
+      "spent": { "type": "int" }
+    }
+  },
+  "categoryEmptyTitle": "Sin categorías",
+  "categoryEmptySubtitle": "Toca '+ Nueva' para crear tu primera categoría",
+  "categoriesTitle": "{femenine, select, true {Categorías} false {Categoría}}",
+  "@categoriesTitle": {
+    "placeholders": {
+      "femenine": {
+        "type": "bool",
+        "example": "true"
+      }
+    }
+  },
+  "errorLoadCategories": "Error al cargar las categorías",
+  "newCategoryTitle": "Nueva categoría",
+  "editCategoryTitle": "Editar categoría",
+  "categoryNotFound": "Categoría no encontrada",
+  "categoryEditSuccess": "Categoría actualizada",
+  "categoryCreateSuccess": "Categoría creada",
+  "categoryDeactivateTitle": "Desactivar categoría",
+  "categoryDeactivateSubtitle": "{emoji} {category} tiene {txCount, plural, =1{1 transacción asociada} other{{txCount} transacciones asociadas}}.\n\nAl desactivarla ya no aparecerá al agregar gastos, pero las transacciones existentes se conservan.",
+  "@categoryDeactivateSubtitle": {
+    "placeholders": {
+      "emoji": { "type": "String" },
+      "category": { "type": "String" },
+      "txCount": { "type": "int" }
+    }
+  },
+  "categoryNotDeleted": "No se puede eliminar",
+  "categoryNotDeletedSubtitle": "{emoji} {category} tiene {txCount, plural, =1{1 transacción asociada} other{{txCount} transacciones asociadas}}.\n\nPara no perder el historial, solo puedes desactivarla. Seguirá visible en transacciones pasadas pero no aparecerá al agregar nuevos gastos.",
+  "@categoryNotDeletedSubtitle": {
+    "placeholders": {
+      "emoji": { "type": "String" },
+      "category": { "type": "String" },
+      "txCount": { "type": "int" }
+    }
+  },
+  "categoryDeleteConfirm": "Eliminar categoría",
+  "categoryDeleteConfirmSubtitle": "¿Eliminar {emoji} {category}?\n\nEsta categoría no tiene transacciones, por lo que se puede eliminar de forma permanente.",
+  "@categoryDeleteConfirmSubtitle": {
+    "placeholders": {
+      "emoji": { "type": "String" },
+      "category": { "type": "String" }
+    }
+  },
+  "countActiveCategories": "{count, plural, =1{1 categoría activa} other{{count} categorías activas}}",
+  "@countActiveCategories": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+
+  // Dashboard
+  "availableBalance": "Saldo disponible",
+  "welcomeToKaku": "Bienvenido a Kaku 👋",
+  "welcomeToKakuSubtitle": "Tu bolsillo, bajo control",
+  "welcomeToKakuName": "Hola, {name} 👋",
+  "@welcomeToKakuName": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "errorLoadBudget": "Error al cargar presupuestos",
+  "bannerStateExceeded": "Llevas {spent} gastados y tu límite era {budget}. Te pasaste por {over} este mes.",
+  "@bannerStateExceeded": {
+    "placeholders": {
+      "spent": { "type": "String" },
+      "budget": { "type": "String" },
+      "over": { "type": "String" }
+    }
+  },
+  "bannerStateCritical": "A este ritmo ({avg}/día) gastarás {projection} este mes, {over} más de tu presupuesto.",
+  "@bannerStateCritical": {
+    "placeholders": {
+      "avg": { "type": "String" },
+      "projection": { "type": "String" },
+      "over": { "type": "String" }
+    }
+  },
+  "bannerStateWarning": "Al ritmo actual podrías llegar a {projection} este mes vs tu presupuesto de {budget}.",
+  "@bannerStateWarning": {
+    "placeholders": {
+      "projection": { "type": "String" },
+      "budget": { "type": "String" }
+    }
+  },
+  "bannerStateNearEnd": "Quedan {daysLeft} días y ya usaste el {percentage} de tu presupuesto.",
+  "@bannerStateNearEnd": {
+    "placeholders": {
+      "daysLeft": { "type": "String" },
+      "percentage": { "type": "String" }
+    }
+  },
+  "bannerConfigExceeded": "Presupuesto superado",
+  "bannerConfigCritical": "Vas a pasarte del presupuesto",
+  "bannerConfigWarning": "Revisa tu ritmo de gasto",
+  "bannerConfigNearEnd": "Casi al límite del mes",
+
+  // Goals
+  "goalsTitle": "Metas",
+  "contributeGoal": "Aportar meta",
+  "btnContribute": "Aportar",
+  "contributeAll": "Todo",
+  "leftToContribute": "Quedan {amount} para completar",
+  "@leftToContribute": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "amountContributeToday": "Monto a aportar hoy",
+  "newProgress": "Nuevo progreso",
+  "contributeSuccess": "Aporte realizado",
+  "btnConfirmContribute": "Confirmar aporte",
+  "newGoalTitle": "Nueva meta",
+  "nameGoal": "Meta: {name}",
+  "@nameGoal": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "amountGoal": "Monto objetivo",
+  "dateGoal": "Fecha límite (opcional)",
+  "dateGoalMessage": "Si no ingresa una fecha, el sistema utilizará su historial de ahorro para estimar cuándo podría cumplir su meta.",
+  "goalUpdateSuccess": "Meta actualizada",
+  "goalCreateSuccess": "Meta creada",
+  "btnUpdateGoal": "Actualizar Meta",
+  "btnCreateGoal": "Crear Meta",
+  "goalEditTitle": "Editar meta {name}",
+  "@goalEditTitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "goalCompleteSuccess": "Meta completada",
+  "goalDeleting": "Meta eliminandose",
+  "goalsActive": "{count, plural, =1{1 activa · } other{{count} activas · }}",
+  "@goalsActive": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "goalComplete": "{count, plural, =1{1 Completada} other{{count} completadas}}",
+  "@goalComplete": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "goalsNoActive": "Sin metas activas",
+
+  // Premium
+  "premiumSubtitle": "Lleva tus finanzas\nal siguiente nivel",
+  "premiumContent": "Todas las herramientas que necesitas para\ntener control total de tu dinero.",
+  "premiumPaymentTitle": "✨ PAGO ÚNICO — SIN SUSCRIPCIÓN",
+  "premiumPaymentSubtitle": "para siempre · un solo pago",
+  "premiumUnlockKaku": "Desbloquear Kaku Premium",
+  "welcomeToPremium": "🎉 ¡Bienvenido a Kaku Premium!",
+  "billingPending": "Pago pendiente. Te notificaremos cuando se confirme.",
+  "billingProductNotFound": "No se encontró el producto en la tienda. Verifica tu conexión e intenta de nuevo.",
+  "billingFailed": "Error al procesar el pago. Intenta de nuevo.",
+  "labelUnlockTitle": "TODO LO QUE DESBLOQUEAS",
+  "billingRestorePurchase": "Restaurar compra",
+  "billingCodePromo": "¿Tienes un código de descuento?",
+  "billingNoteLegal": "Pago único · Sin suscripción · Sin cobros recurrentes",
+  "verifyingPurchase": "Verificando compra...",
+  "verifyingPurchaseSuccess": "✅ Compra restaurada correctamente",
+  "billingRestorePurchaseNotFound": "No se encontró ninguna compra previa asociada a tu cuenta de Google.",
+  "billingRestorePurchaseError": "Error al restaurar. Intenta de nuevo.",
+  "premiumFeatureBackupDrive": "Backup automático a Google Drive",
+  "premiumFeatureBackupDriveSubtitle": "Sincroniza tu base de datos y recibos en la nube con un toque",
+  "premiumFeatureExportPdf": "PDF con fotos de recibos",
+  "premiumFeatureExportPdfSubtitle": "Exporta reportes completos con las imágenes adjuntas de cada compra",
+  "premiumFeatureExportCustomRange": "Rango de fechas personalizado",
+  "premiumFeatureExportCustomRangeSubtitle": "Exporta cualquier período de tiempo, no solo el mes actual",
+  "premiumFeatureUnlimitedGoals": "Metas ilimitadas",
+  "premiumFeatureUnlimitedGoalsSubtitle": "Crea todas las metas de ahorro que necesites sin restricciones",
+  "premiumFeatureUnlimitedBudgets": "Presupuestos ilimitados",
+  "premiumFeatureUnlimitedBudgetsSubtitle": "Asigna límites a todas tus categorías, no solo 3",
+  "premiumFeatureUnlimitedCategories": "Categorías personalizadas ilimitadas",
+  "premiumFeatureUnlimitedCategoriesSubtitle": "Organiza tus gastos con todas las categorías que quieras",
+  "premiumFeaturePinLock": "Bloqueo con PIN o biometría",
+  "premiumFeaturePinLockSubtitle": "Protege tu información financiera con huella, Face ID o PIN propio",
+  "premiumFeatureViewHistory": "Historial completo de estadísticas",
+  "premiumFeatureViewHistorySubtitle": "Analiza tus patrones de gasto en cualquier período pasado",
+  "redeemCodeErrorInvalid": "Código no válido. Verifica e intenta de nuevo.",
+  "redeemCodeErrorAlreadyUsed": "Este código ya fue canjeado en este dispositivo.",
+  "redeemCode": "Canjear código",
+  "redeemCodeSubtitle": "Ingresa tu código de descuento o acceso premium",
+
+  // Settings
+  "settingsTitle": "Configuración",
+  "appearanceTitle": "Apariencia",
+  "themeTitle": "Tema de color",
+  "themeSubtitle": "Elige el color de acento de la app",
+  "themeModeTitle": "Modo oscuro",
+  "themeModeSubtitle": "Activa el modo oscuro o desactivalo para usar el tema claro",
+  "regionalTitle": "Regional",
+  "currencyTitle": "Moneda",
+  "budgetTitle": "Presupuestos",
+  "budgetByCategoryTitle": "Presupuestos por categorías",
+  "budgetByCategorySubtitle": "{monthYear} - {count, plural, =1{1 configurado} other{{count} configurados}}",
+  "dataTitle": "Datos",
+  "storageLocalTitle": "Almacenamiento local",
+  "storageNoReceipts": "Sin recibos guardados",
+  "storageSummary": "{size} · {count, plural, =1{1 foto} other{{count} fotos}}",
+  "@storageSummary": {
+    "placeholders": {
+      "size": { "type": "String" },
+      "count": { "type": "int" }
+    }
+  },
+  "dangerZoneTitle": "Zona peligrosa",
+  "deleteDataAllTitle": "Borrar todos los datos",
+  "deleteDataAllSubtitle": "Elimina todos los datos de la app",
+  "aboutTitle": "Acerca de",
+  "versionTitle": "Versión",
+
+  // Transactions
+  "transactionTypeFilterAll": "Todos",
+  "transactionTypeFilterByCategory": "Por categoría",
+  "transactionTypeExpense": "{count, plural, =1{Gasto} other{Gastos}}",
+  "@transactionTypeExpense": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "transactionTypeIncome": "{count, plural, =1{Ingreso} other{Ingresos}}",
+  "@transactionTypeIncome": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "transactionTypeTransfer": "{count, plural, =1{Transferencia} other{Transferencias}}",
+  "@transactionTypeTransfer": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "transactionsHistoryEmpty": "Historial de transacciones vacío",
+  "transactionTitle": "{plural, select, true {Transacciones} false {Transacción}}",
+  "@transactionTitle": {
+    "placeholders": {
+      "plural": {
+        "type": "bool",
+        "example": "true"
+      }
+    }
+  },
+  "transactionCount": "{count, plural, =1{1 transacción} other{{count} transacciones}}",
+  "@transactionCount": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "transactionEmpty": "Sin transacciones",
 
   "balance": "Balance",
   "errorInsufficientFunds": "Fondos insuficientes para esta transacción",
   "errorAccountNotFound": "Cuenta no encontrada",
-  "categoryFood": "Comida",
-  "categoryServices": "Servicios",
   "errorInvalidAmount": "Cantidad no válida",
   "errorNetworkError": "Error de red",
   "today": "Hoy",
@@ -290,6 +643,12 @@
       }
     }
   },
+  "btnDeactivate": "Desactivar",
+  "btnActivate": "Activar",
+  "btnDelete": "Eliminar",
+  "btnUnderstood": "Entendido",
+  "btnDisableInstead": "Desactivar en su lugar",
+  "btnRetry": "Reintentar",
 
   // Texts
   "emojiLabel": "Emoji",
@@ -301,4 +660,11 @@
   "selectedColor": "Selecciona un color",
   "noDescription": "Sin descripción",
   "history": "Historial",
+  "preview": "Vista previa",
+  "average": "Promedio",
+  "majorSpending": "Mayor gasto",
+  "viewAll": "Ver todas",
+  "loading": "Cargando...",
+  "error": "Error",
+  "notAvailable": "No disponible"
 }

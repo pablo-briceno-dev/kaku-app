@@ -4,9 +4,11 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/colors_plates.dart';
 import 'package:kaku/core/database/app_database.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/categories/category_form_sheet.dart';
 import 'package:kaku/features/categories/widgets/category_tile.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
@@ -23,6 +25,7 @@ class CategoryItem extends ConsumerWidget {
     final catColor = hexToColor(category.colorHex);
     final isActive = category.isActive;
     final selectedMonth = ref.watch(selectedMonthProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
@@ -82,7 +85,7 @@ class CategoryItem extends ConsumerWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          isActive ? 'Desactivar' : 'Activar',
+                          isActive ? l10n.btnDeactivate : l10n.btnActivate,
                           style: const TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -97,13 +100,13 @@ class CategoryItem extends ConsumerWidget {
                     foregroundColor: cs.error,
                     borderRadius: BorderRadius.circular(12),
                     padding: EdgeInsets.zero,
-                    child: const Column(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.delete_outline_rounded, size: 20),
                         SizedBox(height: 4),
                         Text(
-                          'Eliminar',
+                          l10n.btnDelete,
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -137,11 +140,15 @@ class CategoryItem extends ConsumerWidget {
   }
 
   void _openEditForm(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     AppBottomSheet.show(
       context,
-      title: 'Editar categoría',
+      title: l10n.editCategoryTitle,
       isFullScreen: true,
-      child: CategoryFormSheet(category: category),
+      child: CategoryFormSheet(
+        category: category,
+        defaultName: category.displayName(context),
+      ),
     );
   }
 
@@ -168,20 +175,22 @@ class CategoryItem extends ConsumerWidget {
     WidgetRef ref,
     int txCount,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Desactivar categoría'),
+        title: Text(l10n.categoryDeactivateTitle),
         content: Text(
-          '${category.emoji} ${category.name} tiene $txCount '
-          '${txCount == 1 ? 'transacción' : 'transacciones'} asociadas.\n\n'
-          'Al desactivarla ya no aparecerá al agregar gastos, '
-          'pero las transacciones existentes se conservan.',
+          l10n.categoryDeactivateSubtitle(
+            emoji: category.emoji,
+            category: category.displayName(context),
+            txCount: txCount,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
+            child: Text(l10n.btnCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -193,7 +202,7 @@ class CategoryItem extends ConsumerWidget {
                   .read(categoriesDaoProvider)
                   .toggleActive(category.id, false);
             },
-            child: const Text('Desactivar'),
+            child: Text(l10n.btnDeactivate),
           ),
         ],
       ),
@@ -206,24 +215,25 @@ class CategoryItem extends ConsumerWidget {
         .countByCategory(category.id);
 
     if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context)!;
 
     if (txCount > 0) {
       // Tiene transacciones → no se puede eliminar, solo desactivar
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('No se puede eliminar'),
+          title: Text(l10n.categoryNotDeleted),
           content: Text(
-            '${category.emoji} ${category.name} tiene $txCount '
-            '${txCount == 1 ? 'transacción asociada' : 'transacciones asociadas'}.\n\n'
-            'Para no perder el historial, solo puedes desactivarla. '
-            'Seguirá visible en transacciones pasadas pero no '
-            'aparecerá al agregar nuevos gastos.',
+            l10n.categoryNotDeletedSubtitle(
+              emoji: category.emoji,
+              category: category.displayName(context),
+              txCount: txCount,
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Entendido'),
+              child: Text(l10n.btnUnderstood),
             ),
             // Ofrece desactivar como alternativa
             FilledButton(
@@ -236,7 +246,7 @@ class CategoryItem extends ConsumerWidget {
                     .read(categoriesDaoProvider)
                     .toggleActive(category.id, false);
               },
-              child: const Text('Desactivar en su lugar'),
+              child: Text(l10n.btnDisableInstead),
             ),
           ],
         ),
@@ -248,23 +258,24 @@ class CategoryItem extends ConsumerWidget {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Eliminar categoría'),
+        title: Text(l10n.categoryDeleteConfirm),
         content: Text(
-          '¿Eliminar ${category.emoji} ${category.name}?\n\n'
-          'Esta categoría no tiene transacciones, '
-          'por lo que se puede eliminar de forma permanente.',
+          l10n.categoryDeleteConfirmSubtitle(
+            emoji: category.emoji,
+            category: category.displayName(context),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(l10n.btnCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Eliminar'),
+            child: Text(l10n.btnDelete),
           ),
         ],
       ),

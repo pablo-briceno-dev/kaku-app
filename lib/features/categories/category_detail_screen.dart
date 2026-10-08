@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
 import 'package:kaku/core/models/budget_progress.dart';
 import 'package:kaku/features/categories/category_form_sheet.dart';
 import 'package:kaku/features/categories/mini_stats_by_category.dart';
 import 'package:kaku/features/categories/transaction_list_by_category.dart';
 import 'package:kaku/features/categories/widgets/card_budget_category.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
@@ -28,17 +30,18 @@ class CategoryDetailScreen extends ConsumerWidget {
     final categoryAsync = ref.watch(categoryByIdProvider(id));
     final selectedMonth = ref.watch(selectedMonthProvider);
     final currency = ref.watch(currencyProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: CustomAppBar(
         title: categoryAsync.when(
           data: (category) => Text(
             category != null
-                ? '${category.emoji} ${category.name}'
-                : 'Categoría $id',
+                ? '${category.emoji} ${category.displayName(context)}'
+                : '${l10n.categoriesTitle(femenine: false)} $id',
           ),
-          error: (e, _) => Text('Categoría $id'),
-          loading: () => const Text('Categoría...'),
+          error: (e, _) => Text('${l10n.categoriesTitle(femenine: false)} $id'),
+          loading: () => Text('${l10n.categoriesTitle(femenine: false)}...'),
         ),
         actions: categoryAsync.when(
           data: (category) {
@@ -47,7 +50,7 @@ class CategoryDetailScreen extends ConsumerWidget {
                 IconButton(
                   onPressed: () => AppBottomSheet.show(
                     context,
-                    title: 'Editar categoría',
+                    title: l10n.editCategoryTitle,
                     isFullScreen: true,
                     child: CategoryFormSheet(category: category),
                   ),
@@ -67,8 +70,8 @@ class CategoryDetailScreen extends ConsumerWidget {
         data: (category) {
           if (category == null) {
             return const ContentWidgetEmpty(
-              title: 'Categoría',
-              message: 'Categoría no encontrada',
+              title: l10n.categoriesTitle(femenine: false),
+              message: l10n.categoryNotFound,
             );
           }
           final budgetProgress = ref.watch(

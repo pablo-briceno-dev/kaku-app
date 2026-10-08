@@ -221,7 +221,7 @@ class TransactionDetailScreen extends ConsumerWidget {
                                 '${category?.emoji ?? ''} ${category?.name ?? ' - '}',
                           ),
                           TransactionDetailListConfig(
-                            title: 'Cuenta',
+                            title: l10n.accountsTitle(plural: false),
                             subtitle:
                                 '${account?.icon ?? ''} ${account?.name ?? ' - '}',
                           ),

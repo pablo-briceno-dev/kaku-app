@@ -105,6 +105,11 @@ class DateFormatter {
     return f.format(DateTime(year, month));
   }
 
+  static String monthYearLabel(int year, int month, String localeCode) {
+    final f = _skeleton(DateFormat.yMMMM, localeCode, 'monthYearLabel');
+    return f.format(DateTime(year, month));
+  }
+
   // Estos no cambian — no dependen del idioma
   static String groupKey(DateTime date) =>
       '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';

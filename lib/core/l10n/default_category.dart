@@ -1,0 +1,17 @@
+enum DefaultCategory {
+  food,
+  transport,
+  home,
+  health,
+  leisure,
+  education,
+  shopping,
+  services,
+  savings,
+  salary,
+  freelance,
+  sales,
+  gifts,
+  investments,
+  otherIncome,
+}

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:kaku/core/budget_calculator.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 
 class MonthNavigator extends ConsumerStatefulWidget {
@@ -26,10 +26,10 @@ class _MonthNavigatorState extends ConsumerState<MonthNavigator> {
         (m) => BudgetCalculator.isCurrentMonth(m.year, m.month),
       ),
     );
-    final monthName = DateFormat(
-      'MMMM yyyy',
-      'es',
-    ).format(DateTime(selectedMonth.year, selectedMonth.month));
+    final monthName = context.dates.monthYearLabel(
+      selectedMonth.year,
+      selectedMonth.month,
+    );
 
     return Row(
       mainAxisSize: MainAxisSize.max,

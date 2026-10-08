@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 
@@ -141,8 +142,9 @@ class _BannerContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
-    final config = _configFor(state, cs);
+    final config = _configFor(l10n, state, cs);
     final daysLeft = daysInMonth - daysElapsed;
 
     return AnimatedSize(
@@ -177,7 +179,7 @@ class _BannerContent extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    _buildMessage(daysLeft),
+                    _buildMessage(l10n, daysLeft),
                     style: TextStyle(
                       fontSize: 12,
                       color: config.textColor.withAlpha(75),
@@ -193,7 +195,7 @@ class _BannerContent extends StatelessWidget {
     );
   }
 
-  String _buildMessage(int daysLeft) {
+  String _buildMessage(AppLocalizations l10n, int daysLeft) {
     final projStr = CurrencyFormatter.compact(projection);
     final budgStr = CurrencyFormatter.compact(totalBudget);
     final avgStr = CurrencyFormatter.compact(dailyAvg);
@@ -201,53 +203,64 @@ class _BannerContent extends StatelessWidget {
     final overStr = CurrencyFormatter.compact(totalSpent - totalBudget);
 
     return switch (state) {
-      _BannerState.exceeded =>
-        'Llevas $spentStr gastados y tu límite era $budgStr. '
-            'Te pasaste por $overStr este mes.',
+      _BannerState.exceeded => l10n.bannerStateExceeded(
+        spent: spentStr,
+        budget: budgStr,
+        over: overStr,
+      ),
 
-      _BannerState.critical =>
-        'A este ritmo ($avgStr/día) gastarás $projStr este mes, '
-            '${CurrencyFormatter.compact(projection - totalBudget)} más de tu presupuesto.',
+      _BannerState.critical => l10n.bannerStateCritical(
+        avg: avgStr,
+        projection: projStr,
+        over: CurrencyFormatter.compact(projection - totalBudget),
+      ),
 
-      _BannerState.warning =>
-        'Al ritmo actual podrías llegar a $projStr este mes '
-            'vs tu presupuesto de $budgStr.',
+      _BannerState.warning => l10n.bannerStateWarning(
+        projection: projStr,
+        budget: budgStr,
+      ),
 
-      _BannerState.nearEnd =>
-        'Quedan $daysLeft días y ya usaste el '
-            '${CurrencyFormatter.percentage((totalSpent / totalBudget) * 100)} '
-            'de tu presupuesto.',
+      _BannerState.nearEnd => l10n.bannerStateNearEnd(
+        daysLeft: daysLeft,
+        percentage: CurrencyFormatter.percentage(
+          (totalSpent / totalBudget) * 100,
+        ),
+      ),
 
       _BannerState.safe => '',
     };
   }
 
-  _BannerConfig _configFor(_BannerState state, ColorScheme cs) {
+  _BannerConfig _configFor(
+    AppLocalizations l10n,
+    _BannerState state,
+    ColorScheme cs,
+  ) {
     return switch (state) {
       _BannerState.exceeded => _BannerConfig(
         icon: '🚨',
-        title: 'Presupuesto superado',
+        title: l10n.bannerConfigExceeded,
         bgColor: cs.error.withAlpha(20),
         borderColor: cs.error.withAlpha(60),
         textColor: cs.error,
       ),
       _BannerState.critical => _BannerConfig(
         icon: '⚠️',
-        title: 'Vas a pasarte del presupuesto',
+        title: l10n.bannerConfigCritical,
         bgColor: Colors.orange.withAlpha(20),
         borderColor: Colors.orange.withAlpha(60),
         textColor: Colors.orange,
       ),
       _BannerState.warning => _BannerConfig(
         icon: '📊',
-        title: 'Revisa tu ritmo de gasto',
+        title: l10n.bannerConfigWarning,
         bgColor: Colors.amber.withAlpha(15),
         borderColor: Colors.amber.withAlpha(50),
         textColor: Colors.amber,
       ),
       _BannerState.nearEnd => _BannerConfig(
         icon: '⏳',
-        title: 'Casi al límite del mes',
+        title: l10n.bannerConfigNearEnd,
         bgColor: Colors.amber.withAlpha(15),
         borderColor: Colors.amber.withAlpha(50),
         textColor: Colors.amber,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kaku/core/colors_plates.dart';
 import 'package:kaku/core/currency_formatter.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class CardGoal extends StatelessWidget {
   final String emoji;
@@ -40,6 +41,7 @@ class CardGoal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
 
@@ -116,8 +118,8 @@ class CardGoal extends StatelessWidget {
                 children: [
                   OutlinedButton.icon(
                     icon: Icon(Icons.add, color: _obtainColor(progress, cs)),
-                    label: const Text(
-                      'Aportar',
+                    label: Text(
+                      l10n.btnContribute,
                       style: TextStyle(fontWeight: FontWeight.w800),
                     ),
                     style: OutlinedButton.styleFrom(
@@ -133,8 +135,8 @@ class CardGoal extends StatelessWidget {
                   const SizedBox(width: 16),
                   OutlinedButton.icon(
                     icon: Icon(Icons.delete, color: cs.error),
-                    label: const Text(
-                      'Eliminar',
+                    label: Text(
+                      l10n.btnDelete,
                       style: TextStyle(fontWeight: FontWeight.w800),
                     ),
                     style: OutlinedButton.styleFrom(

@@ -5,8 +5,10 @@ import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/features/goals/goals_list.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/date_picker_field.dart';
@@ -14,8 +16,9 @@ import 'package:kaku/shared/widgets/emoji_picker_field.dart';
 
 class GoalFormSheet extends ConsumerStatefulWidget {
   final GoalsListConfig? goal;
+  final String defaultName;
 
-  const GoalFormSheet({super.key, this.goal});
+  const GoalFormSheet({super.key, this.goal, required this.defaultName});
 
   @override
   ConsumerState<GoalFormSheet> createState() => _GoalFormSheetState();
@@ -40,11 +43,11 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
         widget.goal!.targetAmount,
         currency,
       );
-      controllers['deadline']?.text = DateFormatter.fullDateTime(
+      controllers['deadline']?.text = context.dates.fullDateTime(
         widget.goal!.deadline!,
       );
     } else {
-      controllers['name']?.text = 'Nueva Meta';
+      controllers['name']?.text = widget.defaultName;
       controllers['targetAmount']?.text = CurrencyFormatter.format(0, currency);
     }
 
@@ -74,6 +77,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final currency = ref.watch(currencyProvider);
@@ -104,7 +108,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
                   textAlign: TextAlign.justify,
                 ),
                 Text(
-                  'Meta: ${controllers['targetAmount']?.text ?? ''}',
+                  l10n.nameGoal(name: controllers['name']?.text ?? ''),
                   style: ts.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
                   textAlign: TextAlign.justify,
                 ),
@@ -118,9 +122,9 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
             controller: controllers['name'],
             keyboardType: TextInputType.text,
             maxLength: 60,
-            validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
+            validator: (value) => value!.isEmpty ? l10n.formRequired : null,
             autovalidateMode: AutovalidateMode.onUserInteraction,
-            decoration: const InputDecoration(labelText: 'Nombre*'),
+            decoration: const InputDecoration(labelText: '${l10n.formName}*'),
           ),
           const SizedBox(height: 16),
           EmojiPickerField(
@@ -139,21 +143,21 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Campo requerido';
+                return l10n.formRequired;
               }
               if (CurrencyFormatter.parse(value, currency) <= 0) {
-                return 'Debe ser mayor a 0';
+                return l10n.formAmountMajor;
               }
               return null;
             },
             decoration: const InputDecoration(
-              labelText: 'Monto objetivo*',
+              labelText: '${l10n.amountGoal}*',
               hintText: r'$0',
             ),
           ),
           const SizedBox(height: 16),
           DatePickerField(
-            label: 'Fecha límite (opcional)',
+            label: l10n.dateGoal,
             mode: DatePickerFieldMode.future,
             selectedDate: _deadline,
             onChanged: (date) {
@@ -161,10 +165,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
             },
           ),
           const SizedBox(height: 8),
-          Text(
-            'Si no ingresa una fecha, el sistema utilizará su historial de ahorro para estimar cuándo podría cumplir su meta.',
-            style: ts.titleSmall,
-          ),
+          Text(l10n.dateGoalMessage, style: ts.titleSmall),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
@@ -219,15 +220,15 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
                         AppSnackbar.success(
                           context,
                           widget.goal != null
-                              ? 'Meta actualizada'
-                              : 'Meta creada',
+                              ? l10n.goalUpdateSuccess
+                              : l10n.goalCreateSuccess,
                         );
                         Navigator.pop(context);
                       }
                     },
               child: widget.goal != null
-                  ? const Text('Actualizar Meta')
-                  : const Text('Crear Meta'),
+                  ? Text(l10n.btnUpdateGoal)
+                  : Text(l10n.btnCreateGoal),
             ),
           ),
         ],

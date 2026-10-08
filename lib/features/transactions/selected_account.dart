@@ -50,7 +50,7 @@ class SelectedAccount extends ConsumerWidget {
             Expanded(
               flex: 4,
               child: Text(
-                account?.name ?? 'Cuenta',
+                account?.name ?? l10n.accountsTitle(plural: false),
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,

@@ -12,6 +12,7 @@ import 'package:kaku/core/database/tables/budgets_table.dart';
 import 'package:kaku/core/database/tables/categories_table.dart';
 import 'package:kaku/core/database/tables/goals_table.dart';
 import 'package:kaku/core/database/tables/transactions_table.dart';
+import 'package:kaku/core/l10n/default_category.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -37,7 +38,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   // Aquí irán las migraciones cuando actualice el schema
   @override
@@ -59,27 +60,55 @@ class AppDatabase extends _$AppDatabase {
           'UPDATE transactions_table SET unit_price = amount WHERE unit_price = 0;',
         );
       }
+      if (from == 3 && to == 4) {
+        await m.addColumn(categoriesTable, categoriesTable.systemKey);
+        const nameToKey = [
+          ('Ahorro', 'savings'),
+          ('Comida', 'food'),
+          ('Transporte', 'transport'),
+          ('Casa', 'home'),
+          ('Salud', 'health'),
+          ('Ocio', 'leisure'),
+          ('Educación', 'education'),
+          ('Compras', 'shopping'),
+          ('Servicios', 'services'),
+          ('Salario', 'salary'),
+          ('Freelance', 'freelance'),
+          ('Ventas', 'sales'),
+          ('Regalos', 'gifts'),
+          ('Inversiones', 'investments'),
+          ('Otros ingresos', 'otherIncome'),
+        ];
+        var count = 1;
+        for (final (name, key) in nameToKey) {
+          await customStatement(
+            'UPDATE categories_table SET system_key = ?  WHERE id = ?',
+            [key, count],
+          );
+          count++;
+        }
+      }
     },
   );
 
   Future<void> _seedDefaultCategories() async {
     final defaults = [
-      ('Comida', '🍔', '#FF6B6B', false),
-      ('Transporte', '🚌', '#4ECDC4', false),
-      ('Casa', '🏠', '#45B7D1', false),
-      ('Salud', '💊', '#96CEB4', false),
-      ('Ocio', '🎮', '#FFEAA7', false),
-      ('Educación', '📚', '#DDA0DD', false),
-      ('Compras', '🛍️', '#F39C12', false),
-      ('Servicios', '💡', '#3498DB', false),
+      (DefaultCategory.food, 'Comida', '🍔', '#FF6B6B', false),
+      (DefaultCategory.transport, 'Transporte', '🚌', '#4ECDC4', false),
+      (DefaultCategory.home, 'Casa', '🏠', '#45B7D1', false),
+      (DefaultCategory.health, 'Salud', '💊', '#96CEB4', false),
+      (DefaultCategory.leisure, 'Ocio', '🎮', '#FFEAA7', false),
+      (DefaultCategory.education, 'Educación', '📚', '#DDA0DD', false),
+      (DefaultCategory.shopping, 'Compras', '🛍️', '#F39C12', false),
+      (DefaultCategory.services, 'Servicios', '💡', '#3498DB', false),
 
       // INGRESOS
-      ('Salario', '💼', '#27AE60', true),
-      ('Freelance', '💻', '#00B894', true),
-      ('Ventas', '🛒', '#0984E3', true),
-      ('Regalos', '🎁', '#E84393', true),
-      ('Inversiones', '📈', '#6C5CE7', true),
-      ('Otros ingresos', '💵', '#F1C40F', true),
+      (DefaultCategory.salary, 'Salario', '💼', '#27AE60', true),
+      (DefaultCategory.freelance, 'Freelance', '💻', '#00B894', true),
+      (DefaultCategory.sales, 'Ventas', '🛒', '#0984E3', true),
+      (DefaultCategory.gifts, 'Regalos', '🎁', '#E84393', true),
+      (DefaultCategory.investments, 'Inversiones', '📈', '#6C5CE7', true),
+      (DefaultCategory.otherIncome, 'Otros ingresos', '💵', '#F1C40F', true),
     ];
     await into(categoriesTable).insert(
       CategoriesTableCompanion.insert(
@@ -88,13 +117,15 @@ class AppDatabase extends _$AppDatabase {
         emoji: Value('💰'),
         colorHex: Value('#2ECC71'),
         isSystem: Value(true),
+        systemKey: Value(DefaultCategory.savings.name),
       ),
     );
     var count = 1;
-    for (final (name, emoji, color, isIncome) in defaults) {
+    for (final (key, name, emoji, color, isIncome) in defaults) {
       await into(categoriesTable).insert(
         CategoriesTableCompanion.insert(
           name: name,
+          systemKey: Value(key.name),
           emoji: Value(emoji),
           colorHex: Value(color),
           isSystem: Value(true),

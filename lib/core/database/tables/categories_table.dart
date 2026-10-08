@@ -12,4 +12,5 @@ class CategoriesTable extends Table {
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
   BoolColumn get isSystem => boolean().withDefault(const Constant(false))();
+  TextColumn get systemKey => text().nullable()();
 }

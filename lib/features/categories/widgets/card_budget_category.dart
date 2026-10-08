@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kaku/core/currency_formatter.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/budget_progress.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/utils/budget_color.dart';
 
 class CardBudgetCategory extends StatelessWidget {
@@ -23,20 +25,7 @@ class CardBudgetCategory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final monthLabels = [
-      'Ene',
-      'Feb',
-      'Mar',
-      'Abr',
-      'May',
-      'Jun',
-      'Jul',
-      'Ago',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dic',
-    ];
+    final l10n = AppLocalizations.of(context)!;
 
     if (limit == 0) {
       return Container(
@@ -53,7 +42,7 @@ class CardBudgetCategory extends StatelessWidget {
             Icon(Icons.flag, size: 30, color: cs.onSurfaceVariant),
             const SizedBox(height: 4),
             Text(
-              'Sin presupuesto definido para esta categoría',
+              l10n.notSetBudgetCategory,
               style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
             ),
           ],
@@ -80,7 +69,16 @@ class CardBudgetCategory extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Gastado en ${monthLabels[month - 1]}'.toUpperCase()),
+                  Text(
+                    l10n
+                        .spentInMonth(
+                          month: context.dates.monthLabelShort(
+                            DateTime.now().year,
+                            month,
+                          ),
+                        )
+                        .toUpperCase(),
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     CurrencyFormatter.format(spent, currency),
@@ -92,7 +90,7 @@ class CardBudgetCategory extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('Límite'.toUpperCase()),
+                  Text(l10n.categoryLimit.toUpperCase()),
                   const SizedBox(height: 4),
                   Text(
                     CurrencyFormatter.format(limit, currency),
@@ -115,12 +113,16 @@ class CardBudgetCategory extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                '${CurrencyFormatter.percentage((spent / limit) * 100)} usado',
+                l10n.categorySpentUsed(
+                  spent: CurrencyFormatter.percentage((spent / limit) * 100),
+                ),
                 style: TextStyle(fontSize: 20, color: cs.primary),
               ),
               const Spacer(),
               Text(
-                'Quedan ${CurrencyFormatter.format(limit - spent, currency)}',
+                l10n.categorySpentLeft(
+                  spent: CurrencyFormatter.format(limit - spent, currency),
+                ),
                 style: TextStyle(fontSize: 20, color: cs.onSurfaceVariant),
               ),
             ],

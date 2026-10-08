@@ -48,6 +48,9 @@ class ContextDates {
 
   String monthLabelShort(int year, int month) =>
       DateFormatter.monthLabelShort(year, month, _localeCode);
+
+  String monthYearLabel(int year, int month) =>
+      DateFormatter.monthYearLabel(year, month, _localeCode);
 }
 
 extension DateContextX on BuildContext {

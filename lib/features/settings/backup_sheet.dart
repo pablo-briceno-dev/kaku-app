@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/backup_service.dart';
@@ -21,6 +22,7 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
   String? get _userEmail => BackupService.currentUser?.email;
 
   Future<void> _authenticate() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       _loading = true;
       _statusMessage = null;
@@ -30,8 +32,8 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
     setState(() {
       _loading = false;
       _statusMessage = ok
-          ? '✅ Conectado como ${BackupService.currentUser?.email}'
-          : 'No se pudo conectar con Google';
+          ? l10n.backupConnectedAs(BackupService.currentUser?.email ?? '')
+          : l10n.backupConnectFailed;
       _isError = !ok;
     });
   }
@@ -42,6 +44,7 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
   }
 
   Future<void> _backup() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       _loading = true;
       _statusMessage = null;
@@ -60,42 +63,41 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
       _loading = false;
       switch (result) {
         case BackupResult.success:
-          _statusMessage = '✅ Backup completado — DB + recibos cifrados';
+          _statusMessage = l10n.backupCompleted;
           _isError = false;
         case BackupResult.notSignedIn:
-          _statusMessage = 'Inicia sesión con Google primero';
+          _statusMessage = l10n.backupSignInFirst;
           _isError = true;
         case BackupResult.dbNotFound:
-          _statusMessage = 'No se encontró la base de datos';
+          _statusMessage = l10n.backupDbNotFound;
           _isError = true;
         case BackupResult.error:
-          _statusMessage = 'Error al realizar el backup. Intenta de nuevo.';
+          _statusMessage = l10n.backupErrorGeneric;
           _isError = true;
       }
     });
   }
 
   Future<void> _restore() async {
+    final l10n = AppLocalizations.of(context)!;
+
     // Doble confirmación — restaurar sobreescribe todos los datos actuales
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Restaurar backup'),
-        content: const Text(
-          'Se reemplazarán todos los datos actuales con los del backup.\n\n'
-          'Esta acción no se puede deshacer.',
-        ),
+        title: Text(l10n.restoreDialogTitle),
+        content: Text(l10n.restoreDialogContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(l10n.restoreDialogCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Restaurar'),
+            child: Text(l10n.restoreDialogConfirm),
           ),
         ],
       ),
@@ -116,19 +118,17 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
         case RestoreResult.success:
           final counter = ref.read(appRefreshCounterProvider.notifier);
           counter.state++;
-
-          // 2. (Opcional) Invalidar explícitamente el databaseProvider para asegurar recreación
           ref.invalidate(databaseProvider);
-          _statusMessage = '✅ Datos restaurados correctamente';
+          _statusMessage = l10n.restoreSuccess;
           _isError = false;
         case RestoreResult.noBackupFound:
-          _statusMessage = 'No se encontró ningún backup en Drive';
+          _statusMessage = l10n.restoreNoBackupFound;
           _isError = true;
         case RestoreResult.notSignedIn:
-          _statusMessage = 'Inicia sesión con Google primero';
+          _statusMessage = l10n.backupSignInFirst;
           _isError = true;
         case RestoreResult.error:
-          _statusMessage = 'Error al restaurar. Intenta de nuevo.';
+          _statusMessage = l10n.restoreErrorGeneric;
           _isError = true;
       }
     });
@@ -137,6 +137,7 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
@@ -158,16 +159,13 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'El backup incluye:',
+                  l10n.backupIncludesTitle,
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 6),
-                _backupItem(
-                  '🗄️',
-                  'Base de datos (transacciones, cuentas, metas)',
-                ),
-                _backupItem('🖼️', 'Fotos de recibos'),
-                _backupItem('🔒', 'Cifrado AES-256 con tu cuenta de Google'),
+                _backupItem('🗄️', l10n.backupIncludesDatabase),
+                _backupItem('🖼️', l10n.backupIncludesReceipts),
+                _backupItem('🔒', l10n.backupIncludesEncryption),
               ],
             ),
           ),
@@ -193,7 +191,10 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
                   ),
                   TextButton(
                     onPressed: (_loading || _restoring) ? null : _signOut,
-                    child: const Text('Salir', style: TextStyle(fontSize: 11)),
+                    child: Text(
+                      l10n.backupSignOut,
+                      style: TextStyle(fontSize: 11),
+                    ),
                   ),
                 ],
               ),
@@ -228,7 +229,7 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
             OutlinedButton.icon(
               onPressed: _loading ? null : _authenticate,
               icon: const Text('🔑', style: TextStyle(fontSize: 16)),
-              label: const Text('Conectar con Google'),
+              label: Text(l10n.backupConnectGoogle),
             ),
 
           if (!_isSignedIn) const SizedBox(height: 8),
@@ -248,7 +249,7 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
                     ),
                   )
                 : const Icon(Icons.cloud_upload_outlined, size: 18),
-            label: Text(_loading ? 'Subiendo...' : 'Hacer backup ahora'),
+            label: Text(_loading ? l10n.backupUploading : l10n.backupDoNow),
           ),
 
           const SizedBox(height: 8),
@@ -273,7 +274,7 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
                   )
                 : const Icon(Icons.cloud_download_outlined, size: 18),
             label: Text(
-              _restoring ? 'Restaurando...' : 'Restaurar desde Drive',
+              _restoring ? l10n.backupRestoring : l10n.backupRestoreFromDrive,
             ),
           ),
         ],

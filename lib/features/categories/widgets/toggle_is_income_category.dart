@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class ToggleIsIncomeCategory extends StatelessWidget {
   final TransactionType selectedType;
@@ -15,6 +16,7 @@ class ToggleIsIncomeCategory extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       // width: double.infinity,
@@ -35,7 +37,7 @@ class ToggleIsIncomeCategory extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              TransactionType.expense.label,
+              TransactionType.expense.label(l10n, 2),
               style: ts.titleMedium?.copyWith(
                 color: selectedType == TransactionType.expense
                     ? selectedType.color
@@ -46,7 +48,7 @@ class ToggleIsIncomeCategory extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              TransactionType.income.label,
+              TransactionType.income.label(l10n, 2),
               style: ts.titleMedium?.copyWith(
                 color: selectedType == TransactionType.expense
                     ? cs.onSurfaceVariant

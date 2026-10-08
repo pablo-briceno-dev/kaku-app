@@ -5,6 +5,7 @@ import 'package:kaku/features/dashboard/horizontal_progress_bars.dart';
 import 'package:kaku/features/dashboard/month_navigator.dart';
 import 'package:kaku/features/dashboard/projection_banner.dart';
 import 'package:kaku/features/dashboard/transactions_list.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/profile_provider.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
 import 'package:upgrader/upgrader.dart';
@@ -19,6 +20,7 @@ class DashboardScreen extends ConsumerStatefulWidget {
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final profile = ref.watch(profileProvider);
     final cs = Theme.of(context).colorScheme;
 
@@ -34,9 +36,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                profile.displayName == "Usuario"
-                    ? 'Bienvenido a Kaku 👋'
-                    : 'Hola, ${profile.displayName} 👋',
+                profile.displayName == l10n.userDisplayName
+                    ? l10n.welcomeToKaku
+                    : l10n.welcomeToKakuName(profile.displayName),
                 style: TextStyle(
                   color: cs.onSurfaceVariant,
                   fontWeight: FontWeight.normal,
@@ -44,7 +46,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Tu bolsillo, bajo control',
+                l10n.welcomeToKakuSubtitle,
                 style: TextStyle(
                   color: cs.onSurfaceVariant,
                   fontWeight: FontWeight.normal,

@@ -6,6 +6,7 @@ import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/features/goals/contribute_goal_sheet.dart';
 import 'package:kaku/features/goals/goal_form_sheet.dart';
 import 'package:kaku/features/goals/widgets/card_goal.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/utils/undo_delete.dart';
@@ -42,6 +43,7 @@ class GoalsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final currency = ref.watch(currencyProvider);
     final selectedMonth = ref.watch(selectedMonthProvider);
     final monthOneTransactions = ref
@@ -114,22 +116,26 @@ class GoalsList extends ConsumerWidget {
               ),
               progress: (goal.savedAmount / goal.targetAmount) * 100,
               estimate: (goal.savedAmount / goal.targetAmount) * 100 == 100
-                  ? 'Completada'
+                  ? l10n.goalComplete
                   : BudgetCalculator.getEstimatedSavingTime(
+                      context,
                       goalRemaining,
                       avgMonthlySavings,
                       deadline: goal.deadline,
                     ),
               onTap: () => AppBottomSheet.show(
                 context,
-                title: 'Editar Meta ${goal.name}',
+                title: l10n.goalEditTitle(name: goal.name),
                 useRootNavigator: true,
                 isFullScreen: true,
-                child: GoalFormSheet(goal: goal),
+                child: GoalFormSheet(
+                  goal: goal,
+                  defaultName: l10n.newGoalTitle,
+                ),
               ),
               onContribute: () => AppBottomSheet.show(
                 context,
-                title: 'Aportar meta',
+                title: l10n.contributeGoal,
                 useRootNavigator: true,
                 isFullScreen: true,
                 child: ContributeGoalSheet(
@@ -142,7 +148,7 @@ class GoalsList extends ConsumerWidget {
               ),
               onDelete: () => showUndoDelete(
                 context: context,
-                label: 'Meta eliminandose',
+                label: l10n.goalDeleting,
                 onDelete: () => _onDelete(ref, goal),
               ),
             ),

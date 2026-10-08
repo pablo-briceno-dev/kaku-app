@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class HeroSection extends StatelessWidget {
   const HeroSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
 
     return Column(
@@ -38,7 +40,7 @@ class HeroSection extends StatelessWidget {
         const SizedBox(height: 20),
 
         Text(
-          'Lleva tus finanzas\nal siguiente nivel',
+          l10n.premiumSubtitle,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             fontWeight: FontWeight.w800,
@@ -49,7 +51,7 @@ class HeroSection extends StatelessWidget {
         const SizedBox(height: 12),
 
         Text(
-          'Todas las herramientas que necesitas para\ntener control total de tu dinero.',
+          l10n.premiumContent,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 15,

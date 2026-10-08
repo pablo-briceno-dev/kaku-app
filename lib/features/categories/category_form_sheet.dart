@@ -6,6 +6,7 @@ import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/features/categories/widgets/toggle_is_income_category.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/widgets/emoji_picker_field.dart';
 import 'package:kaku/shared/widgets/preview_icon_for_widgets.dart';
@@ -14,8 +15,14 @@ import 'package:kaku/shared/widgets/selected_color_picker.dart';
 class CategoryFormSheet extends ConsumerStatefulWidget {
   final int totalCategories;
   final Category? category;
+  final String defaultName;
 
-  const CategoryFormSheet({super.key, this.category, this.totalCategories = 0});
+  const CategoryFormSheet({
+    super.key,
+    this.category,
+    this.totalCategories = 0,
+    required this.defaultName,
+  });
 
   @override
   ConsumerState<CategoryFormSheet> createState() => _CategoryFormSheetState();
@@ -31,14 +38,14 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
   void initState() {
     super.initState();
     if (widget.category != null) {
-      _nameController.text = widget.category!.name;
+      _nameController.text = widget.defaultName;
       _selectedEmoji = widget.category!.emoji;
       _colorController.text = widget.category!.colorHex;
       selectedType = widget.category!.isIncome
           ? TransactionType.income
           : TransactionType.expense;
     } else {
-      _nameController.text = 'Nueva Categoría';
+      _nameController.text = widget.defaultName;
       _colorController.text = '#FF6B6B';
     }
 
@@ -55,6 +62,8 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
   @override
   Widget build(BuildContext context) {
     final ts = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -64,7 +73,7 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
               color: hexToColor(_colorController.text),
               icon: _selectedEmoji,
               label: _nameController.text,
-              subtitle: 'Vista previa',
+              subtitle: l10n.preview,
               size: 90,
             ),
           ),
@@ -75,8 +84,8 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
             controller: _nameController,
             keyboardType: TextInputType.text,
             maxLength: 30,
-            validator: (value) => value!.isEmpty ? 'Campo requerido' : null,
-            decoration: const InputDecoration(labelText: 'Nombre*'),
+            validator: (value) => value!.isEmpty ? l10n.formRequired : null,
+            decoration: const InputDecoration(labelText: '${l10n.formName}*'),
           ),
           const SizedBox(height: 16),
           EmojiPickerField(
@@ -87,7 +96,7 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Color', style: ts.titleMedium),
+              Text(l10n.formColor, style: ts.titleMedium),
               const SizedBox(width: 20),
               SelectedColorPicker(
                 onColorSelected: (color) =>
@@ -125,6 +134,10 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
                             isActive: widget.category!.isActive,
                             sortOrder: widget.category!.sortOrder,
                             isSystem: widget.category!.isSystem,
+                            systemKey:
+                                widget.defaultName == _nameController.text
+                                ? widget.category!.systemKey
+                                : null,
                           ),
                         );
                       } else {
@@ -140,6 +153,7 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
                             isActive: drift.Value(true),
                             isSystem: drift.Value(false),
                             sortOrder: drift.Value(widget.totalCategories + 1),
+                            systemKey: drift.Value(null),
                           ),
                         );
                       }
@@ -148,15 +162,15 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
                         AppSnackbar.success(
                           context,
                           widget.category != null
-                              ? 'Categoría actualizada'
-                              : 'Categoría creada',
+                              ? l10n.categoryEditSuccess
+                              : l10n.categoryCreateSuccess,
                         );
                         Navigator.pop(context);
                       }
                     },
               child: widget.category != null
-                  ? const Text('Actualizar')
-                  : const Text('Crear Categoría'),
+                  ? Text(l10n.btnUpdate)
+                  : Text(l10n.btnCreate),
             ),
           ),
         ],

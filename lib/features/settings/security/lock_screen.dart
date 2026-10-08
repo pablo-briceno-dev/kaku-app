@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/security/pin_screen.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
@@ -31,10 +32,6 @@ class _LockScreenState extends ConsumerState<LockScreen> {
       final pinEnabled = await AppPinService.isEnabled();
       final biometricEnabled = ref.read(biometricsEnabledProvider);
 
-      debugPrint(
-        '🔐 pinEnabled: $pinEnabled, biometricEnabled: $biometricEnabled',
-      );
-
       if (!pinEnabled && !biometricEnabled) {
         // Sin bloqueo → ir directo al dashboard
         ref.read(authenticationStateProvider.notifier).state = true;
@@ -49,16 +46,17 @@ class _LockScreenState extends ConsumerState<LockScreen> {
       if (pinEnabled && mounted) {
         authenticated = await PinScreen.verifyPin(context);
       } else if (biometricEnabled) {
+        if (!mounted) return;
         final result = await BiometricService.authenticate(
-          reason: 'Confirma tu identidad para acceder a Kaku',
+          reason: AppLocalizations.of(context)!.biometricAuthReason,
         );
         authenticated = result == BiometricResult.success;
         if (!authenticated && result == BiometricResult.failed) {
           // Mostrar mensaje de error
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Autenticación fallida. Intenta de nuevo.'),
+              SnackBar(
+                content: Text(AppLocalizations.of(context)!.biometricAuthFailed),
                 duration: Duration(seconds: 2),
               ),
             );
@@ -74,7 +72,6 @@ class _LockScreenState extends ConsumerState<LockScreen> {
         setState(() => _isAuthenticating = false);
       }
     } catch (e) {
-      debugPrint('❌ Error en autenticación: $e');
       if (mounted) {
         ScaffoldMessenger.of(
           context,
@@ -86,7 +83,9 @@ class _LockScreenState extends ConsumerState<LockScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
+
     return Scaffold(
       backgroundColor: cs.surface,
       body: Center(
@@ -106,7 +105,7 @@ class _LockScreenState extends ConsumerState<LockScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              _isAuthenticating ? 'Verificando...' : 'Desbloqueando...',
+              _isAuthenticating ? l10n.biometricLockVerifying : l10n.biometricAuthUnlocking,
               style: TextStyle(color: cs.onSurfaceVariant),
             ),
             const SizedBox(height: 28),
@@ -114,7 +113,7 @@ class _LockScreenState extends ConsumerState<LockScreen> {
               FilledButton.icon(
                 onPressed: _authenticate,
                 icon: const Icon(Icons.fingerprint),
-                label: const Text('Reintentar'),
+                label: Text(l10n.btnRetry),
               ),
           ],
         ),

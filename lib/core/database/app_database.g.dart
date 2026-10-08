@@ -662,6 +662,17 @@ class $CategoriesTableTable extends CategoriesTable
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _systemKeyMeta = const VerificationMeta(
+    'systemKey',
+  );
+  @override
+  late final GeneratedColumn<String> systemKey = GeneratedColumn<String>(
+    'system_key',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -673,6 +684,7 @@ class $CategoriesTableTable extends CategoriesTable
     isActive,
     sortOrder,
     isSystem,
+    systemKey,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -739,6 +751,12 @@ class $CategoriesTableTable extends CategoriesTable
         isSystem.isAcceptableOrUnknown(data['is_system']!, _isSystemMeta),
       );
     }
+    if (data.containsKey('system_key')) {
+      context.handle(
+        _systemKeyMeta,
+        systemKey.isAcceptableOrUnknown(data['system_key']!, _systemKeyMeta),
+      );
+    }
     return context;
   }
 
@@ -784,6 +802,10 @@ class $CategoriesTableTable extends CategoriesTable
         DriftSqlType.bool,
         data['${effectivePrefix}is_system'],
       )!,
+      systemKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}system_key'],
+      ),
     );
   }
 
@@ -803,6 +825,7 @@ class Category extends DataClass implements Insertable<Category> {
   final bool isActive;
   final int sortOrder;
   final bool isSystem;
+  final String? systemKey;
   const Category({
     required this.id,
     required this.name,
@@ -813,6 +836,7 @@ class Category extends DataClass implements Insertable<Category> {
     required this.isActive,
     required this.sortOrder,
     required this.isSystem,
+    this.systemKey,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -826,6 +850,9 @@ class Category extends DataClass implements Insertable<Category> {
     map['is_active'] = Variable<bool>(isActive);
     map['sort_order'] = Variable<int>(sortOrder);
     map['is_system'] = Variable<bool>(isSystem);
+    if (!nullToAbsent || systemKey != null) {
+      map['system_key'] = Variable<String>(systemKey);
+    }
     return map;
   }
 
@@ -840,6 +867,9 @@ class Category extends DataClass implements Insertable<Category> {
       isActive: Value(isActive),
       sortOrder: Value(sortOrder),
       isSystem: Value(isSystem),
+      systemKey: systemKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(systemKey),
     );
   }
 
@@ -858,6 +888,7 @@ class Category extends DataClass implements Insertable<Category> {
       isActive: serializer.fromJson<bool>(json['isActive']),
       sortOrder: serializer.fromJson<int>(json['sortOrder']),
       isSystem: serializer.fromJson<bool>(json['isSystem']),
+      systemKey: serializer.fromJson<String?>(json['systemKey']),
     );
   }
   @override
@@ -873,6 +904,7 @@ class Category extends DataClass implements Insertable<Category> {
       'isActive': serializer.toJson<bool>(isActive),
       'sortOrder': serializer.toJson<int>(sortOrder),
       'isSystem': serializer.toJson<bool>(isSystem),
+      'systemKey': serializer.toJson<String?>(systemKey),
     };
   }
 
@@ -886,6 +918,7 @@ class Category extends DataClass implements Insertable<Category> {
     bool? isActive,
     int? sortOrder,
     bool? isSystem,
+    Value<String?> systemKey = const Value.absent(),
   }) => Category(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -896,6 +929,7 @@ class Category extends DataClass implements Insertable<Category> {
     isActive: isActive ?? this.isActive,
     sortOrder: sortOrder ?? this.sortOrder,
     isSystem: isSystem ?? this.isSystem,
+    systemKey: systemKey.present ? systemKey.value : this.systemKey,
   );
   Category copyWithCompanion(CategoriesTableCompanion data) {
     return Category(
@@ -908,6 +942,7 @@ class Category extends DataClass implements Insertable<Category> {
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
       sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
       isSystem: data.isSystem.present ? data.isSystem.value : this.isSystem,
+      systemKey: data.systemKey.present ? data.systemKey.value : this.systemKey,
     );
   }
 
@@ -922,7 +957,8 @@ class Category extends DataClass implements Insertable<Category> {
           ..write('isIncome: $isIncome, ')
           ..write('isActive: $isActive, ')
           ..write('sortOrder: $sortOrder, ')
-          ..write('isSystem: $isSystem')
+          ..write('isSystem: $isSystem, ')
+          ..write('systemKey: $systemKey')
           ..write(')'))
         .toString();
   }
@@ -938,6 +974,7 @@ class Category extends DataClass implements Insertable<Category> {
     isActive,
     sortOrder,
     isSystem,
+    systemKey,
   );
   @override
   bool operator ==(Object other) =>
@@ -951,7 +988,8 @@ class Category extends DataClass implements Insertable<Category> {
           other.isIncome == this.isIncome &&
           other.isActive == this.isActive &&
           other.sortOrder == this.sortOrder &&
-          other.isSystem == this.isSystem);
+          other.isSystem == this.isSystem &&
+          other.systemKey == this.systemKey);
 }
 
 class CategoriesTableCompanion extends UpdateCompanion<Category> {
@@ -964,6 +1002,7 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
   final Value<bool> isActive;
   final Value<int> sortOrder;
   final Value<bool> isSystem;
+  final Value<String?> systemKey;
   const CategoriesTableCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -974,6 +1013,7 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
     this.isActive = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.isSystem = const Value.absent(),
+    this.systemKey = const Value.absent(),
   });
   CategoriesTableCompanion.insert({
     this.id = const Value.absent(),
@@ -985,6 +1025,7 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
     this.isActive = const Value.absent(),
     this.sortOrder = const Value.absent(),
     this.isSystem = const Value.absent(),
+    this.systemKey = const Value.absent(),
   }) : name = Value(name);
   static Insertable<Category> custom({
     Expression<int>? id,
@@ -996,6 +1037,7 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
     Expression<bool>? isActive,
     Expression<int>? sortOrder,
     Expression<bool>? isSystem,
+    Expression<String>? systemKey,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1007,6 +1049,7 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
       if (isActive != null) 'is_active': isActive,
       if (sortOrder != null) 'sort_order': sortOrder,
       if (isSystem != null) 'is_system': isSystem,
+      if (systemKey != null) 'system_key': systemKey,
     });
   }
 
@@ -1020,6 +1063,7 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
     Value<bool>? isActive,
     Value<int>? sortOrder,
     Value<bool>? isSystem,
+    Value<String?>? systemKey,
   }) {
     return CategoriesTableCompanion(
       id: id ?? this.id,
@@ -1031,6 +1075,7 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
       isActive: isActive ?? this.isActive,
       sortOrder: sortOrder ?? this.sortOrder,
       isSystem: isSystem ?? this.isSystem,
+      systemKey: systemKey ?? this.systemKey,
     );
   }
 
@@ -1064,6 +1109,9 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
     if (isSystem.present) {
       map['is_system'] = Variable<bool>(isSystem.value);
     }
+    if (systemKey.present) {
+      map['system_key'] = Variable<String>(systemKey.value);
+    }
     return map;
   }
 
@@ -1078,7 +1126,8 @@ class CategoriesTableCompanion extends UpdateCompanion<Category> {
           ..write('isIncome: $isIncome, ')
           ..write('isActive: $isActive, ')
           ..write('sortOrder: $sortOrder, ')
-          ..write('isSystem: $isSystem')
+          ..write('isSystem: $isSystem, ')
+          ..write('systemKey: $systemKey')
           ..write(')'))
         .toString();
   }
@@ -3256,7 +3305,7 @@ class $$AccountsTableTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$AccountsTableTable, Account>(table),
                   $$AccountsTableTableReferences(db, table, e),
                 ),
               )
@@ -3322,6 +3371,7 @@ typedef $$CategoriesTableTableCreateCompanionBuilder =
       Value<bool> isActive,
       Value<int> sortOrder,
       Value<bool> isSystem,
+      Value<String?> systemKey,
     });
 typedef $$CategoriesTableTableUpdateCompanionBuilder =
     CategoriesTableCompanion Function({
@@ -3334,6 +3384,7 @@ typedef $$CategoriesTableTableUpdateCompanionBuilder =
       Value<bool> isActive,
       Value<int> sortOrder,
       Value<bool> isSystem,
+      Value<String?> systemKey,
     });
 
 final class $$CategoriesTableTableReferences
@@ -3435,6 +3486,11 @@ class $$CategoriesTableTableFilterComposer
 
   ColumnFilters<bool> get isSystem => $composableBuilder(
     column: $table.isSystem,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get systemKey => $composableBuilder(
+    column: $table.systemKey,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3542,6 +3598,11 @@ class $$CategoriesTableTableOrderingComposer
     column: $table.isSystem,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get systemKey => $composableBuilder(
+    column: $table.systemKey,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CategoriesTableTableAnnotationComposer
@@ -3579,6 +3640,9 @@ class $$CategoriesTableTableAnnotationComposer
 
   GeneratedColumn<bool> get isSystem =>
       $composableBuilder(column: $table.isSystem, builder: (column) => column);
+
+  GeneratedColumn<String> get systemKey =>
+      $composableBuilder(column: $table.systemKey, builder: (column) => column);
 
   Expression<T> budgetsTableRefs<T extends Object>(
     Expression<T> Function($$BudgetsTableTableAnnotationComposer a) f,
@@ -3674,6 +3738,7 @@ class $$CategoriesTableTableTableManager
                 Value<bool> isActive = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<bool> isSystem = const Value.absent(),
+                Value<String?> systemKey = const Value.absent(),
               }) => CategoriesTableCompanion(
                 id: id,
                 name: name,
@@ -3684,6 +3749,7 @@ class $$CategoriesTableTableTableManager
                 isActive: isActive,
                 sortOrder: sortOrder,
                 isSystem: isSystem,
+                systemKey: systemKey,
               ),
           createCompanionCallback:
               ({
@@ -3696,6 +3762,7 @@ class $$CategoriesTableTableTableManager
                 Value<bool> isActive = const Value.absent(),
                 Value<int> sortOrder = const Value.absent(),
                 Value<bool> isSystem = const Value.absent(),
+                Value<String?> systemKey = const Value.absent(),
               }) => CategoriesTableCompanion.insert(
                 id: id,
                 name: name,
@@ -3706,11 +3773,12 @@ class $$CategoriesTableTableTableManager
                 isActive: isActive,
                 sortOrder: sortOrder,
                 isSystem: isSystem,
+                systemKey: systemKey,
               ),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$CategoriesTableTable, Category>(table),
                   $$CategoriesTableTableReferences(db, table, e),
                 ),
               )
@@ -4062,7 +4130,7 @@ class $$BudgetsTableTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$BudgetsTableTable, Budget>(table),
                   $$BudgetsTableTableReferences(db, table, e),
                 ),
               )
@@ -4454,7 +4522,7 @@ class $$GoalsTableTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$GoalsTableTable, Goal>(table),
                   $$GoalsTableTableReferences(db, table, e),
                 ),
               )
@@ -5112,7 +5180,7 @@ class $$TransactionsTableTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$TransactionsTableTable, Transaction>(table),
                   $$TransactionsTableTableReferences(db, table, e),
                 ),
               )

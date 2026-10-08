@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/features/settings/security/pin_screen.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
@@ -71,9 +72,10 @@ class _BiometricLockScreenState extends ConsumerState<BiometricLockScreen>
         }
       }
     } else {
+      if (!mounted) return;
       // Usa la biometría del sistema
       final result = await BiometricService.authenticate(
-        reason: 'Confirma tu identidad para acceder a Kaku',
+        reason: AppLocalizations.of(context)!.biometricAuthReason,
       );
       if (mounted) {
         setState(() {
@@ -87,6 +89,7 @@ class _BiometricLockScreenState extends ConsumerState<BiometricLockScreen>
   @override
   Widget build(BuildContext context) {
     if (!_isLocked) return widget.child;
+    final l10n = AppLocalizations.of(context)!;
 
     // Pantalla de bloqueo
     final cs = Theme.of(context).colorScheme;
@@ -99,14 +102,14 @@ class _BiometricLockScreenState extends ConsumerState<BiometricLockScreen>
             Icon(Icons.lock_outline_rounded, size: 56, color: cs.primary),
             const SizedBox(height: 16),
             Text(
-              'Kaku bloqueado',
+              l10n.biometricLockTitle,
               style: Theme.of(
                 context,
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 8),
             Text(
-              'Usa tu biometría para continuar',
+              l10n.biometricLockSubtitle,
               style: TextStyle(color: cs.onSurfaceVariant),
             ),
             const SizedBox(height: 28),
@@ -122,7 +125,11 @@ class _BiometricLockScreenState extends ConsumerState<BiometricLockScreen>
                       ),
                     )
                   : const Icon(Icons.fingerprint),
-              label: Text(_isAuthenticating ? 'Verificando...' : 'Desbloquear'),
+              label: Text(
+                _isAuthenticating
+                    ? l10n.biometricLockVerifying
+                    : l10n.biometricLockUnlock,
+              ),
             ),
           ],
         ),

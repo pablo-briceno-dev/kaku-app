@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/date_formatter.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/widgets/transaction_item.dart';
 import 'package:kaku/features/dashboard/widgets/transactions_list_skeleton.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
@@ -15,6 +17,7 @@ class TransactionsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final selectedMonth = ref.watch(selectedMonthProvider);
@@ -25,9 +28,9 @@ class TransactionsList extends ConsumerWidget {
       error: (e, _) => const SizedBox.shrink(),
       data: (transactions) {
         if (transactions.isEmpty) {
-          return const ContentWidgetEmpty(
+          return ContentWidgetEmpty(
             title: '🫙',
-            message: 'Sin transacciones este mes',
+            message: l10n.transactionEmpty,
           );
         }
         // Agrupar por día usando groupKey como clave
@@ -46,14 +49,14 @@ class TransactionsList extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Transacciones',
+                    l10n.transactionTitle(plural: true),
                     style: ts.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   TextButton(
                     onPressed: () => context.push(AppRoutes.transactions),
-                    child: const Text('Ver todas'),
+                    child: Text(l10n.viewAll),
                   ),
                 ],
               ),
@@ -70,7 +73,7 @@ class TransactionsList extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8, top: 4),
                     child: Text(
-                      DateFormatter.relative(date),
+                      context.dates.relative(date),
                       style: ts.labelMedium?.copyWith(
                         color: cs.onSurfaceVariant,
                         fontWeight: FontWeight.w600,

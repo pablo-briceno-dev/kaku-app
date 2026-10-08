@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/currency_formatter.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/dashboard/widgets/progress_bar_item.dart';
 import 'package:kaku/features/dashboard/widgets/budget_bar_skeleton.dart';
@@ -38,7 +39,7 @@ class HorizontalProgressBars extends ConsumerWidget {
         height: ProgressBarItem.fixedHeight,
         child: Center(
           child: Text(
-            'Error al cargar presupuestos',
+            l10n.errorLoadBudget,
             style: TextStyle(fontSize: 12, color: cs.error),
           ),
         ),
@@ -87,7 +88,7 @@ class HorizontalProgressBars extends ConsumerWidget {
                     padding: const EdgeInsets.only(right: 12),
                     child: ProgressBarItem(
                       emoji: budget.category.emoji,
-                      title: budget.category.name,
+                      title: budget.category.displayName(context),
                       progress: budget.progress,
                       status: budget.status,
                       onTap: () => context.push(
@@ -107,27 +108,5 @@ class HorizontalProgressBars extends ConsumerWidget {
         );
       },
     );
-
-    /* 
-    BudgetProgress(
-            budget: Budget(
-              id: 1,
-              categoryId: 1,
-              limitAmount: 2000,
-              month: 5,
-              rollover: false,
-              year: 2026,
-            ),
-            category: Category(
-              id: 1,
-              emoji: '💰',
-              name: 'Saldo',
-              colorHex: '#FF0000',
-              isDefault: true,
-              isIncome: false,
-            ),
-            spent: 100,
-          ),
-     */
   }
 }

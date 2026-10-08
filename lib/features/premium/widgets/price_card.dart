@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class PriceCard extends StatelessWidget {
   final bool isPurchasing;
@@ -14,6 +15,7 @@ class PriceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
 
     return Container(
@@ -43,7 +45,7 @@ class PriceCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(100),
             ),
             child: Text(
-              '✨ PAGO ÚNICO — SIN SUSCRIPCIÓN',
+              l10n.premiumPaymentTitle,
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w800,
@@ -59,14 +61,6 @@ class PriceCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text(
-              //   'US\$',
-              //   style: TextStyle(
-              //     fontSize: 18,
-              //     fontWeight: FontWeight.w700,
-              //     color: cs.primary,
-              //   ),
-              // ),
               const SizedBox(width: 2),
               localizedPrice != null
                   ? Text(
@@ -90,7 +84,7 @@ class PriceCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'para siempre · un solo pago',
+            l10n.premiumPaymentSubtitle,
             style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
           ),
           const SizedBox(height: 20),
@@ -115,8 +109,8 @@ class PriceCard extends StatelessWidget {
                         color: Colors.white,
                       ),
                     )
-                  : const Text(
-                      'Desbloquear Kaku Premium',
+                  : Text(
+                      l10n.premiumUnlockKaku,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,

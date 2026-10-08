@@ -5,6 +5,7 @@ import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/features/goals/selected_account_goal.dart';
 import 'package:kaku/features/goals/widgets/amounts_list.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/goal_confetti.dart';
@@ -56,6 +57,7 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final currency = ref.watch(currencyProvider);
     final listAmounts = [
@@ -63,7 +65,7 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
       (CurrencyFormatter.compact(100000, currency), 100000),
       (CurrencyFormatter.compact(200000, currency), 200000),
       (
-        'Todo',
+        l10n.contributeAll,
         BudgetCalculator.goalRemaining(widget.savedAmount, widget.targetAmount),
       ),
     ];
@@ -88,7 +90,15 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                   ),
                   Text(
-                    'Quedan ${CurrencyFormatter.format(BudgetCalculator.goalRemaining(widget.savedAmount, widget.targetAmount), currency)} para completar',
+                    l10n.leftToContribute(
+                      amount: CurrencyFormatter.format(
+                        BudgetCalculator.goalRemaining(
+                          widget.savedAmount,
+                          widget.targetAmount,
+                        ),
+                        currency,
+                      ),
+                    ),
                     style: TextStyle(
                       fontSize: 16.5,
                       fontWeight: FontWeight.w600,
@@ -101,7 +111,7 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Monto a aportar hoy'.toUpperCase(),
+            l10n.amountContributeToday.toUpperCase(),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -120,18 +130,18 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
             autovalidateMode: AutovalidateMode.onUserInteraction,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Campo requerido';
+                return l10n.formRequired;
               }
               if (CurrencyFormatter.parse(value, currency) <= 0) {
-                return 'Debe ser mayor a 0';
+                return l10n.formAmountMajor;
               }
               if (CurrencyFormatter.parse(value, currency) >
                   widget.targetAmount - widget.savedAmount) {
-                return 'No puedes aportar más que el total';
+                return l10n.formContributeMajorTotal;
               }
               if (CurrencyFormatter.parse(value, currency) >
                   (account?.balance ?? 0)) {
-                return 'Cuenta sin saldo suficiente';
+                return l10n.formAccountNoBalance;
               }
               return null;
             },
@@ -165,7 +175,7 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
                   children: [
                     Expanded(
                       child: Text(
-                        'Nuevo progreso',
+                        l10n.newProgress,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -243,12 +253,12 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
                         if (completed) {
                           GoalConfettiOverlay.show(context);
                         } else {
-                          AppSnackbar.success(context, 'Aporte realizado');
+                          AppSnackbar.success(context, l10n.contributeSuccess);
                         }
                         Navigator.pop(context);
                       }
                     },
-              child: const Text('Confirmar aporte'),
+              child: Text(l10n.btnConfirmContribute),
             ),
           ),
         ],
