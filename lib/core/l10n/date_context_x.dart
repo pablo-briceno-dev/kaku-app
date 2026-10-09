@@ -36,7 +36,6 @@ class ContextDates {
   String abbrMonthDayYear(DateTime date) =>
       DateFormatter.abbrMonthDayYear(date, _localeCode);
 
-  
   String fileFriendlyDate(DateTime date) =>
       DateFormatter.fileFriendlyDate(date, _localeCode);
 
@@ -67,6 +66,9 @@ class ContextDates {
   /// "20/05/2026" - usado para la presentación de fechas personalizadas
   String rangeCustomDate(DateTime date) =>
       DateFormatter.rangeCustomDate(date, _localeCode);
+
+  /// Solo el Mes "Enero" (es) / "January" (en)
+  String justMonth(DateTime date) => DateFormatter.justMonth(date, _localeCode);
 }
 
 extension DateContextX on BuildContext {

@@ -31,6 +31,7 @@ final categorySlicesProvider = StreamProvider.autoDispose
               color: hexToColor(cat.colorHex),
               amount: e.value,
               percentage: percentages[e.key] ?? 0,
+              systemKey: cat.systemKey,
             );
           }).toList()..sort((a, b) => b.amount.compareTo(a.amount)));
         },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:kaku/core/budget_calculator.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/stats_models.dart';
 import 'package:kaku/features/stats/category_donut_chart.dart';
@@ -11,6 +12,7 @@ import 'package:kaku/features/stats/spending_line_chart.dart';
 import 'package:kaku/features/stats/widgets/chart_skeleton.dart';
 import 'package:kaku/features/stats/widgets/section_title.dart';
 import 'package:kaku/features/stats/widgets/stats_empty_state.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/premium_provider.dart';
 import 'package:kaku/shared/providers/stats_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
@@ -23,6 +25,7 @@ class StatsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final isPremium = ref.watch(isPremiumProvider);
@@ -58,16 +61,16 @@ class StatsScreen extends ConsumerWidget {
       )),
     );
 
-    final monthName = DateFormat('MMMM yyyy', 'es')
-        .format(DateTime(params.year, params.month))
-        .replaceFirstMapped(RegExp(r'^\w'), (m) => m[0]!.toUpperCase());
+    final monthName = context.dates
+        .monthYear(params.year, params.month)
+        .toUpperCase();
 
     return Scaffold(
       appBar: CustomAppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Estadísticas'),
+            Text(l10n.statsTitle),
             Text(
               monthName,
               style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
@@ -90,13 +93,19 @@ class StatsScreen extends ConsumerWidget {
                   vertical: 8,
                 ),
                 child: SegmentedButton<StatsPeriod>(
-                  segments: const [
-                    ButtonSegment(value: StatsPeriod.month, label: Text('Mes')),
+                  segments: [
+                    ButtonSegment(
+                      value: StatsPeriod.month,
+                      label: Text(l10n.statsMonthLabel),
+                    ),
                     ButtonSegment(
                       value: StatsPeriod.quarter,
-                      label: Text('Trimestre'),
+                      label: Text(l10n.statsQuarterLabel),
                     ),
-                    ButtonSegment(value: StatsPeriod.year, label: Text('Año')),
+                    ButtonSegment(
+                      value: StatsPeriod.year,
+                      label: Text(l10n.statsYearLabel),
+                    ),
                   ],
                   selected: {period},
                   onSelectionChanged: (value) =>
@@ -113,8 +122,8 @@ class StatsScreen extends ConsumerWidget {
               delegate: SliverChildListDelegate([
                 // ── Dona de categorías ── siempre del mes actual
                 SectionTitle(
-                  title: 'Distribución',
-                  subtitle: 'Por categoría · $monthName',
+                  title: l10n.statsDonutTitle,
+                  subtitle: l10n.statsDonutSubtitle(monthName: monthName),
                 ),
                 slicesAsync.when(
                   data: (slices) => slices.isEmpty
@@ -157,9 +166,9 @@ class StatsScreen extends ConsumerWidget {
                     return Column(
                       children: [
                         const SizedBox(height: 28),
-                        const SectionTitle(
-                          title: 'Tendencia',
-                          subtitle: 'Últimos 6 meses',
+                        SectionTitle(
+                          title: l10n.statsTrendTitle,
+                          subtitle: l10n.statsTrendSubtitle,
                         ),
                         trendAsync.when(
                           data: (trend) => SpendingLineChart(
@@ -171,13 +180,13 @@ class StatsScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 28),
                         SectionTitle(
-                          title: 'Mes vs anterior',
-                          subtitle: DateFormat(
-                            'MMMM',
-                            'es',
-                          ).format(DateTime(prevParams.year, prevParams.month)),
+                          title: l10n.statsTrendMonthVsPreviousTitle,
+                          subtitle: context.dates.justMonth(
+                            DateTime(prevParams.year, prevParams.month),
+                          ),
                         ),
                         _buildComparison(
+                          context,
                           params,
                           prevParams,
                           prevAsync,
@@ -208,6 +217,7 @@ class StatsScreen extends ConsumerWidget {
     required AsyncValue<List<MonthPoint>> quarterAsync,
     required AsyncValue<List<MonthPoint>> yearAsync,
   }) {
+    final l10n = AppLocalizations.of(context)!;
     switch (period) {
       // ── MES: barras diarias ──────────────────────────────
       case StatsPeriod.month:
@@ -216,9 +226,13 @@ class StatsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SectionTitle(
-              title: 'Gasto diario',
-              subtitle:
-                  '${BudgetCalculator.daysInMonth(params.year, params.month)} días',
+              title: l10n.statsExpensesDiaryTitle,
+              subtitle: l10n.statsExpensesDiarySubtitle(
+                daysInMonth: BudgetCalculator.daysInMonth(
+                  params.year,
+                  params.month,
+                ),
+              ),
             ),
             dailyAsync.when(
               loading: () => const ChartSkeleton(height: 160),
@@ -241,9 +255,9 @@ class StatsScreen extends ConsumerWidget {
           key: key,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SectionTitle(
-              title: 'Últimos 3 meses',
-              subtitle: 'Gasto total por mes',
+            SectionTitle(
+              title: l10n.statsLast3MonthsTitle,
+              subtitle: l10n.statsLast3MonthsSubtitle,
             ),
             quarterAsync.when(
               loading: () => const ChartSkeleton(height: 160),
@@ -260,9 +274,9 @@ class StatsScreen extends ConsumerWidget {
           key: key,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SectionTitle(
-              title: 'Últimos 12 meses',
-              subtitle: 'Gasto total por mes',
+            SectionTitle(
+              title: l10n.statsLastYearTitle,
+              subtitle: l10n.statsLast3MonthsSubtitle,
             ),
             yearAsync.when(
               loading: () => const ChartSkeleton(height: 160),
@@ -276,6 +290,7 @@ class StatsScreen extends ConsumerWidget {
   }
 
   Widget _buildComparison(
+    BuildContext context,
     ({int month, int year}) current,
     ({int month, int year}) prev,
     AsyncValue<Map<int, double>> prevAsync,
@@ -286,14 +301,12 @@ class StatsScreen extends ConsumerWidget {
       error: (e, _) => Text('Error: $e'),
       data: (prevDaily) {
         final prevTotal = prevDaily.values.fold(0.0, (a, b) => a + b);
-        final currentLabel = DateFormat(
-          'MMMM',
-          'es',
-        ).format(DateTime(current.year, current.month));
-        final prevLabel = DateFormat(
-          'MMMM',
-          'es',
-        ).format(DateTime(prev.year, prev.month));
+        final currentLabel = context.dates.justMonth(
+          DateTime(current.year, current.month),
+        );
+        final prevLabel = context.dates.justMonth(
+          DateTime(prev.year, prev.month),
+        );
         return MonthComparisonCard(
           currentAmount: 0,
           previousAmount: prevTotal,
@@ -310,6 +323,7 @@ class StatsScreen extends ConsumerWidget {
 class _PremiumStatsTeaser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(top: 28),
@@ -326,8 +340,8 @@ class _PremiumStatsTeaser extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '📈 Tendencia · Últimos 6 meses',
+              Text(
+                '📈 ${l10n.statsTrend6MonthsTitle}',
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 8),
@@ -362,7 +376,7 @@ class _PremiumStatsTeaser extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                'Desbloquea Premium para ver tu historial completo de gastos.',
+                l10n.statsTrend6MonthsSubtitle,
                 style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
               ),
             ],

@@ -705,6 +705,65 @@
       "size": { "type": "String" }
     }
   },
+
+  // Stats
+  "statsTitle": "Estadísticas",
+  "statsEmptyThisMonth": "No hay estadísticas para este mes o periodo",
+  "statsTotalLabel": "Total",
+  "statsMonthLabel": "Mes",
+  "statsQuarterLabel": "Trimestre",
+  "statsYearLabel": "Año",
+  "statsDonutTitle": "Distribución",
+  "statsDonutSubtitle": "Por categoría · {monthName}",
+  "@statsDonutSubtitle": {
+    "placeholders": {
+      "monthName": { "type": "String" }
+    }
+  },
+  "statsTrendTitle": "Tendencia",
+  "statsTrendSubtitle": "Últimos 6 meses",
+  "statsTrendMonthVsPreviousTitle": "Mes vs anterior",
+  "statsTrendMonthVsPreviousSubtitle": "{previousLabel} vs {currentLabel}",
+  "@statsTrendMonthVsPreviousSubtitle": {
+    "placeholders": {
+      "previousLabel": { "type": "String" },
+      "currentLabel": { "type": "String" }
+    }
+  },
+  "statsExpensesDiaryTitle": "Gasto diario",
+  "statsExpensesDiarySubtitle": "{daysInMonth, plural, =1{1 día} other{{daysInMonth} días}}",
+  "@statsExpensesDiarySubtitle": {
+    "placeholders": {
+      "daysInMonth": { "type": "int" }
+    }
+  },
+  "statsLast3MonthsTitle": "Últimos 3 meses",
+  "statsLast3MonthsSubtitle": "Gasto total por mes",
+  "statsLastYearTitle": "Últimos 12 meses",
+  "statsTrend6MonthsTitle": "Tendencia · Últimos 6 meses",
+  "statsTrend6MonthsSubtitle": "Desbloquea Premium para ver tu historial completo de gastos.",
+  "statsDailyBarChartTitle": "Promedio: {avg}/día",
+  "@statsDailyBarChartTitle": {
+    "placeholders": {
+      "avg": { "type": "String" }
+    }
+  },
+  "statsDailyBarChartTooltip": "Día {day}\n{money}",
+  "@statsDailyBarChartTooltip": {
+    "placeholders": {
+      "day": { "type": "int" },
+      "money": { "type": "string" }
+    }
+  },
+  "statsDailyBarChartAverage": "Promedio",
+  "statsMonthComparationExpense": "Gastaste",
+  "statsMonthComparationLegend": "{percent}% {improved, select, true {menos} false {más}}",
+  "@statsMonthComparationLegend": {
+    "placeholders": {
+      "percent": { "type": "String" },
+      "improved": { "type": "bool" }
+    }
+  },
   
   // Transactions
   "transactionTypeFilterAll": "Todos",

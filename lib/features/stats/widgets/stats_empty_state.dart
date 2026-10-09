@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class StatsEmptyState extends StatelessWidget {
-  final String message;
+  final String? message;
+
   const StatsEmptyState({
-    this.message = 'Sin transacciones\nen este período',
+    this.message,
     super.key,
   });
 
@@ -23,7 +25,7 @@ class StatsEmptyState extends StatelessWidget {
           Text('🫙', style: const TextStyle(fontSize: 40)),
           const SizedBox(height: 12),
           Text(
-            message,
+            message ?? AppLocalizations.of(context)!.statsEmptyThisMonth,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,

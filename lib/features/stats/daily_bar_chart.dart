@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class DailyBarChart extends StatefulWidget {
   final Map<int, double> dailyData;
@@ -30,13 +31,16 @@ class _DailyBarChartState extends State<DailyBarChart> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final accent = Theme.of(context).colorScheme.primary;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Promedio: ${CurrencyFormatter.compact(_avg, widget.currency)}/dá',
+          l10n.statsDailyBarChartTitle(
+            avg: CurrencyFormatter.compact(_avg, widget.currency),
+          ),
           style: TextStyle(
             fontSize: 12,
             color: Colors.white.withValues(alpha: 0.4),
@@ -55,7 +59,13 @@ class _DailyBarChartState extends State<DailyBarChart> {
                     final amount = widget.dailyData[day] ?? 0;
                     if (amount == 0) return null;
                     return BarTooltipItem(
-                      'Día $day\n${CurrencyFormatter.compact(amount, widget.currency)}',
+                      l10n.statsDailyBarChartTooltip(
+                        day: day,
+                        money: CurrencyFormatter.compact(
+                          amount,
+                          widget.currency,
+                        ),
+                      ),
                       const TextStyle(
                         color: Colors.white,
                         fontSize: 11,
@@ -124,7 +134,7 @@ class _DailyBarChartState extends State<DailyBarChart> {
                         fontSize: 9,
                         color: Colors.white.withValues(alpha: 0.35),
                       ),
-                      labelResolver: (_) => 'Promedio',
+                      labelResolver: (_) => l10n.statsDailyBarChartAverage,
                     ),
                   ),
                 ],

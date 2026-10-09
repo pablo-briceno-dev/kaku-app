@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/stats_models.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class CategoryDonutChart extends StatefulWidget {
   final List<CategorySlice> slices;
@@ -25,6 +26,8 @@ class _CategoryDonutChartState extends State<CategoryDonutChart> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       children: [
         SizedBox(
@@ -93,7 +96,9 @@ class _CategoryDonutChartState extends State<CategoryDonutChart> {
                     ),
                   ),
                   Text(
-                    _touched >= 0 ? widget.slices[_touched].name : 'Total',
+                    _touched >= 0
+                        ? widget.slices[_touched].name
+                        : l10n.statsTotalLabel,
                     style: TextStyle(
                       fontSize: 11,
                       color: Colors.white.withValues(alpha: 0.45),
@@ -134,7 +139,7 @@ class _LegendItem extends StatelessWidget {
         ),
         const SizedBox(width: 5),
         Text(
-          '${slice.emoji} ${slice.name}',
+          '${slice.emoji} ${slice.localizedName(context)}',
           style: TextStyle(
             fontSize: 11,
             color: Colors.white.withValues(alpha: 0.6),

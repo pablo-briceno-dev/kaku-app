@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class MonthComparisonCard extends StatelessWidget {
   final double currentAmount;
@@ -21,6 +22,7 @@ class MonthComparisonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final variation = BudgetCalculator.monthVariation(
       currentAmount,
       previousAmount,
@@ -79,14 +81,14 @@ class MonthComparisonCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Gastaste',
+                l10n.statsMonthComparationExpense,
                 style: TextStyle(
                   fontSize: 12,
                   color: Colors.white.withValues(alpha: 0.5),
                 ),
               ),
               Text(
-                '$arrow ${variation.abs().toStringAsFixed(1)}% ${isImproved ? 'menos' : 'más'}',
+                '$arrow ${l10n.statsMonthComparationLegend(percent: variation.abs().toStringAsFixed(1), improved: isImproved)}',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,

@@ -129,4 +129,10 @@ class DateFormatter {
     );
     return f.format(date);
   }
+
+  /// Solo el Mes "Enero" (es) / "January" (en)
+  static String justMonth(DateTime date, String localeCode) {
+    final f = _skeleton(DateFormat.MMMM, localeCode, 'justMonth');
+    return f.format(date);
+  }
 }
