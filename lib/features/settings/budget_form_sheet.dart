@@ -9,6 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 
 class BudgetFormSheet extends ConsumerStatefulWidget {
@@ -62,11 +65,12 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
 
   Future<void> _save() async {
     final amount = CurrencyFormatter.parse(_limitController.text);
+    final l10n = AppLocalizations.of(context)!;
 
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Ingresa un límite mayor a 0'),
+        SnackBar(
+          content: Text(l10n.formLimitMajor),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -94,26 +98,29 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
 
   Future<void> _delete() async {
     if (widget.existingBudget == null) return;
+    final l10n = AppLocalizations.of(context)!;
 
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Eliminar presupuesto'),
+        title: Text(l10n.deleteBudgetConfirm),
         content: Text(
-          '¿Eliminar el presupuesto de ${widget.category.emoji} '
-          '${widget.category.name} para este mes?',
+          l10n.deleteBudgetConfirmSubtitle(
+            emoji: widget.category.emoji,
+            category: widget.category.displayName(context),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(l10n.btnCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Eliminar'),
+            child: Text(l10n.btnDelete),
           ),
         ],
       ),
@@ -128,6 +135,7 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     // Color de la categoría para el ícono
     final catColor = Color(
@@ -168,7 +176,7 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
                     ),
                   ),
                   Text(
-                    '${_monthName(widget.month)} ${widget.year}',
+                    context.dates.monthYear(widget.year, widget.month),
                     style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
                   ),
                 ],
@@ -180,7 +188,7 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
 
           // ── Campo de límite ──
           Text(
-            'LÍMITE MENSUAL',
+            l10n.limitMonth.toUpperCase(),
             style: TextStyle(
               fontSize: 10,
               letterSpacing: 0.12,
@@ -247,16 +255,15 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Acumular sobrante',
+                      Text(
+                        l10n.acumulateSurplus,
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
-                        'Si gastas menos de lo planeado, '
-                        'el sobrante se suma al próximo mes.',
+                        l10n.acumulateSurplusSubtitle,
                         style: TextStyle(
                           fontSize: 11,
                           color: cs.onSurfaceVariant,
@@ -289,9 +296,7 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
                       color: Colors.white,
                     ),
                   )
-                : Text(
-                    _isEditing ? 'Actualizar presupuesto' : 'Crear presupuesto',
-                  ),
+                : Text(_isEditing ? l10n.acumulateBudget : l10n.createBudget),
           ),
 
           // ── Botón eliminar (solo al editar) ──
@@ -303,26 +308,11 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
                 foregroundColor: cs.error,
                 side: BorderSide(color: cs.error.withValues(alpha: 0.4)),
               ),
-              child: const Text('Eliminar presupuesto'),
+              child: Text(l10n.deleteBudgetConfirm),
             ),
           ],
         ],
       ),
     );
   }
-
-  String _monthName(int month) => const [
-    'Enero',
-    'Febrero',
-    'Marzo',
-    'Abril',
-    'Mayo',
-    'Junio',
-    'Julio',
-    'Agosto',
-    'Septiembre',
-    'Octubre',
-    'Noviembre',
-    'Diciembre',
-  ][month - 1];
 }

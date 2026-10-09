@@ -16,5 +16,6 @@ String localizeError(
     AppErrorCode.messageNoReceipt => l10n.messageNoReceipt(
       source: messageComplement ?? '',
     ),
+    AppErrorCode.errorDeletingData => l10n.errorDeletingData,
   };
 }

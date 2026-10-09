@@ -133,9 +133,19 @@
   },
   "exportTitle": "Exportar datos",
   "exportSubtitle": "CSV · PDF",
+  "exportCsvLabel": "CSV",
+  "exportCsvDecription": "CSV: Abre en Excel o Google Sheets para análisis detallado.",
+  "exportPdfBasicLabel": "PDF básico",
+  "exportPdfBasicDecription": "PDF básico: Tabla de transacciones limpia, lista para imprimir.",
+  "exportPdfWithReceiptsLabel": "PDF con recibos",
+  "exportPdfWithReceiptsDecription": "PDF con recibos: PDF completo con fotos adjuntas. 👑 Premium",
+  "thisMonthLabel": "Mes actual",
+  "last3MonthsLabel": "Últimos 3 meses",
+  "thisYearLabel": "Este año",
+  "customRangeLabel": "Rango personalizado",
 
   // Backup
-  "backupShareText": "Backup de Kaku — {date}",
+  "backupShareText": "Copia de Seguridad de Kaku — {date}",
   "@backupShareText": {
     "placeholders": { "date": { "type": "String" } }
   },
@@ -145,27 +155,40 @@
   "backupSubtitle": "Gratis · Comparte el archivo donde quieras",
   "backupConnectedAs": "✅ Conectado como {email}",
   "backupConnectFailed": "No se pudo conectar con Google",
-  "backupCompleted": "✅ Backup completado — DB + recibos cifrados",
+  "backupCompleted": "✅ Copia de Seguridad completado — DB + recibos cifrados",
   "backupSignInFirst": "Inicia sesión con Google primero",
   "backupDbNotFound": "No se encontró la base de datos",
-  "backupErrorGeneric": "Error al realizar el backup. Intenta de nuevo.",
-  "restoreDialogTitle": "Restaurar backup",
-  "restoreDialogContent": "Se reemplazarán todos los datos actuales con los del backup.\n\nEsta acción no se puede deshacer.",
+  "backupErrorGeneric": "Error al realizar la copia de seguridad. Intenta de nuevo.",
+  "restoreDialogTitle": "Restaurar copia de seguridad",
+  "restoreDialogContent": "Se reemplazarán todos los datos actuales con los de la copia de seguridad.\n\nEsta acción no se puede deshacer.",
   "restoreDialogCancel": "Cancelar",
   "restoreDialogConfirm": "Restaurar",
   "restoreSuccess": "✅ Datos restaurados correctamente",
-  "restoreNoBackupFound": "No se encontró ningún backup en Drive",
+  "restoreNoBackupFound": "No se encontró ninguna copia de seguridad en Drive",
   "restoreErrorGeneric": "Error al restaurar. Intenta de nuevo.",
-  "backupIncludesTitle": "El backup incluye:",
+  "backupIncludesTitle": "La copia de seguridad incluye:",
   "backupIncludesDatabase": "Base de datos (transacciones, cuentas, metas)",
   "backupIncludesReceipts": "Fotos de recibos",
   "backupIncludesEncryption": "Cifrado AES-256 con tu cuenta de Google",
+  "backupIncludesEncryptionLocal": "Cifrado AES-256 con la contraseña ingresada",
   "backupSignOut": "Salir",
   "backupConnectGoogle": "Conectar con Google",
   "backupUploading": "Subiendo...",
-  "backupDoNow": "Hacer backup ahora",
+  "backupDoNow": "Realizar copia de seguridad ahora",
   "backupRestoring": "Restaurando...",
-  "backupRestoreFromDrive": "Restaurar desde Drive"
+  "backupRestoreFromDrive": "Restaurar desde Drive",
+  "passwordNotEmpty": "La contraseña no puede estar vacía",
+  "backupGenerateSuccess": "✅ Copia de seguridad generada correctamente",
+  "backupDbNotFound": "No se encontró la base de datos",
+  "backupPermissionDenied": "Sin permiso para acceder al almacenamiento",
+  "selectedFileBackup": "Selecciona el archivo de la copia de seguridad de Kaku",
+  "backupFileNotFound": "No se encontró el archivo de copia de seguridad",
+  "backupFileNotValid": "El archivo no es una copia de seguridad válida de Kaku o está dañado",
+  "backupMessageShare": "El archivo se guarda en tu dispositivo. Puedes moverlo a Google Drive, WhatsApp o donde prefieras usando el botón Compartir. La contraseña es necesaria para descifrarlo (restaurar) y cifrar el archivo de copia de seguridad.",
+  "backupBtnCreating": "Creando copia de seguridad...",
+  "backupBtnCreateShare": "Crear y compartir copia de seguridad",
+  "backupBtnRestore": "Restaurar desde archivo .zip",
+  "backupBtnRestoring": "Restaurando...",
 
   // Notifications
   "notifBudgetExceededTitle": "{emoji} Presupuesto excedido",
@@ -197,6 +220,11 @@
       "category": { "type": "String" }
     }
   }
+  "notifTitle": "Notificaciones",
+  "notifActivatingBudget": "Activo · Alertas de presupuesto",
+  "notifDeactivatingBudget": "Inactivo",
+  "notifPermissionTitle": "Permiso de notificaciones",
+  "notifPermissionSubtitle": "Kaku necesita permiso para enviarte alertas cuando te acercas al límite de un presupuesto.\n\nHailítalo en los Ajustes del dispositivo.",
 
   // Premium features
   "premiumBlockedBackupDrive": "El backup a Google Drive es una función premium.\nCon el plan free puedes hacer backup local.",
@@ -260,6 +288,8 @@
   "formAmountMajor": "Debe ser mayor a 0",
   "formContributeMajorTotal": "No puedes aportar más que el total",
   "formAccountNoBalance": "Cuenta sin saldo suficiente",
+  "formLimitMajor": "Ingresa un límite mayor a 0",
+  "formPassword": "Contraseña",
 
   // Accounts
   "accountsTitle": "{plural, select, true {Cuentas} false {Cuenta}}",
@@ -388,6 +418,15 @@
       "count": {
         "type": "int",
         "example": "1"
+      }
+    }
+  },
+  "categoryTitle": "{plural, select, true {Categorías} false {Categoría}}",
+  "@categoryTitle": {
+    "placeholders": {
+      "plural": {
+        "type": "bool",
+        "example": "true"
       }
     }
   },
@@ -558,7 +597,115 @@
   "deleteDataAllSubtitle": "Elimina todos los datos de la app",
   "aboutTitle": "Acerca de",
   "versionTitle": "Versión",
+  "deleteText": "BORRAR",
+  "errorDeletingData": "Error al borrar los datos",
+  "messageDataAllDeleted": "Esta acción es permanente e irreversible. Se eliminarán todos los datos de Kaku de tu dispositivo.",
+  "titleDeleteList": "Se eliminarán permanentemente:",
+  "deleteListTransactions": "Todas las transacciones",
+  "deleteListAccounts": "Todas las cuentas",
+  "deleteListGoals": "Todos los metas y aportes",
+  "deleteListBudgets": "Todos los presupuestos",
+  "deleteListCategories": "Todas las categorías personalizadas",
+  "deleteListReceipts": "Todos los fotos de recibos",
+  "deleteListSettings": "Toda la configuración de la app",
+  "writeWordDeleted": "Escribe BORRAR para confirmar",
+  "selectedDatesRange": "Selecciona un rango de fechas",
+  "last3Months": "Últimos 3 meses",
+  "thisYear": "Año {year}",
+  "@thisYear": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "rangeCustom": "Rango personalizado",
+  "formatTitle": "Formato",
+  "csvDecription": "Para abrir en Excel o Google Sheets.",
+  "pdfBasic": "PDF básico",
+  "pdfBasicDecription": "Tabla de transacciones sin fotos.",
+  "pdfWithReceipts": "PDF con fotos de recibos",
+  "pdfWithReceiptsDecription": "PDF completo con fotos adjuntas.",
+  "periodTitle": "Periodo",
+  "rangeTitle": "Rango de fechas",
 
+  // Budgets
+  "budgetTitle": "{plural, select, true {Presupuestos} false {Presupuesto}}",
+  "@budgetTitle": {
+    "placeholders": {
+      "plural": {
+        "type": "bool",
+        "example": "true"
+      }
+    }
+  },
+  "deleteBudgetConfirm": "Eliminar presupuesto",
+  "deleteBudgetConfirmSubtitle": "¿Eliminar el presupuesto de {emoji} {category} para este mes?",
+  "@deleteBudgetConfirmSubtitle": {
+    "placeholders": {
+      "emoji": { "type": "String" },
+      "category": { "type": "String" }
+    }
+  },
+  "limitMonth": "Límite mensual",
+  "acumulateSurplus": "Acumular sobrante",
+  "acumulateSurplusSubtitle": "Si gastas menos de lo planeado, el sobrante se suma al próximo mes.",
+  "acumulateBudget": "Acumular presupuesto",
+  "createBudget": "Crear presupuesto",
+  "budgetTotal": "Presupuesto total",
+  "budgetWornOut": "Gastado",
+  "budgetAvailable": "Disponible",
+  "unlimited": "Sin límite",
+  "budgetWornOutDescription": "Gastado: {spent}",
+  "@budgetWornOutDescription": {
+    "placeholders": {
+      "spent": { "type": "String" }
+    }
+  },
+  "budgetRemainingOrExceeded": "{remaining, select, true {Quedan} false {Excedido}} {amount}",
+  "@budgetRemainingOrExceeded": {
+    "placeholders": {
+      "remaining": { "type": "bool" },
+      "amount": { "type": "String" }
+    }
+  },
+  "editBudget": "Editar presupuesto",
+  "createBudget": "Nuevo presupuesto",
+  "budgetSaved": "Presupuesto guardado",
+
+  // Profile
+  "profileEdit": "Editar perfil",
+  "profileNameLabel": "Nombre",
+  "profileEmailLabel": "Email (Solo Lectura)",
+  "changesSaved": "Cambios guardados",
+
+  // Storage
+  "storageClearReceipts": "Limpiar recibos",
+  "storageReceiptsCleared": "Se eliminarán {count} fotos de recibos ({size}) del dispositivo.\n\nLas transacciones se conservan pero ya no tendrán foto adjunta.",
+  "@storageReceiptsCleared": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "size": { "type": "String" }
+    }
+  },
+  "storageReceiptsLabel": "Fotos de recibos",
+  "storageReceiptsSummary": "{count} fotos de recibos · {size}",
+  "@storageReceiptsSummary": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "size": { "type": "String" }
+    }
+  },
+  "storageNoteInfo": "Las fotos se guardan en el almacenamiento privado de la app y nunca salen de tu dispositivo.",
+  "storageCleaning": "Limpiando...",
+  "storageClearedInfo": "{count, plural, =0{Sin recibos que limpiar} one{Se eliminará un recibo} other{Se eliminarán {count} recibos ({size})}}",
+  "@storageClearedInfo": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "size": { "type": "String" }
+    }
+  },
+  
   // Transactions
   "transactionTypeFilterAll": "Todos",
   "transactionTypeFilterByCategory": "Por categoría",
@@ -649,6 +796,8 @@
   "btnUnderstood": "Entendido",
   "btnDisableInstead": "Desactivar en su lugar",
   "btnRetry": "Reintentar",
+  "btnSave": "Guardar",
+  "btnClear": "Limpiar",
 
   // Texts
   "emojiLabel": "Emoji",
@@ -666,5 +815,6 @@
   "viewAll": "Ver todas",
   "loading": "Cargando...",
   "error": "Error",
-  "notAvailable": "No disponible"
+  "notAvailable": "No disponible",
+  "generatingLabel": "Generando..."
 }

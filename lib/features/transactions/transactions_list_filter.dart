@@ -146,7 +146,7 @@ class TransactionsListFilter extends ConsumerWidget {
                         ),
                         SlideAction(
                           icon: Icons.delete_outline_rounded,
-                          label: 'Eliminar',
+                          label: l10n.btnDelete,
                           color: Theme.of(context).colorScheme.error,
                           onTap: () => showUndoDelete(
                             context: context,

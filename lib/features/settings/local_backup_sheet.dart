@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:kaku/shared/services/local_backup_service.dart';
@@ -37,7 +38,7 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
 
     if (password.isEmpty) {
       setState(() {
-        _statusMessage = 'La contraseña no puede estar vacía';
+        _statusMessage = AppLocalizations.of(context)!.passwordNotEmpty;
         _isError = true;
         _creatingBackup = false;
       });
@@ -47,6 +48,7 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
     ref.read(sharedPrefsProvider).setString(_kPasswordPrefix, password);
 
     final result = await LocalBackupService.createBackup(
+      context,
       userKey: password,
       share: true, // abre Share sheet para que el usuario elija destino
     );
@@ -57,16 +59,16 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
       _creatingBackup = false;
       switch (result) {
         case LocalBackupResult.success:
-          _statusMessage = '✅ Backup generado correctamente';
+          _statusMessage = AppLocalizations.of(context)!.backupGenerateSuccess;
           _isError = false;
         case LocalBackupResult.dbNotFound:
-          _statusMessage = 'No se encontró la base de datos';
+          _statusMessage = AppLocalizations.of(context)!.backupDbNotFound;
           _isError = true;
         case LocalBackupResult.permissionDenied:
-          _statusMessage = 'Sin permiso para acceder al almacenamiento';
+          _statusMessage = AppLocalizations.of(context)!.backupPermissionDenied;
           _isError = true;
         case LocalBackupResult.error:
-          _statusMessage = 'Error al crear el backup. Intenta de nuevo.';
+          _statusMessage = AppLocalizations.of(context)!.backupErrorGeneric;
           _isError = true;
       }
     });
@@ -77,7 +79,7 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
 
     if (password.isEmpty) {
       setState(() {
-        _statusMessage = 'La contraseña no puede estar vacía';
+        _statusMessage = AppLocalizations.of(context)!.passwordNotEmpty;
         _isError = true;
         _creatingBackup = false;
       });
@@ -88,22 +90,19 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Restaurar backup'),
-        content: const Text(
-          'Se reemplazarán todos los datos actuales con los del backup.\n\n'
-          'Esta acción no se puede deshacer.',
-        ),
+        title: Text(AppLocalizations.of(context)!.restoreDialogTitle),
+        content: Text(AppLocalizations.of(context)!.restoreDialogContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context)!.btnCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Restaurar'),
+            child: Text(AppLocalizations.of(context)!.restoreDialogConfirm),
           ),
         ],
       ),
@@ -113,10 +112,12 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
 
     ref.read(sharedPrefsProvider).setString(_kPasswordPrefix, password);
 
+    if (!mounted) return;
+
     // Abre el file picker para que el usuario seleccione el archivo
     final picked = await FilePicker.pickFiles(
       type: FileType.any,
-      dialogTitle: 'Selecciona el archivo de backup de Kaku',
+      dialogTitle: AppLocalizations.of(context)!.selectedFileBackup,
       withData: false,
       withReadStream: false,
     );
@@ -147,17 +148,16 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
 
           // 2. (Opcional) Invalidar explícitamente el databaseProvider para asegurar recreación
           ref.invalidate(databaseProvider);
-          _statusMessage = '✅ Datos restaurados correctamente';
+          _statusMessage = AppLocalizations.of(context)!.restoreSuccess;
           _isError = false;
         case LocalRestoreResult.fileNotFound:
-          _statusMessage = 'No se encontró el archivo de backup';
+          _statusMessage = AppLocalizations.of(context)!.backupFileNotFound;
           _isError = true;
         case LocalRestoreResult.wrongKey:
-          _statusMessage =
-              'El archivo no es un backup válido de Kaku o está dañado';
+          _statusMessage = AppLocalizations.of(context)!.backupFileNotValid;
           _isError = true;
         case LocalRestoreResult.error:
-          _statusMessage = 'Error al restaurar. Intenta de nuevo.';
+          _statusMessage = AppLocalizations.of(context)!.restoreErrorGeneric;
           _isError = true;
       }
     });
@@ -165,6 +165,7 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
 
     return Padding(
@@ -187,13 +188,13 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'El backup incluye:',
+                  l10n.backupIncludesTitle,
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 8),
-                _item('🗄️', 'Base de datos (transacciones, cuentas, metas)'),
-                _item('🖼️', 'Fotos de recibos'),
-                _item('🔒', 'Cifrado AES-256 — solo Kaku puede leerlo'),
+                _item('🗄️', l10n.backupIncludesDatabase),
+                _item('🖼️', l10n.backupIncludesReceipts),
+                _item('🔒', l10n.backupIncludesEncryptionLocal),
               ],
             ),
           ),
@@ -214,10 +215,7 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'El archivo se guarda en tu dispositivo. '
-                    'Puedes moverlo a Google Drive, WhatsApp o '
-                    'donde prefieras usando el botón Compartir. '
-                    'La contraseña es necesaria para descifrarlo y cifrar el backup.',
+                    l10n.backupMessageShare,
                     style: TextStyle(
                       fontSize: 12,
                       color: cs.primary,
@@ -236,7 +234,7 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              labelText: 'Contraseña',
+              labelText: l10n.formPassword,
             ),
           ),
           const SizedBox(height: 16),
@@ -280,8 +278,8 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
                 : const Icon(Icons.share_outlined, size: 18),
             label: Text(
               _creatingBackup
-                  ? 'Creando backup...'
-                  : 'Crear y compartir backup',
+                  ? l10n.backupBtnCreating
+                  : l10n.backupBtnCreateShare,
             ),
           ),
 
@@ -303,7 +301,9 @@ class _LocalBackupSheetState extends ConsumerState<LocalBackupSheet> {
                   )
                 : const Icon(Icons.restore_outlined, size: 18),
             label: Text(
-              _restoringBackup ? 'Restaurando...' : 'Restaurar desde archivo',
+              _restoringBackup
+                  ? l10n.backupBtnRestoring
+                  : l10n.backupBtnRestore,
             ),
           ),
         ],

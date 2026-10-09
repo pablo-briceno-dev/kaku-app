@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/profile_sheet.dart';
 import 'package:kaku/features/settings/widgets/profile_avatar.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/premium_provider.dart';
 import 'package:kaku/shared/providers/profile_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
@@ -13,6 +14,7 @@ class ProfileCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final profile = ref.watch(profileProvider);
     final premiumAsync = ref.watch(premiumNotifierProvider);
@@ -20,7 +22,7 @@ class ProfileCard extends ConsumerWidget {
     return InkWell(
       onTap: () => AppBottomSheet.show(
         context,
-        title: 'Editar perfil',
+        title: l10n.profileEdit,
         useRootNavigator: true,
         isFullScreen: true,
         child: ProfileSheet(),
@@ -41,7 +43,7 @@ class ProfileCard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    profile.displayName,
+                    profile.displayName(l10n),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
@@ -50,7 +52,7 @@ class ProfileCard extends ConsumerWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${profile.displayName.toLowerCase().replaceAll(' ', '.')}@kaku',
+                    '${profile.displayName(l10n).toLowerCase().replaceAll(' ', '.')}@kaku',
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,

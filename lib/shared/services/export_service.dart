@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
 import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/l10n/app_localizations.dart';
@@ -27,8 +28,8 @@ class ExportService {
   }
 
   // ── Exportar CSV ─────────────────────────────────────────
-  static Future<void> exportCsv({
-    required BuildContext context,
+  static Future<void> exportCsv(
+    BuildContext context, {
     required List<TransactionWithCategory> transactions,
     required CurrencyType currency,
   }) async {
@@ -38,7 +39,8 @@ class ExportService {
 
     for (final txc in transactions) {
       final tx = txc.transaction;
-      final cat = txc.category?.name ?? l10n.exportUncategorized;
+      final cat =
+          txc.category?.displayName(context) ?? l10n.exportUncategorized;
       // ✅ Usa relative() + time() que sabemos que existen
       final date =
           '${context.dates.relative(tx.date)} ${context.dates.time(tx.date)}';
@@ -67,8 +69,8 @@ class ExportService {
   }
 
   // ── Exportar PDF ─────────────────────────────────────────
-  static Future<void> exportPdf({
-    required BuildContext buildContext,
+  static Future<void> exportPdf(
+    BuildContext buildContext, {
     required List<TransactionWithCategory> transactions,
     required CurrencyType currency,
     required String periodLabel,
@@ -193,8 +195,15 @@ class ExportService {
                 return pw.TableRow(
                   children: [
                     _cell(dateStr),
-                    _cell(tx.description ?? txc.category?.name ?? '—'),
-                    _cell(txc.category?.name ?? l10n.exportUncategorized),
+                    _cell(
+                      tx.description ??
+                          txc.category?.displayName(buildContext) ??
+                          '—',
+                    ),
+                    _cell(
+                      txc.category?.displayName(buildContext) ??
+                          l10n.exportUncategorized,
+                    ),
                     _cell(
                       isExp
                           ? l10n.transactionTypeExpense(count: 1)
@@ -234,7 +243,10 @@ class ExportService {
         final image = pw.MemoryImage(imageBytes);
         if (!buildContext.mounted) return;
         final dateStr = buildContext.dates.dayMonth(tx.date);
-        final desc = tx.description ?? txc.category?.name ?? l10n.exportUncategorized;
+        final desc =
+            tx.description ??
+            txc.category?.displayName(buildContext) ??
+            l10n.exportUncategorized;
 
         doc.addPage(
           pw.Page(
@@ -296,8 +308,8 @@ class ExportService {
 
   // ── PDF con imágenes de recibos (PREMIUM) ─────────────────
   // Mantiene compatibilidad - delega a exportPdf con withReceipts: true
-  static Future<void> exportPdfWithReceipts({
-    required BuildContext context,
+  static Future<void> exportPdfWithReceipts(
+    BuildContext context, {
     required List<TransactionWithCategory> transactions,
     required CurrencyType currency,
     required String periodLabel,
@@ -309,7 +321,7 @@ class ExportService {
     if (!context.mounted) return;
 
     await exportPdf(
-      buildContext: context,
+      context,
       transactions: transactions,
       currency: currency,
       periodLabel: periodLabel,

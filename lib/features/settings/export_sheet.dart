@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
+import 'package:kaku/core/l10n/premium_reason_x.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/export_service.dart';
@@ -27,7 +30,10 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
       );
       if (reason != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(reason), behavior: SnackBarBehavior.floating),
+          SnackBar(
+            content: Text(reason.label(AppLocalizations.of(context)!)),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
         return;
       }
@@ -35,8 +41,8 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
 
     if (_period == _ExportPeriod.customRange && _range == null && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Selecciona un rango de fechas'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.selectedDatesRange),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -51,20 +57,26 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
     final (start, end, label) = _periodRange(selectedMonth);
     final txs = await txDao.getTransactionsInRange(start, end);
 
-    if (!mounted) return;
+    if (!mounted || !context.mounted) return;
 
     try {
       switch (_format) {
         case _ExportFormat.csv:
-          await ExportService.exportCsv(transactions: txs, currency: currency);
+          await ExportService.exportCsv(
+            context,
+            transactions: txs,
+            currency: currency,
+          );
         case _ExportFormat.pdfBasic:
           await ExportService.exportPdf(
+            context,
             transactions: txs,
             currency: currency,
             periodLabel: label,
           );
         case _ExportFormat.pdfWithReceipts:
           await ExportService.exportPdf(
+            context,
             transactions: txs,
             currency: currency,
             periodLabel: label,
@@ -83,19 +95,19 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
         return (
           DateTime(selected.year, selected.month, 1),
           DateTime(selected.year, selected.month + 1, 0, 23, 59, 59),
-          '${_monthName(selected.month)} ${selected.year}',
+          context.dates.monthYear(selected.year, selected.month),
         );
       case _ExportPeriod.last3Months:
         return (
           DateTime(now.year, now.month - 2, 1),
           DateTime(now.year, now.month + 1, 0, 23, 59, 59),
-          'Últimos 3 meses',
+          AppLocalizations.of(context)!.last3Months,
         );
       case _ExportPeriod.thisYear:
         return (
           DateTime(now.year, 1, 1),
           DateTime(now.year, 12, 31, 23, 59, 59),
-          'Año ${now.year}',
+          AppLocalizations.of(context)!.thisYear(year: now.year),
         );
       case _ExportPeriod.customRange:
         if (_range == null) {
@@ -103,7 +115,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
           return (
             DateTime(selected.year, selected.month, 1),
             DateTime(selected.year, selected.month + 1, 0, 23, 59, 59),
-            'Rango personalizado',
+            rangeCustom,
           );
         }
         final start = _range!.start;
@@ -111,27 +123,10 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
         return (
           DateTime(start.year, start.month, start.day),
           DateTime(end.year, end.month, end.day, 23, 59, 59),
-          '${_formatDate(start)} - ${_formatDate(end)}',
+          '${context.dates.rangeCustomDate(start)} - ${context.dates.rangeCustomDate(end)}',
         );
     }
   }
-
-  String _monthName(int m) => const [
-    'Enero',
-    'Febrero',
-    'Marzo',
-    'Abril',
-    'Mayo',
-    'Junio',
-    'Julio',
-    'Agosto',
-    'Septiembre',
-    'Octubre',
-    'Noviembre',
-    'Diciembre',
-  ][m - 1];
-
-  String _formatDate(DateTime date) => '${date.day}/${date.month}/${date.year}';
 
   // ── Selector de rango personalizado ───────────────────────────
   Future<void> _selectDateRange() async {
@@ -148,6 +143,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
 
     return Padding(
@@ -158,7 +154,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
         children: [
           // ── Selector de formato ──────────────────────
           Text(
-            'FORMATO',
+            l10n.formatTitle.toUpperCase(),
             style: TextStyle(
               fontSize: 10,
               letterSpacing: 0.1,
@@ -171,7 +167,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
           _FormatTile(
             icon: Icons.table_chart_outlined,
             label: 'CSV',
-            desc: 'Para abrir en Excel o Google Sheets',
+            desc: l10n.csvDecription,
             isPro: false,
             selected: _format == _ExportFormat.csv,
             onTap: () => setState(() => _format = _ExportFormat.csv),
@@ -179,8 +175,8 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
           const SizedBox(height: 8),
           _FormatTile(
             icon: Icons.picture_as_pdf_outlined,
-            label: 'PDF básico',
-            desc: 'Tabla de transacciones sin fotos',
+            label: l10n.pdfBasic,
+            desc: l10n.pdfBasicDecription,
             isPro: false,
             selected: _format == _ExportFormat.pdfBasic,
             onTap: () => setState(() => _format = _ExportFormat.pdfBasic),
@@ -192,8 +188,8 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
             showLockBadge: false,
             child: _FormatTile(
               icon: Icons.picture_as_pdf_rounded,
-              label: 'PDF con recibos',
-              desc: 'PDF completo con fotos adjuntas',
+              label: l10n.pdfWithReceipts,
+              desc: l10n.pdfWithReceiptsDecription,
               isPro: true,
               selected: _format == _ExportFormat.pdfWithReceipts,
               onTap: () =>
@@ -205,7 +201,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
 
           // ── Selector de período ──────────────────────
           Text(
-            'PERÍODO',
+            l10n.periodTitle.toUpperCase(),
             style: TextStyle(
               fontSize: 10,
               letterSpacing: 0.1,
@@ -231,7 +227,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
                         value: p,
                         title: Row(
                           children: [
-                            Text(_periodLabel(p)),
+                            Text(_periodLabel(l10n, p)),
                             const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -272,7 +268,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
                   type: MaterialType.transparency,
                   child: RadioListTile<_ExportPeriod>(
                     value: p,
-                    title: Text(_periodLabel(p)),
+                    title: Text(_periodLabel(l10n, p)),
                     // sin groupValue — RadioGroup lo gestiona
                   ),
                 );
@@ -294,7 +290,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
                     child: TextFormField(
                       readOnly: true,
                       decoration: InputDecoration(
-                        labelText: 'Rango de fechas',
+                        labelText: l10n.rangeTitle,
                         suffixIcon: Icon(
                           Icons.calendar_today,
                           color: cs.primary,
@@ -305,7 +301,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
                       ),
                       controller: TextEditingController(
                         text: _range != null
-                            ? '${_formatDate(_range!.start)} - ${_formatDate(_range!.end)}'
+                            ? '${context.dates.rangeCustomDate(_range!.start)} - ${context.dates.rangeCustomDate(_range!.end)}'
                             : '',
                       ),
                       onTap: _selectDateRange,
@@ -327,7 +323,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                _formatDescription(_format),
+                _formatDescription(l10n, _format),
                 style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
               ),
             ),
@@ -348,7 +344,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
                   )
                 : Icon(_formatIcon(_format), size: 18),
             label: Text(
-              _loading ? 'Generando...' : 'Exportar ${_formatLabel(_format)}',
+              _loading ? l10n.generatingLabel : _formatLabel(l10n, _format),
             ),
           ),
         ],
@@ -356,21 +352,20 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
     );
   }
 
-  String _periodLabel(_ExportPeriod p) => switch (p) {
-    _ExportPeriod.currentMonth => 'Mes actual',
-    _ExportPeriod.last3Months => 'Últimos 3 meses',
-    _ExportPeriod.thisYear => 'Este año',
-    _ExportPeriod.customRange => 'Rango personalizado',
+  String _periodLabel(AppLocalizations l10n, _ExportPeriod p) => switch (p) {
+    _ExportPeriod.currentMonth => l10n.thisMonthLabel,
+    _ExportPeriod.last3Months => l10n.last3MonthsLabel,
+    _ExportPeriod.thisYear => l10n.thisYearLabel,
+    _ExportPeriod.customRange => l10n.customRangeLabel,
   };
 
-  String _formatDescription(_ExportFormat f) => switch (f) {
-    _ExportFormat.csv =>
-      '📊 CSV: abre en Excel o Google Sheets para análisis detallado.',
-    _ExportFormat.pdfBasic =>
-      '📄 PDF básico: tabla de transacciones limpia, lista para imprimir.',
-    _ExportFormat.pdfWithReceipts =>
-      '📄 PDF completo: incluye miniaturas de las fotos de recibos adjuntas. 👑 Premium',
-  };
+  String _formatDescription(AppLocalizations l10n, _ExportFormat f) =>
+      switch (f) {
+        _ExportFormat.csv => '📊 ${l10n.exportCsvDecription}',
+        _ExportFormat.pdfBasic => '📄 ${l10n.exportPdfBasicDecription}',
+        _ExportFormat.pdfWithReceipts =>
+          '📄 ${l10n.exportPdfWithReceiptsDecription}',
+      };
 
   IconData _formatIcon(_ExportFormat f) => switch (f) {
     _ExportFormat.csv => Icons.download_outlined,
@@ -378,10 +373,10 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
     _ExportFormat.pdfWithReceipts => Icons.picture_as_pdf_rounded,
   };
 
-  String _formatLabel(_ExportFormat f) => switch (f) {
-    _ExportFormat.csv => 'CSV',
-    _ExportFormat.pdfBasic => 'PDF básico',
-    _ExportFormat.pdfWithReceipts => 'PDF con recibos',
+  String _formatLabel(AppLocalizations l10n, _ExportFormat f) => switch (f) {
+    _ExportFormat.csv => l10n.exportCsvLabel,
+    _ExportFormat.pdfBasic => l10n.exportPdfBasicLabel,
+    _ExportFormat.pdfWithReceipts => l10n.exportPdfWithReceiptsLabel,
   };
 }
 

@@ -35,11 +35,11 @@ class TransactionDetailScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancelar'),
+            child: const Text(l10n.btnCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Eliminar'),
+            child: const Text(l10n.btnDelete),
           ),
         ],
       ),
@@ -286,7 +286,7 @@ class TransactionDetailScreen extends ConsumerWidget {
                             width: 150,
                             child: OutlinedButton.icon(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              label: const Text('Eliminar'),
+                              label: const Text(l10n.btnDelete),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: Colors.red.withValues(
                                   alpha: 0.1,

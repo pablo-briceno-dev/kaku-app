@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 
 class CurrencySheet extends ConsumerWidget {
@@ -8,6 +9,7 @@ class CurrencySheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final currencyProv = ref.watch(currencyProvider);
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
@@ -52,7 +54,7 @@ class CurrencySheet extends ConsumerWidget {
                 ),
               ),
               subtitle: Text(
-                currency.labelComplete,
+                currency.labelComplete(l10n),
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               trailing: selected

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/budget_progress.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/premium_service.dart';
@@ -16,6 +19,7 @@ class BudgetListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final selectedMonth = ref.watch(selectedMonthProvider);
     final cs = Theme.of(context).colorScheme;
 
@@ -27,7 +31,7 @@ class BudgetListScreen extends ConsumerWidget {
     final allCatsAsync = ref.watch(expenseCategoriesProvider);
 
     return Scaffold(
-      appBar: CustomAppBar(title: const Text('Presupuestos')),
+      appBar: CustomAppBar(title: Text(l10n.budgetTitle(plural: true))),
       body: budgetsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
@@ -51,7 +55,7 @@ class BudgetListScreen extends ConsumerWidget {
                 const SizedBox(height: 20),
 
                 Text(
-                  'CATEGORÍAS',
+                  l10n.categoryTitle(plural: true).toUpperCase(),
                   style: TextStyle(
                     fontSize: 10,
                     letterSpacing: 0.12,
@@ -86,22 +90,8 @@ class _MonthHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final months = const [
-      'Enero',
-      'Febrero',
-      'Marzo',
-      'Abril',
-      'Mayo',
-      'Junio',
-      'Julio',
-      'Agosto',
-      'Septiembre',
-      'Octubre',
-      'Noviembre',
-      'Diciembre',
-    ];
     return Text(
-      '${months[month.month - 1]} ${month.year}',
+      context.dates.monthYear(month.year, month.month),
       style: Theme.of(
         context,
       ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
@@ -116,6 +106,7 @@ class _BudgetSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final totalLimit = budgets.fold(0.0, (s, b) => s + b.budget.limitAmount);
     final totalSpent = budgets.fold(0.0, (s, b) => s + b.spent);
@@ -134,18 +125,18 @@ class _BudgetSummaryCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _SummaryItem(
-                label: 'Presupuesto total',
+                label: l10n.budgetTotal,
                 value: CurrencyFormatter.compact(totalLimit),
                 color: cs.onSurface,
               ),
               _SummaryItem(
-                label: 'Gastado',
+                label: l10n.budgetWornOut,
                 value: CurrencyFormatter.compact(totalSpent),
                 color: cs.error,
                 align: TextAlign.center,
               ),
               _SummaryItem(
-                label: 'Disponible',
+                label: l10n.budgetAvailable,
                 value: CurrencyFormatter.compact(remaining.abs()),
                 color: remaining >= 0 ? cs.primary : cs.error,
                 align: TextAlign.end,
@@ -225,6 +216,7 @@ class _CategoryBudgetTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final hasBudget = budgetProgress != null;
     final catColor = Color(
@@ -292,7 +284,7 @@ class _CategoryBudgetTile extends ConsumerWidget {
                     )
                   else
                     Text(
-                      'Sin límite',
+                      l10n.unlimited,
                       style: TextStyle(
                         fontSize: 12,
                         color: cs.onSurfaceVariant.withValues(alpha: 0.5),
@@ -327,16 +319,25 @@ class _CategoryBudgetTile extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Gastado: ${CurrencyFormatter.compact(budgetProgress!.spent)}',
+                      l10n.budgetWornOutDescription(
+                        spent: CurrencyFormatter.compact(budgetProgress!.spent),
+                      ),
                       style: TextStyle(
                         fontSize: 10,
                         color: cs.onSurfaceVariant,
                       ),
                     ),
                     Text(
-                      budgetProgress!.remaining >= 0
-                          ? 'Quedan ${CurrencyFormatter.compact(budgetProgress!.remaining)}'
-                          : 'Excedido ${CurrencyFormatter.compact(budgetProgress!.remaining.abs())}',
+                      l10n.budgetRemainingOrExceeded(
+                        remaining: budgetProgress!.remaining >= 0,
+                        amount: budgetProgress!.remaining >= 0
+                            ? CurrencyFormatter.compact(
+                                budgetProgress!.remaining,
+                              )
+                            : CurrencyFormatter.compact(
+                                budgetProgress!.remaining.abs(),
+                              ),
+                      ),
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
@@ -362,6 +363,7 @@ class _CategoryBudgetTile extends ConsumerWidget {
   };
 
   Future<void> _openForm(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     final selectedMonth = ref.watch(selectedMonthProvider);
     final budgetsAsync = ref.watch(budgetProgressProvider(selectedMonth));
     final blocked = await PremiumLimitChecker.check(
@@ -378,10 +380,8 @@ class _CategoryBudgetTile extends ConsumerWidget {
     if (context.mounted) {
       final saved = await AppBottomSheet.show<bool>(
         context,
-        title: budgetProgress != null
-            ? 'Editar presupuesto'
-            : 'Nuevo presupuesto',
-        subtitle: '${category.emoji} ${category.name}',
+        title: budgetProgress != null ? l10n.editBudget : l10n.createBudget,
+        subtitle: '${category.emoji} ${category.displayName(context)}',
         child: BudgetFormSheet(
           category: category,
           month: month,
@@ -395,7 +395,7 @@ class _CategoryBudgetTile extends ConsumerWidget {
       if (saved == true && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Presupuesto guardado'),
+            content: Text(l10n.budgetSaved),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -403,18 +403,3 @@ class _CategoryBudgetTile extends ConsumerWidget {
     }
   }
 }
-
-// ─────────────────────────────────────────────────────────────
-//  Provider adicional que necesitas agregar en database_provider.dart
-// ─────────────────────────────────────────────────────────────
-//
-//  // Stream de categorías de gasto para la lista de presupuestos
-//  final expenseCategoriesProvider = StreamProvider<List<Category>>((ref) {
-//    return ref.watch(categoriesDaoProvider).watchExpenseCategories();
-//  });
-//
-//  // En CategoriesDao agrega este método si no lo tienes:
-//  Stream<List<Category>> watchExpenseCategories() =>
-//      (select(categoriesTable)
-//        ..where((c) => c.isIncome.equals(false)))
-//      .watch();

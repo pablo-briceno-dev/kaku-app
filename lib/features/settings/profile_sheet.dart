@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/features/settings/widgets/profile_avatar.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/profile_provider.dart';
 
 class ProfileSheet extends ConsumerStatefulWidget {
@@ -18,12 +19,15 @@ class _ProfileSheetState extends ConsumerState<ProfileSheet> {
   @override
   void initState() {
     super.initState();
-    _nameController.text = ref.read(profileProvider).displayName;
+    _nameController.text = ref
+        .read(profileProvider)
+        .displayName(AppLocalizations.of(context)!);
     _receiptPath = ref.read(profileProvider).avatarPath;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final profile = ref.watch(profileProvider);
 
     return Container(
@@ -38,19 +42,17 @@ class _ProfileSheetState extends ConsumerState<ProfileSheet> {
             textAlign: TextAlign.start,
             keyboardType: TextInputType.text,
             maxLines: 1,
-            decoration: const InputDecoration(labelText: 'Nombre'),
+            decoration: InputDecoration(labelText: l10n.profileNameLabel),
           ),
           const SizedBox(height: 16),
           TextFormField(
             textAlign: TextAlign.start,
             keyboardType: TextInputType.text,
             maxLines: 1,
-            decoration: const InputDecoration(
-              labelText: 'Email (Solo Lectura)',
-            ),
+            decoration: InputDecoration(labelText: l10n.profileEmailLabel),
             controller: TextEditingController(
               text:
-                  '${profile.displayName.toLowerCase().replaceAll(' ', '.')}@kaku',
+                  '${profile.displayName(l10n).toLowerCase().replaceAll(' ', '.')}@kaku',
             ),
             enabled: false,
           ),
@@ -67,11 +69,11 @@ class _ProfileSheetState extends ConsumerState<ProfileSheet> {
                 }
 
                 if (context.mounted) {
-                  AppSnackbar.success(context, 'Cambios guardados');
+                  AppSnackbar.success(context, l10n.changesSaved);
                   Navigator.pop(context);
                 }
               },
-              child: Text('Guardar'),
+              child: Text(l10n.btnSave),
             ),
           ),
         ],

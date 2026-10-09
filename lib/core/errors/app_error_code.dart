@@ -4,4 +4,5 @@ enum AppErrorCode {
   invalidAmount,
   networkError,
   messageNoReceipt,
+  errorDeletingData,
 }
