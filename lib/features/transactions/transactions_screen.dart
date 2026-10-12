@@ -6,6 +6,7 @@ import 'package:kaku/core/models/transaction_type_filter.dart';
 import 'package:kaku/features/transactions/card_transactions.dart';
 import 'package:kaku/features/transactions/horizontal_transaction_type_filter.dart';
 import 'package:kaku/features/transactions/transactions_list_filter.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
@@ -15,6 +16,7 @@ class TransactionsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final selectedMonth = ref.watch(selectedMonthProvider);
     final categorySelected = ref.watch(selectedCategoryProvider);
     final selectedFilter = ref.watch(transactionTypeFilterProvider);
@@ -59,7 +61,7 @@ class TransactionsScreen extends ConsumerWidget {
         0;
 
     return Scaffold(
-      appBar: CustomAppBar(title: Text('Transacciones')),
+      appBar: CustomAppBar(title: Text(l10n.transactionTitle(plural: 1))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(

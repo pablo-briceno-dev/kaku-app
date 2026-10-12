@@ -103,7 +103,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const Divider(height: 1),
               ListTileChild(
-                label: l10n.categoriesTitle(femenine: true),
+                label: l10n.categoriesTitle(isPlural: 1),
                 subtitle: categoriesAsync.when(
                   data: (categories) =>
                       l10n.countActiveCategories(count: categories.length),
@@ -115,7 +115,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ],
           ),
-          SectionHeader(l10n.budgetTitle),
+          SectionHeader(l10n.budgetsSectionTitle),
           SectionCard(
             children: [
               ListTileChild(

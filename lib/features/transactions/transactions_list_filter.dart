@@ -5,11 +5,13 @@ import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/date_formatter.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/core/models/transaction_type_filter.dart';
 import 'package:kaku/core/receipt_storage.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/transactions/edit_transaction_sheet.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/utils/undo_delete.dart';
@@ -38,6 +40,7 @@ class TransactionsListFilter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final selectedMonth = ref.watch(selectedMonthProvider);
@@ -53,9 +56,9 @@ class TransactionsListFilter extends ConsumerWidget {
     return monthTransactionsAsync.when(
       data: (transactions) {
         if (transactions.isEmpty) {
-          return const ContentWidgetEmpty(
+          return ContentWidgetEmpty(
             title: '🫙',
-            message: 'Sin transacciones',
+            message: l10n.transactionEmpty,
           );
         }
         var transactionsFiltered = transactions.where(
@@ -102,7 +105,7 @@ class TransactionsListFilter extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8, top: 4),
                     child: Text(
-                      DateFormatter.relative(date),
+                      context.dates.relative(date),
                       style: ts.labelMedium?.copyWith(
                         color: cs.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
@@ -134,8 +137,9 @@ class TransactionsListFilter extends ConsumerWidget {
                                 txWithCat.transaction.categoryId;
                             AppBottomSheet.show(
                               context,
-                              title:
-                                  'Editar transacción #${txWithCat.transaction.id}',
+                              title: l10n.transactionEditTitle(
+                                id: txWithCat.transaction.id,
+                              ),
                               isFullScreen: true,
                               useRootNavigator: true,
                               child: EditTransactionSheet(
@@ -150,7 +154,7 @@ class TransactionsListFilter extends ConsumerWidget {
                           color: Theme.of(context).colorScheme.error,
                           onTap: () => showUndoDelete(
                             context: context,
-                            label: 'Transacción eliminandose',
+                            label: l10n.transactionDeletingLabel,
                             onDelete: () => _onDelete(
                               ref,
                               txWithCat.transaction,

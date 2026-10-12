@@ -41,7 +41,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(l10n.categoriesTitle(femenine: true)),
+        title: Text(l10n.categoriesTitle(isPlural: 1)),
         defaultActions: false,
         actions: [
           PremiumGate(
@@ -49,7 +49,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
             showLockBadge: false,
             child: TextButton(
               onPressed: () => _openCreateForm(l10n),
-              child: Text('+ ${l10n.btnNew(femenine: true)}'),
+              child: Text('+ ${l10n.btnNew(femenine: 1)}'),
             ),
           ),
         ],

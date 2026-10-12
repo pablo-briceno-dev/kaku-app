@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
+import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/features/transactions/selected_account.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
@@ -27,6 +29,7 @@ class _AddTransactionTransferFormState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final currency = ref.watch(currencyProvider);
@@ -44,8 +47,7 @@ class _AddTransactionTransferFormState
             child: Center(
               child: ContentWidgetEmpty(
                 title: '🏧​',
-                message:
-                    'Registra al menos dos cuentas para poder crear transferencias',
+                message: l10n.transferMessageEmpty,
               ),
             ),
           );
@@ -86,7 +88,9 @@ class _AddTransactionTransferFormState
                           CurrencyFormatter.inputFormatter(currency),
                         ],
                         decoration: InputDecoration(
-                          labelText: 'MONTO · ${currency.label}',
+                          labelText: l10n.transferAmountLabel(
+                            currency: currency.label,
+                          ),
                           hintText: r'$0',
                           labelStyle: ts.titleLarge?.copyWith(
                             color: cs.onSurfaceVariant,
@@ -94,14 +98,14 @@ class _AddTransactionTransferFormState
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Campo requerido';
+                            return l10n.formRequired;
                           }
                           if (CurrencyFormatter.parse(value, currency) <= 0) {
-                            return 'Debe ser mayor a 0';
+                            return l10n.formAmountMajor;
                           }
                           if (CurrencyFormatter.parse(value, currency) >
                               (sourceAccount?.balance ?? 0.0)) {
-                            return 'Saldo insuficiente';
+                            return l10n.formAccountNoBalance;
                           }
                           return null;
                         },
@@ -119,7 +123,8 @@ class _AddTransactionTransferFormState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'CUENTA DESTINO',
+                              l10n.transferAccountDestinationLabel
+                                  .toUpperCase(),
                               style: ts.titleMedium?.copyWith(
                                 color: cs.onSurfaceVariant,
                               ),
@@ -128,11 +133,11 @@ class _AddTransactionTransferFormState
                             FormField<int>(
                               validator: (_) {
                                 if (_toAccountController.text.isEmpty) {
-                                  return 'Seleccione una cuenta destino';
+                                  return l10n.transferAccountDestEmpty;
                                 }
                                 if (int.tryParse(_toAccountController.text) ==
                                     fromAccount) {
-                                  return 'La cuenta destino no debe ser igual a la cuenta origen';
+                                  return l10n.transferAccountDestEqualOrigin;
                                 }
                                 return null;
                               },
@@ -174,7 +179,7 @@ class _AddTransactionTransferFormState
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'CUENTA ORIGEN',
+                              l10n.transferAccountOriginLabel.toUpperCase(),
                               style: ts.titleMedium?.copyWith(
                                 color: cs.onSurfaceVariant,
                               ),
@@ -183,11 +188,11 @@ class _AddTransactionTransferFormState
                             FormField<int>(
                               validator: (_) {
                                 if (_toAccountController.text.isEmpty) {
-                                  return 'Seleccione una cuenta origen';
+                                  return l10n.transferAccountOriginEmpty;
                                 }
                                 if (int.tryParse(_toAccountController.text) ==
                                     fromAccount) {
-                                  return 'La cuenta origen no debe ser igual a la cuenta destino';
+                                  return l10n.transferAccountOriginEqualDest;
                                 }
                                 return null;
                               },
@@ -237,8 +242,9 @@ class _AddTransactionTransferFormState
                         maxLength: 100,
                         keyboardType: TextInputType.text,
                         maxLines: 3,
-                        decoration: const InputDecoration(
-                          labelText: 'DESCRIPCIÓN',
+                        decoration: InputDecoration(
+                          labelText: l10n.transactionDescriptionLabel
+                              .toUpperCase(),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -286,12 +292,12 @@ class _AddTransactionTransferFormState
                             if (context.mounted) {
                               AppSnackbar.success(
                                 context,
-                                '${selectedType.label} guardado',
+                                l10n.transactionTransferSaved,
                               );
                               Navigator.pop(context);
                             }
                           },
-                          child: Text('Guardar ${selectedType.label}'),
+                          child: Text(l10n.transactionTransferBtnSaved),
                         ),
                       ),
                       const SizedBox(height: 20),

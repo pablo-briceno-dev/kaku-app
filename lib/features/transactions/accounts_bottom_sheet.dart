@@ -5,6 +5,7 @@ import 'package:kaku/core/colors_plates.dart';
 import 'package:kaku/core/models/account_type.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/features/accounts/widgets/account_skeleton.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/card_account_item.dart';
@@ -17,6 +18,7 @@ class AccountsBottomSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final activeAccountsAsync = ref.watch(activeAccountsProvider);
     final selectedAccount = ref.watch(selectedAccountProvider);
@@ -37,16 +39,16 @@ class AccountsBottomSheet extends ConsumerWidget {
         height: 120,
         child: Center(
           child: Text(
-            'Error al cargar las cuentas',
+            l10n.accountsErrorLoading,
             style: TextStyle(fontSize: 12, color: cs.error),
           ),
         ),
       ),
       data: (accounts) {
         if (accounts.isEmpty) {
-          return const ContentWidgetEmpty(
+          return ContentWidgetEmpty(
             title: '💸​',
-            message: 'Sin cuentas creadas',
+            message: l10n.accountsNotCreated,
           );
         }
 

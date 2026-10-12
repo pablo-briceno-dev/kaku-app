@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
 import 'package:kaku/core/models/transaction_type_filter.dart';
 import 'package:kaku/features/transactions/categories_chips_bottom_sheet.dart';
 import 'package:kaku/features/transactions/widgets/chip_horizontal_item.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
@@ -13,6 +15,7 @@ class HorizontalTransactionTypeFilter extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final selectedFilter = ref.watch(transactionTypeFilterProvider);
     final categories = ref.watch(expenseCategoriesProvider).value;
     final categorySelected = ref.watch(selectedCategoryProvider);
@@ -31,8 +34,8 @@ class HorizontalTransactionTypeFilter extends ConsumerWidget {
           final chipLabel =
               selectedFilter == TransactionTypeFilter.byCategory &&
                   transactionFilter == TransactionTypeFilter.byCategory
-              ? '${category?.emoji ?? '💸'} ${category?.name ?? transactionFilter.label}'
-              : '${transactionFilter == TransactionTypeFilter.byCategory ? '💸 ' : ''} ${transactionFilter.label}';
+              ? '${category?.emoji ?? '💸'} ${category?.displayName(context) ?? transactionFilter.label(l10n)}'
+              : '${transactionFilter == TransactionTypeFilter.byCategory ? '💸 ' : ''} ${transactionFilter.label(l10n)}';
 
           return Padding(
                 padding: const EdgeInsets.only(right: 12),
@@ -43,7 +46,7 @@ class HorizontalTransactionTypeFilter extends ConsumerWidget {
                     if (transactionFilter == TransactionTypeFilter.byCategory) {
                       AppBottomSheet.show(
                         context,
-                        title: 'Categorías',
+                        title: l10n.categoriesTitle(isPlural: 1),
                         // isFullScreen: true,
                         child: CategoriesChipsBottomSheet(),
                       );

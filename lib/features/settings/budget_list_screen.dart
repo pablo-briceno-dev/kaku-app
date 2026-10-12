@@ -31,7 +31,7 @@ class BudgetListScreen extends ConsumerWidget {
     final allCatsAsync = ref.watch(expenseCategoriesProvider);
 
     return Scaffold(
-      appBar: CustomAppBar(title: Text(l10n.budgetTitle(plural: true))),
+      appBar: CustomAppBar(title: Text(l10n.budgetTitle(plural: 1))),
       body: budgetsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
@@ -55,7 +55,7 @@ class BudgetListScreen extends ConsumerWidget {
                 const SizedBox(height: 20),
 
                 Text(
-                  l10n.categoryTitle(plural: true).toUpperCase(),
+                  l10n.categoryTitle(isPlural: 1).toUpperCase(),
                   style: TextStyle(
                     fontSize: 10,
                     letterSpacing: 0.12,
@@ -329,7 +329,7 @@ class _CategoryBudgetTile extends ConsumerWidget {
                     ),
                     Text(
                       l10n.budgetRemainingOrExceeded(
-                        remaining: budgetProgress!.remaining >= 0,
+                        remaining: budgetProgress!.remaining >= 0 ? 1 : 0,
                         amount: budgetProgress!.remaining >= 0
                             ? CurrencyFormatter.compact(
                                 budgetProgress!.remaining,

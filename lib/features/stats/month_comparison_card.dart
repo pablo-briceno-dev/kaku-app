@@ -88,7 +88,7 @@ class MonthComparisonCard extends StatelessWidget {
                 ),
               ),
               Text(
-                '$arrow ${l10n.statsMonthComparationLegend(percent: variation.abs().toStringAsFixed(1), improved: isImproved)}',
+                '$arrow ${l10n.statsMonthComparationLegend(percent: variation.abs().toStringAsFixed(1), improved: isImproved ? 1 : 0)}',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,

@@ -26,7 +26,7 @@ class AccountsScreen extends StatelessWidget {
               child: AccountFormSheet(),
             ),
             icon: Icon(Icons.add),
-            label: Text(l10n.btnNew(femenine: true)),
+            label: Text(l10n.btnNew(femenine: 1)),
           ),
         ],
       ),

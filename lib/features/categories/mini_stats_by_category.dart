@@ -63,7 +63,7 @@ class MiniStatsByCategory extends ConsumerWidget {
           child: Column(
             children: [
               Text(
-                l10n.transactionTitle(plural: true).toUpperCase(),
+                l10n.transactionTitle(plural: 1).toUpperCase(),
                 style: ts.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: cs.onSurfaceVariant,

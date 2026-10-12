@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/features/transactions/widgets/chip_horizontal_item.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
@@ -46,7 +47,7 @@ class HorizontalChipsCategories extends ConsumerWidget {
         for (final category in categories) {
           chipsList.add(
             OptionsExtraConfig(
-              label: '${category.emoji} ${category.name}',
+              label: '${category.emoji} ${category.displayName(context)}',
               id: category.id,
               isSelected: category.id == selectedCategory,
             ),

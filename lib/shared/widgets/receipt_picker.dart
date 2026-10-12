@@ -62,8 +62,8 @@ class _ReceiptPickerState extends State<ReceiptPicker>
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(l10n.permissionTitle(source: resource)),
-        content: Text(l10n.permissionDesc(source: resource)),
+        title: Text(l10n.permissionTitle(source: resource.toLowerCase())),
+        content: Text(l10n.permissionDesc(source: resource.toLowerCase())),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

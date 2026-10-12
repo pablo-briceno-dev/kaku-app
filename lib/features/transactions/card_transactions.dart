@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 
 class CardTransactions extends StatelessWidget {
   final String expenses;
@@ -15,6 +16,7 @@ class CardTransactions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
 
@@ -37,7 +39,7 @@ class CardTransactions extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                TransactionType.expense.labelPlural.toUpperCase(),
+                TransactionType.expense.label(l10n, 2).toUpperCase(),
                 style: ts.bodyLarge?.copyWith(color: cs.onSurfaceVariant),
               ),
               const SizedBox(height: 4),
@@ -57,7 +59,7 @@ class CardTransactions extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                TransactionType.income.labelPlural.toUpperCase(),
+                TransactionType.income.label(l10n, 2).toUpperCase(),
                 style: ts.bodyLarge?.copyWith(color: cs.onSurfaceVariant),
               ),
               const SizedBox(height: 4),
@@ -77,12 +79,12 @@ class CardTransactions extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'total'.toUpperCase(),
+                l10n.totalTransactionsLabel.toUpperCase(),
                 style: ts.bodyLarge?.copyWith(color: cs.onSurfaceVariant),
               ),
               const SizedBox(height: 4),
               Text(
-                '$total txs',
+                '$total txns',
                 style: ts.titleLarge?.copyWith(
                   color: cs.onSurface,
                   fontWeight: FontWeight.w800,

@@ -51,7 +51,7 @@ class SelectedAccountGoal extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              account?.name ?? l10n.accountsTitle(plural: false),
+              account?.name ?? l10n.accountsTitle(isPlural: 0),
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,

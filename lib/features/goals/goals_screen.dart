@@ -95,7 +95,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
               }
             },
             icon: Icon(Icons.add),
-            label: Text(l10n.btnNew(femenine: true)),
+            label: Text(l10n.btnNew(femenine: 1)),
           ),
         ],
       ),

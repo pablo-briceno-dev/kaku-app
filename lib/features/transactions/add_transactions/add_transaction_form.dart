@@ -5,9 +5,11 @@ import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
+import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/features/transactions/horizontal_chips_categories.dart';
 import 'package:kaku/features/transactions/selected_account.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
@@ -64,6 +66,7 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final currency = ref.watch(currencyProvider);
@@ -82,8 +85,7 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
             child: Center(
               child: ContentWidgetEmpty(
                 title: '🏧​',
-                message:
-                    'Registra al menos una cuenta para poder crear transacciones',
+                message: l10n.messageTransactionAccountEmpty,
               ),
             ),
           );
@@ -116,8 +118,9 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                           CurrencyFormatter.inputFormatter(currency),
                         ],
                         decoration: InputDecoration(
-                          labelText:
-                              'MONTO O VALOR UNITARIO · ${currency.label}',
+                          labelText: l10n.amountOrValueUnit(
+                            currency: currency.label,
+                          ),
                           hintText: r'$0',
                           labelStyle: ts.titleLarge?.copyWith(
                             color: cs.onSurfaceVariant,
@@ -125,15 +128,15 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Campo requerido';
+                            return l10n.formRequired;
                           }
                           if (CurrencyFormatter.parse(value, currency) <= 0) {
-                            return 'Debe ser mayor a 0';
+                            return l10n.formAmountMajor;
                           }
                           if (selectedType == TransactionType.expense &&
                               CurrencyFormatter.parse(value, currency) >
                                   (account?.balance ?? 0.0)) {
-                            return 'Saldo insuficiente';
+                            return l10n.formAccountNoBalance;
                           }
                           return null;
                         },
@@ -155,7 +158,7 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                                 // CurrencyFormatter.inputFormatter(currency),
                               ],
                               decoration: InputDecoration(
-                                labelText: 'CANTIDAD',
+                                labelText: l10n.amountLabel.toUpperCase(),
                                 hintText: r'1',
                                 labelStyle: ts.titleLarge?.copyWith(
                                   color: cs.onSurfaceVariant,
@@ -163,10 +166,10 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Campo requerido';
+                                  return l10n.formRequired;
                                 }
                                 if (int.parse(value) <= 0) {
-                                  return 'Debe ser mayor o igual a 1';
+                                  return l10n.formMajorOrEqual(value: 1);
                                 }
                                 return null;
                               },
@@ -188,7 +191,11 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                                 CurrencyFormatter.inputFormatter(currency),
                               ],
                               decoration: InputDecoration(
-                                labelText: 'TOTAL · ${currency.label}',
+                                labelText: l10n
+                                    .transactionTotalLabel(
+                                      currency: currency.label,
+                                    )
+                                    .toUpperCase(),
                                 hintText: r'$0',
                                 labelStyle: ts.titleLarge?.copyWith(
                                   color: cs.onSurfaceVariant,
@@ -196,16 +203,16 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Campo requerido';
+                                  return l10n.formRequired;
                                 }
                                 if (CurrencyFormatter.parse(value, currency) <=
                                     0) {
-                                  return 'Debe ser mayor a 0';
+                                  return l10n.formAmountMajor;
                                 }
                                 if (selectedType == TransactionType.expense &&
                                     CurrencyFormatter.parse(value, currency) >
                                         (account?.balance ?? 0.0)) {
-                                  return 'Saldo insuficiente';
+                                  return l10n.formAccountNoBalance;
                                 }
                                 return null;
                               },
@@ -226,7 +233,9 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'CATEGORÍA',
+                              l10n
+                                  .categoriesTitle(isPlural: 0)
+                                  .toUpperCase(),
                               style: ts.titleMedium?.copyWith(
                                 color: cs.onSurfaceVariant,
                               ),
@@ -243,8 +252,8 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                         maxLength: 100,
                         keyboardType: TextInputType.text,
                         maxLines: 3,
-                        decoration: const InputDecoration(
-                          labelText: 'DESCRIPCIÓN',
+                        decoration: InputDecoration(
+                          labelText: l10n.transactionDescriptionLabel,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -337,12 +346,20 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                             if (context.mounted) {
                               AppSnackbar.success(
                                 context,
-                                '${selectedType.label} guardado',
+                                selectedType == TransactionType.expense
+                                    ? l10n.transactionExpenseSaved
+                                    : selectedType == TransactionType.income
+                                        ? l10n.transactionIncomeSaved
+                                        : l10n.transactionSavedGeneric,
                               );
                               Navigator.pop(context);
                             }
                           },
-                          child: Text('Guardar ${selectedType.label}'),
+                          child: Text(selectedType == TransactionType.expense
+                              ? l10n.transactionExpenseBtnSaved
+                              : selectedType == TransactionType.income
+                                  ? l10n.transactionIncomeBtnSaved
+                                  : l10n.transactionBtnSavedGeneric),
                         ),
                       ),
                       const SizedBox(height: 20),

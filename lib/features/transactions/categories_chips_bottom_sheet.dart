@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
 import 'package:kaku/features/transactions/widgets/chip_horizontal_item.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
@@ -35,7 +36,7 @@ class CategoriesChipsBottomSheet extends ConsumerWidget {
                       bottom: index == categories.length - 1 ? 20 : 12,
                     ),
                     child: ChipHorizontalItem(
-                      label: '${category.emoji} ${category.name}',
+                      label: '${category.emoji} ${category.displayName(context)}',
                       isSelected: category.id == categorySelected,
                       onTap: category.id == categorySelected
                           ? null

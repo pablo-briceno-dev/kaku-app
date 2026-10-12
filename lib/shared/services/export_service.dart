@@ -84,7 +84,7 @@ class ExportService {
       l10n.exportCategory,
       l10n.exportType,
       l10n.exportAmount,
-      l10n.exportUnitAmount,
+      l10n.exportUnitPrice,
       l10n.exportTotal,
     ];
     final doc = pw.Document();

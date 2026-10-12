@@ -5,11 +5,14 @@ import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
+import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/core/receipt_storage.dart';
 import 'package:kaku/features/transactions/edit_transaction_sheet.dart';
 import 'package:kaku/features/transactions/widgets/transaction_detail_list.dart';
 import 'package:kaku/features/transactions/widgets/transaction_detail_skeleton.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
@@ -27,19 +30,20 @@ class TransactionDetailScreen extends ConsumerWidget {
     Transaction transaction,
     double balanced,
   ) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Eliminar transacción'),
-        content: const Text('Esta acción no se puede deshacer. ¿Eliminar?'),
+        title: Text(l10n.deleteTransactionConfirm),
+        content: Text(l10n.deleteTransactionDesc),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text(l10n.btnCancel),
+            child: Text(l10n.btnCancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text(l10n.btnDelete),
+            child: Text(l10n.btnDelete),
           ),
         ],
       ),
@@ -60,7 +64,7 @@ class TransactionDetailScreen extends ConsumerWidget {
           );
 
       if (context.mounted) {
-        AppSnackbar.success(context, 'Transacción eliminada');
+        AppSnackbar.success(context, l10n.deleteTransactionSuccess);
         Navigator.pop(context);
       }
     }
@@ -68,6 +72,7 @@ class TransactionDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final currencyPro = ref.watch(currencyProvider);
     final transactionAsync = ref.watch(transactionByIdProvider(id));
@@ -76,11 +81,13 @@ class TransactionDetailScreen extends ConsumerWidget {
       data: (transaction) {
         if (transaction == null) {
           return Scaffold(
-            appBar: CustomAppBar(title: Text('Transacción')),
+            appBar: CustomAppBar(
+              title: Text(l10n.transactionTitle(plural: 0)),
+            ),
             body: Center(
               child: ContentWidgetEmpty(
                 title: '💱​',
-                message: 'La transacción no es correcta',
+                message: l10n.transactionNotFound,
               ),
             ),
           );
@@ -97,7 +104,9 @@ class TransactionDetailScreen extends ConsumerWidget {
             .value;
 
         return Scaffold(
-          appBar: CustomAppBar(title: Text('Transacción')),
+          appBar: CustomAppBar(
+            title: Text(l10n.transactionTitle(plural: 0)),
+          ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -148,7 +157,7 @@ class TransactionDetailScreen extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      '${category != null ? '${category.name} · ' : ''} ${DateFormatter.fullDateTime(transaction.date)}',
+                      '${category != null ? '${category.displayName(context)} · ' : ''} ${DateFormatter.fullDateTime(transaction.date)}',
                       style: TextStyle(
                         fontSize: 15,
                         color: cs.onSurface.withValues(alpha: 0.76),
@@ -179,7 +188,7 @@ class TransactionDetailScreen extends ConsumerWidget {
                         ),
                       ),
                       child: Text(
-                        transactionType.label,
+                        transactionType.label(l10n, 1),
                         style: TextStyle(
                           fontSize: 15,
                           color:
@@ -209,34 +218,40 @@ class TransactionDetailScreen extends ConsumerWidget {
                       TransactionDetailList(
                         list: [
                           TransactionDetailListConfig(
-                            title: 'Descripción',
+                            title: l10n.transactionDescriptionLabel,
                             subtitle:
                                 transaction.description ??
                                 category?.name ??
                                 ' - ',
                           ),
                           TransactionDetailListConfig(
-                            title: 'Categoría',
+                            title: l10n.categoryTitle(isPlural: 0),
                             subtitle:
-                                '${category?.emoji ?? ''} ${category?.name ?? ' - '}',
+                                '${category?.emoji ?? ''} ${category?.displayName(context) ?? ' - '}',
                           ),
                           TransactionDetailListConfig(
-                            title: l10n.accountsTitle(plural: false),
+                            title: l10n.accountsTitle(isPlural: 0),
                             subtitle:
                                 '${account?.icon ?? ''} ${account?.name ?? ' - '}',
                           ),
                           TransactionDetailListConfig(
-                            title: 'Fecha y hora',
-                            subtitle: DateFormatter.fullDateTime(
+                            title: l10n.transactionDateCompleteLabel,
+                            subtitle: context.dates.fullDateTime(
                               transaction.date,
                             ),
                           ),
                           TransactionDetailListConfig(
-                            title: 'Recurrente',
-                            subtitle: transaction.isRecurring ? 'Si' : 'No',
+                            title: l10n.transactionRecurrentLabel,
+                            subtitle: transaction.isRecurring
+                                ? l10n.transactionIsRecurringLabel(
+                                    recurring: 1,
+                                  )
+                                : l10n.transactionIsRecurringLabel(
+                                    recurring: 0,
+                                  ),
                           ),
                           TransactionDetailListConfig(
-                            title: 'Foto de recibo',
+                            title: l10n.transactionReceiptLabel,
                             subtitle: transaction.receiptPath,
                             isImage: true,
                           ),
@@ -251,7 +266,7 @@ class TransactionDetailScreen extends ConsumerWidget {
                             width: 150,
                             child: OutlinedButton.icon(
                               icon: Icon(Icons.edit, color: cs.primary),
-                              label: const Text(l10n.btnEdit),
+                              label: Text(l10n.btnEdit),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: cs.primary.withValues(
                                   alpha: 0.1,
@@ -270,8 +285,9 @@ class TransactionDetailScreen extends ConsumerWidget {
                                     .categoryId;
                                 AppBottomSheet.show(
                                   context,
-                                  title:
-                                      'Editar transacción #${transaction.id}',
+                                  title: l10n.transactionEditTitle(
+                                    id: transaction.id,
+                                  ),
                                   isFullScreen: true,
                                   useRootNavigator: true,
                                   child: EditTransactionSheet(
@@ -286,7 +302,7 @@ class TransactionDetailScreen extends ConsumerWidget {
                             width: 150,
                             child: OutlinedButton.icon(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              label: const Text(l10n.btnDelete),
+                              label: Text(l10n.btnDelete),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: Colors.red.withValues(
                                   alpha: 0.1,
@@ -314,11 +330,11 @@ class TransactionDetailScreen extends ConsumerWidget {
         );
       },
       error: (e, _) => Scaffold(
-        appBar: CustomAppBar(title: Text('Transacción')),
+        appBar: CustomAppBar(title: Text(l10n.transactionTitle(plural: 0))),
         body: TransactionDetailSkeleton(),
       ),
       loading: () => Scaffold(
-        appBar: CustomAppBar(title: Text('Transacción')),
+        appBar: CustomAppBar(title: Text(l10n.transactionTitle(plural: 0))),
         body: TransactionDetailSkeleton(),
       ),
     );

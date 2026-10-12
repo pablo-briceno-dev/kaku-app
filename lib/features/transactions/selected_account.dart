@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/features/transactions/accounts_bottom_sheet.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/widgets/app_bottom_sheet.dart';
 
@@ -12,6 +13,7 @@ class SelectedAccount extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final activeAccounts = ref.watch(activeAccountsProvider).value;
     final account = activeAccounts?.length == 1
@@ -25,7 +27,7 @@ class SelectedAccount extends ConsumerWidget {
           ? null
           : () => AppBottomSheet.show(
               context,
-              title: 'Cuentas',
+              title: l10n.accountsTitle(isPlural: 1),
               isFullScreen: true,
               child: AccountsBottomSheet(onTap: onTap),
             ),
@@ -50,7 +52,7 @@ class SelectedAccount extends ConsumerWidget {
             Expanded(
               flex: 4,
               child: Text(
-                account?.name ?? l10n.accountsTitle(plural: false),
+                account?.name ?? l10n.accountsTitle(isPlural: 0),
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,

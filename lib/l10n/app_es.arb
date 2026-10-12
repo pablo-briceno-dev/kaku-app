@@ -1,5 +1,6 @@
 {
-  // Currency
+  "@@locale": "es",
+
   "currencyCopLabel": "Peso colombiano",
   "currencyUsdLabel": "Dólar estadounidense",
   "currencyEurLabel": "Euro",
@@ -7,7 +8,6 @@
   "currencyMxnLabel": "Peso mexicano",
   "currencySelect": "Moneda",
 
-  // Theme
   "accentAurora": "Aurora",
   "accentDusk": "Atardecer",
   "accentViolet": "Violeta",
@@ -17,16 +17,13 @@
   "themeLight": "Claro",
   "themeSystem": "Sistema",
 
-  // UserProfile
   "userDisplayName": "Usuario",
 
-  // AppShell
   "appSheelTabDashboard": "Inicio",
   "appShellTabStats": "Estadísticas",
   "appShellTabPersonal": "Metas",
   "appShellTabAccounts": "Cuentas",
 
-  // BudgetCalculator
   "budgetCalculatorSavingsRateMenorCero": "Gastaste más de lo que ganaste",
   "budgetCalculatorSavingsRateMenor20": "Puedes mejorar",
   "budgetCalculatorSavingsRateMenor50": "Vas bien 👍",
@@ -51,7 +48,6 @@
   },
   "noEstimate": "Sin estimación",
 
-  // Security
   "securityBiometrics": "Bloqueo de pantalla",
   "securityBiometricsSubtitle": "Elige cómo quieres proteger tu app",
   "securityPin": "PIN",
@@ -78,7 +74,7 @@
       }
     }
   },
-  "biometricAuthFailed": "Autenticación fallida. Intenta de nuevo."
+  "biometricAuthFailed": "Autenticación fallida. Intenta de nuevo.",
   "biometricAuthUnlocking": "Desbloqueando...",
   "createPin": "Crear PIN",
   "createPinSubtitle": "Elige un PIN de 4 dígitos",
@@ -99,18 +95,16 @@
   "pinIncorrectSubtitle": "PIN incorrecto. Intenta de nuevo.",
   "securityTitle": "Seguridad",
 
-  // Sync
   "notSynced": "Sin sincronizar",
   "syncLastBackup": "Última sincronización: {relative}",
   "@syncLastBackup": {
     "placeholders": {
       "relative": {
-        "type": "String",
+        "type": "String"
       }
     }
   },
 
-  // Exports
   "exportCsvHeader": "Fecha,Descripción,Categoría,Tipo,Cantidad,M.Unitario,Total",
   "exportPdfHeader": "Fecha,Descripción,Categoría,Tipo,Cant.,M. Unit.,Total",
   "exportUncategorized": "Sin categoría",
@@ -120,7 +114,7 @@
   "exportCategory": "Categoría",
   "exportType": "Tipo",
   "exportAmount": "Cant.",
-  "exportUnitAmount": "M. Unit.",
+  "exportUnitPrice": "M. Unit.",
   "exportTotal": "Total",
   "exportReportTitle": "Kaku - Reporte {period}",
   "@exportReportTitle": {
@@ -144,7 +138,6 @@
   "thisYearLabel": "Este año",
   "customRangeLabel": "Rango personalizado",
 
-  // Backup
   "backupShareText": "Copia de Seguridad de Kaku — {date}",
   "@backupShareText": {
     "placeholders": { "date": { "type": "String" } }
@@ -179,7 +172,6 @@
   "backupRestoreFromDrive": "Restaurar desde Drive",
   "passwordNotEmpty": "La contraseña no puede estar vacía",
   "backupGenerateSuccess": "✅ Copia de seguridad generada correctamente",
-  "backupDbNotFound": "No se encontró la base de datos",
   "backupPermissionDenied": "Sin permiso para acceder al almacenamiento",
   "selectedFileBackup": "Selecciona el archivo de la copia de seguridad de Kaku",
   "backupFileNotFound": "No se encontró el archivo de copia de seguridad",
@@ -190,7 +182,6 @@
   "backupBtnRestore": "Restaurar desde archivo .zip",
   "backupBtnRestoring": "Restaurando...",
 
-  // Notifications
   "notifBudgetExceededTitle": "{emoji} Presupuesto excedido",
   "@notifBudgetExceededTitle": {
     "placeholders": {
@@ -219,14 +210,13 @@
       "limit": { "type": "String" },
       "category": { "type": "String" }
     }
-  }
+  },
   "notifTitle": "Notificaciones",
   "notifActivatingBudget": "Activo · Alertas de presupuesto",
   "notifDeactivatingBudget": "Inactivo",
   "notifPermissionTitle": "Permiso de notificaciones",
-  "notifPermissionSubtitle": "Kaku necesita permiso para enviarte alertas cuando te acercas al límite de un presupuesto.\n\nHailítalo en los Ajustes del dispositivo.",
+  "notifPermissionSubtitle": "Kaku necesita permiso para enviarte alertas cuando te acercas al límite de un presupuesto.\n\nHabilítalo en los Ajustes del dispositivo.",
 
-  // Premium features
   "premiumBlockedBackupDrive": "El backup a Google Drive es una función premium.\nCon el plan free puedes hacer backup local.",
   "premiumBlockedExportPdfWithReceipts": "El PDF con imágenes de recibos es una función premium.\nCon el plan free puedes exportar CSV o PDF básico.",
   "premiumBlockedExportCustomRange": "El rango personalizado de fechas es premium.\nCon el plan free puedes exportar el mes actual.",
@@ -236,7 +226,6 @@
   "premiumBlockedUnlimitedBudgets": "Has alcanzado el límite de {max} presupuestos del plan free.",
   "premiumBlockedUnlimitedCategories": "Has alcanzado el límite de {max} categorías personalizadas del plan free.",
 
-  // Receipt Picker
   "permissionTitle": "Permiso de {source}",
   "@permissionTitle": {
     "placeholders": {
@@ -266,7 +255,6 @@
   },
   "attachedReceipt": "Recibo adjunto",
 
-  // Receipt Viewer
   "receiptName": "Recibo · {name}",
   "@receiptName": {
     "placeholders": {
@@ -279,7 +267,6 @@
   "toPinchToZoom": "Pellizca para hacer zoom",
   "receiptNotFound": "No se pudo cargar el recibo",
 
-  // Form
   "formRequired": "Campo requerido",
   "formName": "Nombre",
   "formBalanceInitial": "Saldo inicial",
@@ -289,15 +276,23 @@
   "formContributeMajorTotal": "No puedes aportar más que el total",
   "formAccountNoBalance": "Cuenta sin saldo suficiente",
   "formLimitMajor": "Ingresa un límite mayor a 0",
+  "formMajorOrEqual": "Debe ser mayor o igual a {value}",
+  "@formMajorOrEqual": {
+    "placeholders": {
+      "value": {
+        "type": "int",
+        "example": "0"
+      }
+    }
+  },
   "formPassword": "Contraseña",
 
-  // Accounts
-  "accountsTitle": "{plural, select, true {Cuentas} false {Cuenta}}",
+  "accountsTitle": "{isPlural, plural, =1 {Cuentas} other {Cuenta}}",
   "@accountsTitle": {
     "placeholders": {
-      "plural": {
-        "type": "bool",
-        "example": "true"
+      "isPlural": {
+        "type": "int",
+        "example": "1"
       }
     }
   },
@@ -318,8 +313,8 @@
   "myAccounts": "Mis cuentas",
   "accountNew": "Nueva cuenta",
   "currentBalance": "Saldo actual",
-  "accountEntry": "Entrada",
-  "accountExit": "Salida",
+  "accountInflow": "Entrada",
+  "accountOutflow": "Salida",
   "balanceTotal": "Balance total",
   "accountsActive": "{count, plural, =1 {1 cuenta activa} other {{count} cuentas activas}}",
   "@accountsActive": {
@@ -333,7 +328,15 @@
   "thisMonth": "este mes",
   "savings": "Ahorro",
 
-  // Categories
+  "categoriesTitle": "{isPlural, plural, =1 {Categorías} other {Categoría}}",
+  "@categoriesTitle": {
+    "placeholders": {
+      "isPlural": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "categoryFood": "Comida",
   "categoryTransport": "Transporte",
   "categoryHome": "Casa",
@@ -341,7 +344,7 @@
   "categoryLeisure": "Ocio",
   "categoryEducation": "Educación",
   "categoryShopping": "Compras",
-  "categoryServices": "Servicios",
+  "categoryUtilities": "Servicios",
   "categorySavings": "Ahorro",
   "categorySalary": "Salario",
   "categoryFreelance": "Freelance",
@@ -371,15 +374,6 @@
   },
   "categoryEmptyTitle": "Sin categorías",
   "categoryEmptySubtitle": "Toca '+ Nueva' para crear tu primera categoría",
-  "categoriesTitle": "{femenine, select, true {Categorías} false {Categoría}}",
-  "@categoriesTitle": {
-    "placeholders": {
-      "femenine": {
-        "type": "bool",
-        "example": "true"
-      }
-    }
-  },
   "errorLoadCategories": "Error al cargar las categorías",
   "newCategoryTitle": "Nueva categoría",
   "editCategoryTitle": "Editar categoría",
@@ -421,17 +415,16 @@
       }
     }
   },
-  "categoryTitle": "{plural, select, true {Categorías} false {Categoría}}",
+  "categoryTitle": "{isPlural, plural, =1{Categorías} other {Categoría}}",
   "@categoryTitle": {
     "placeholders": {
-      "plural": {
-        "type": "bool",
-        "example": "true"
+      "isPlural": {
+        "type": "int",
+        "example": "1"
       }
     }
   },
 
-  // Dashboard
   "availableBalance": "Saldo disponible",
   "welcomeToKaku": "Bienvenido a Kaku 👋",
   "welcomeToKakuSubtitle": "Tu bolsillo, bajo control",
@@ -480,7 +473,6 @@
   "bannerConfigWarning": "Revisa tu ritmo de gasto",
   "bannerConfigNearEnd": "Casi al límite del mes",
 
-  // Goals
   "goalsTitle": "Metas",
   "contributeGoal": "Aportar meta",
   "btnContribute": "Aportar",
@@ -531,7 +523,6 @@
   },
   "goalsNoActive": "Sin metas activas",
 
-  // Premium
   "premiumSubtitle": "Lleva tus finanzas\nal siguiente nivel",
   "premiumContent": "Todas las herramientas que necesitas para\ntener control total de tu dinero.",
   "premiumPaymentTitle": "✨ PAGO ÚNICO — SIN SUSCRIPCIÓN",
@@ -570,7 +561,6 @@
   "redeemCode": "Canjear código",
   "redeemCodeSubtitle": "Ingresa tu código de descuento o acceso premium",
 
-  // Settings
   "settingsTitle": "Configuración",
   "appearanceTitle": "Apariencia",
   "themeTitle": "Tema de color",
@@ -579,7 +569,7 @@
   "themeModeSubtitle": "Activa el modo oscuro o desactivalo para usar el tema claro",
   "regionalTitle": "Regional",
   "currencyTitle": "Moneda",
-  "budgetTitle": "Presupuestos",
+  "budgetsSectionTitle": "Presupuestos",
   "budgetByCategoryTitle": "Presupuestos por categorías",
   "budgetByCategorySubtitle": "{monthYear} - {count, plural, =1{1 configurado} other{{count} configurados}}",
   "dataTitle": "Datos",
@@ -629,13 +619,12 @@
   "periodTitle": "Periodo",
   "rangeTitle": "Rango de fechas",
 
-  // Budgets
-  "budgetTitle": "{plural, select, true {Presupuestos} false {Presupuesto}}",
+  "budgetTitle": "{plural, plural, =1 {Presupuestos} other {Presupuesto}}",
   "@budgetTitle": {
     "placeholders": {
       "plural": {
-        "type": "bool",
-        "example": "true"
+        "type": "int",
+        "example": "1"
       }
     }
   },
@@ -651,7 +640,7 @@
   "acumulateSurplus": "Acumular sobrante",
   "acumulateSurplusSubtitle": "Si gastas menos de lo planeado, el sobrante se suma al próximo mes.",
   "acumulateBudget": "Acumular presupuesto",
-  "createBudget": "Crear presupuesto",
+  "btnCreateBudget": "Crear presupuesto",
   "budgetTotal": "Presupuesto total",
   "budgetWornOut": "Gastado",
   "budgetAvailable": "Disponible",
@@ -662,10 +651,10 @@
       "spent": { "type": "String" }
     }
   },
-  "budgetRemainingOrExceeded": "{remaining, select, true {Quedan} false {Excedido}} {amount}",
+  "budgetRemainingOrExceeded": "{remaining, plural, =1 {Quedan} other {Excedido}} {amount}",
   "@budgetRemainingOrExceeded": {
     "placeholders": {
-      "remaining": { "type": "bool" },
+      "remaining": { "type": "int" },
       "amount": { "type": "String" }
     }
   },
@@ -673,13 +662,11 @@
   "createBudget": "Nuevo presupuesto",
   "budgetSaved": "Presupuesto guardado",
 
-  // Profile
   "profileEdit": "Editar perfil",
   "profileNameLabel": "Nombre",
   "profileEmailLabel": "Email (Solo Lectura)",
   "changesSaved": "Cambios guardados",
 
-  // Storage
   "storageClearReceipts": "Limpiar recibos",
   "storageReceiptsCleared": "Se eliminarán {count} fotos de recibos ({size}) del dispositivo.\n\nLas transacciones se conservan pero ya no tendrán foto adjunta.",
   "@storageReceiptsCleared": {
@@ -706,7 +693,6 @@
     }
   },
 
-  // Stats
   "statsTitle": "Estadísticas",
   "statsEmptyThisMonth": "No hay estadísticas para este mes o periodo",
   "statsTotalLabel": "Total",
@@ -752,20 +738,19 @@
   "@statsDailyBarChartTooltip": {
     "placeholders": {
       "day": { "type": "int" },
-      "money": { "type": "string" }
+      "money": { "type": "String" }
     }
   },
   "statsDailyBarChartAverage": "Promedio",
   "statsMonthComparationExpense": "Gastaste",
-  "statsMonthComparationLegend": "{percent}% {improved, select, true {menos} false {más}}",
+  "statsMonthComparationLegend": "{percent}% {improved, plural, =1 {menos} other {más}}",
   "@statsMonthComparationLegend": {
     "placeholders": {
       "percent": { "type": "String" },
-      "improved": { "type": "bool" }
+      "improved": { "type": "int" }
     }
   },
   
-  // Transactions
   "transactionTypeFilterAll": "Todos",
   "transactionTypeFilterByCategory": "Por categoría",
   "transactionTypeExpense": "{count, plural, =1{Gasto} other{Gastos}}",
@@ -796,12 +781,12 @@
     }
   },
   "transactionsHistoryEmpty": "Historial de transacciones vacío",
-  "transactionTitle": "{plural, select, true {Transacciones} false {Transacción}}",
+  "transactionTitle": "{plural, plural, =1 {Transacciones} other {Transacción}}",
   "@transactionTitle": {
     "placeholders": {
       "plural": {
-        "type": "bool",
-        "example": "true"
+        "type": "int",
+        "example": "1"
       }
     }
   },
@@ -815,7 +800,83 @@
     }
   },
   "transactionEmpty": "Sin transacciones",
-
+  "transactionTotalLabel": "Total · {currency}",
+  "@transactionTotalLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String",
+        "example": "USD"
+      }
+    }
+  },
+  "transactionDescriptionLabel": "Descripción",
+  "transactionExpenseSaved": "Gasto guardado",
+  "transactionIncomeSaved": "Ingreso guardado",
+  "transactionTransferSaved": "Transferencia guardada",
+  "transactionSavedGeneric": "Transacción guardada",
+  "transactionExpenseBtnSaved": "Guardar gasto",
+  "transactionIncomeBtnSaved": "Guardar ingreso",
+  "transactionTransferBtnSaved": "Guardar transferencia",
+  "transactionBtnSavedGeneric": "Guardar transacción",
+  "addTransactionTitle": "Nueva transacción",
+  "transferMessageEmpty": "Registra al menos dos cuentas para poder crear transferencias",
+  "transferAmountLabel": "Cantidad o Monto · {currency}",
+  "@transferAmountLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String",
+        "example": "USD"
+      }
+    }
+  },
+  "transferAccountDestinationLabel": "Cuenta destino",
+  "transferAccountOriginLabel": "Cuenta origen",
+  "transferAccountDestEmpty": "Seleccione una cuenta de destino",
+  "transferAccountOriginEmpty": "Seleccione una cuenta de origen",
+  "transferAccountDestEqualOrigin": "La cuenta destino no debe ser igual a la cuenta origen",
+  "transferAccountOriginEqualDest": "La cuenta origen no debe ser igual a la cuenta destino",
+  "deleteTransactionConfirm": "Eliminar transacción",
+  "deleteTransactionDesc": "Esta acción no se puede deshacer. ¿Eliminar?",
+  "deleteTransactionSuccess": "Transacción eliminada",
+  "transactionNotFound": "Transacción no encontrada",
+  "messageTransactionAccountEmpty": "Registra al menos una cuenta para poder crear transacciones",
+  "amountOrValueUnit": "Monto o valor unitario · {currency}",
+  "@amountOrValueUnit": {
+    "placeholders": {
+      "currency": {
+        "type": "String",
+        "example": "USD"
+      }
+    }
+  },
+  "amountLabel": "Cantidad",
+  "valueUnitLabel": "Valor Unitario",
+  "viewReceipt": "Ver recibo",
+  "receiptEmpty": "Sin recibo",
+  "totalTransactionsLabel": "Total",
+  "transactionDateCompleteLabel": "Fecha y hora",
+  "transactionRecurrentLabel": "Recurrente",
+  "transactionIsRecurringLabel": "{recurring, plural, =1 {Sí} other {No}}",
+  "@transactionIsRecurringLabel": {
+    "placeholders": {
+      "recurring": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "transactionReceiptLabel": "Foto de recibo",
+  "transactionEditTitle": "Editar transacción #{id}",
+  "@transactionEditTitle": {
+    "placeholders": {
+      "id": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "transactionDeletingLabel": "Transacción eliminandose",
+  
   "balance": "Balance",
   "errorInsufficientFunds": "Fondos insuficientes para esta transacción",
   "errorAccountNotFound": "Cuenta no encontrada",
@@ -824,8 +885,6 @@
   "today": "Hoy",
   "yesterday": "Ayer",
 
-  // ===== General =====
-  // Buttons/Actions
   "undo": "Deshacer",
   "btnClose": "Cerrar",
   "archived": "Archivada",
@@ -840,12 +899,12 @@
   "btnCreate": "Crear",
   "btnArchive": "Archivar o Inactivar",
   "btnViewDetail": "Ver detalle",
-  "btnNew": "{femenine, select, true {Nueva} false {Nuevo}}",
+  "btnNew": "{femenine, plural, =1 {Nueva} other {Nuevo}}",
   "@btnNew": {
     "placeholders": {
       "femenine": {
-        "type": "bool",
-        "example": "true"
+        "type": "int",
+        "example": "1"
       }
     }
   },
@@ -857,8 +916,8 @@
   "btnRetry": "Reintentar",
   "btnSave": "Guardar",
   "btnClear": "Limpiar",
+  "btnSaveChanges": "Guardar cambios",
 
-  // Texts
   "emojiLabel": "Emoji",
   "emojiHint": "Elige un emoji",
   "emojiHintSearch": "Buscar emoji...",

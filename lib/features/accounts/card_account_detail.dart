@@ -51,7 +51,7 @@ class CardAccountDetail extends ConsumerWidget {
       subtitle: l10n.currentBalance,
       chipItems: [
         ChipItemConfig(
-          title: l10n.accountEntry,
+          title: l10n.accountInflow,
           description: CurrencyFormatter.withSign(
             income,
             compact: true,
@@ -60,7 +60,7 @@ class CardAccountDetail extends ConsumerWidget {
           colorDescription: Colors.green,
         ),
         ChipItemConfig(
-          title: l10n.accountExit,
+          title: l10n.accountOutflow,
           description: CurrencyFormatter.withSign(
             expense,
             compact: true,

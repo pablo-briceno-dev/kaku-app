@@ -12,7 +12,7 @@ extension DefaultCategoryL10n on DefaultCategory {
     DefaultCategory.leisure => l10n.categoryLeisure,
     DefaultCategory.education => l10n.categoryEducation,
     DefaultCategory.shopping => l10n.categoryShopping,
-    DefaultCategory.services => l10n.categoryServices,
+    DefaultCategory.services => l10n.categoryUtilities,
     DefaultCategory.savings => l10n.categorySavings,
     DefaultCategory.salary => l10n.categorySalary,
     DefaultCategory.freelance => l10n.categoryFreelance,

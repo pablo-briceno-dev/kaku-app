@@ -4,8 +4,10 @@ import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
+import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/features/transactions/horizontal_chips_categories.dart';
 import 'package:kaku/features/transactions/selected_account.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/date_picker_field.dart';
@@ -117,6 +119,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final currency = ref.watch(currencyProvider);
@@ -132,7 +135,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
         if (activeAccounts.isEmpty) {
           return Center(
             child: Text(
-              'No tienes ninguna cuenta activa. Registra al menos una cuenta para poder crear transacciones.',
+              l10n.messageTransactionAccountEmpty,
               style: ts.bodyLarge?.copyWith(fontSize: 20),
               textAlign: TextAlign.center,
             ),
@@ -166,16 +169,18 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Campo requerido';
+                          return l10n.formRequired;
                         }
                         if (CurrencyFormatter.parse(value, currency) >
                             account!.balance) {
-                          return 'No tienes suficiente saldo';
+                          return l10n.formAccountNoBalance;
                         }
                         return null;
                       },
                       decoration: InputDecoration(
-                        labelText: 'MONTO O VALOR UNITARIO · ${currency.label}',
+                        labelText: l10n
+                            .amountOrValueUnit(currency: currency.label)
+                            .toUpperCase(),
                         // hintText: r'$0',
                         labelStyle: ts.titleLarge?.copyWith(
                           color: cs.onSurfaceVariant,
@@ -201,7 +206,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                               // CurrencyFormatter.inputFormatter(currency),
                             ],
                             decoration: InputDecoration(
-                              labelText: 'CANTIDAD',
+                              labelText: l10n.amountLabel.toUpperCase(),
                               hintText: r'1',
                               labelStyle: ts.titleLarge?.copyWith(
                                 color: cs.onSurfaceVariant,
@@ -209,10 +214,10 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Campo requerido';
+                                return l10n.formRequired;
                               }
                               if (int.parse(value) <= 1) {
-                                return 'Debe ser mayor a 1';
+                                return l10n.formMajorOrEqual(value: 1);
                               }
                               return null;
                             },
@@ -233,7 +238,11 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                               CurrencyFormatter.inputFormatter(currency),
                             ],
                             decoration: InputDecoration(
-                              labelText: 'TOTAL · ${currency.label}',
+                              labelText: l10n
+                                  .transactionTotalLabel(
+                                    currency: currency.label,
+                                  )
+                                  .toUpperCase(),
                               hintText: r'$0',
                               labelStyle: ts.titleLarge?.copyWith(
                                 color: cs.onSurfaceVariant,
@@ -241,11 +250,11 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Campo requerido';
+                                return l10n.formRequired;
                               }
                               if (CurrencyFormatter.parse(value, currency) >
                                   account!.balance) {
-                                return 'No tienes suficiente saldo';
+                                return l10n.formAccountNoBalance;
                               }
                               return null;
                             },
@@ -268,7 +277,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'CATEGORÍA',
+                            l10n.categoriesTitle(isPlural: 0).toUpperCase(),
                             style: ts.titleMedium?.copyWith(
                               color: cs.onSurfaceVariant,
                             ),
@@ -285,8 +294,9 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                       maxLength: 100,
                       keyboardType: TextInputType.text,
                       maxLines: 3,
-                      decoration: const InputDecoration(
-                        labelText: 'DESCRIPCIÓN',
+                      decoration: InputDecoration(
+                        labelText: l10n.transactionDescriptionLabel
+                            .toUpperCase(),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -420,12 +430,12 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                                 if (context.mounted) {
                                   AppSnackbar.success(
                                     context,
-                                    'Cambios guardados',
+                                    l10n.changesSaved,
                                   );
                                   Navigator.pop(context);
                                 }
                               },
-                        child: const Text('Guardar cambios'),
+                        child: Text(l10n.btnSaveChanges),
                       ),
                     ),
                     const SizedBox(height: 25),

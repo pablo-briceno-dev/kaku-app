@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/features/transactions/add_transactions/add_transaction_form.dart';
 import 'package:kaku/features/transactions/add_transactions/add_transaction_transfer_form.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
@@ -61,6 +62,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final currentColor = switch (_currentTab) {
       0 => TransactionType.expense.color,
@@ -71,7 +73,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen>
 
     return Scaffold(
       appBar: CustomAppBar(
-        title: const Text('Nueva transacción'),
+        title: Text(l10n.addTransactionTitle),
         defaultActions: false,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(55),
@@ -92,10 +94,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen>
                 dividerColor: Colors.transparent,
                 labelColor: Colors.white,
                 unselectedLabelColor: cs.onSurfaceVariant,
-                tabs: const [
-                  Tab(text: 'Gasto'),
-                  Tab(text: 'Ingreso'),
-                  Tab(text: 'Transferencia'),
+                tabs: [
+                  Tab(text: TransactionType.expense.label(l10n, 1)),
+                  Tab(text: TransactionType.income.label(l10n, 1)),
+                  Tab(text: TransactionType.transfer.label(l10n, 1)),
                 ],
               ),
             ),

@@ -58,7 +58,7 @@ class TransactionListByCategory extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    l10n.transactionTitle(plural: true),
+                    l10n.transactionTitle(plural: 1),
                     style: ts.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),

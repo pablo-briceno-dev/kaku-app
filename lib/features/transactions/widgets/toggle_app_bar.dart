@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 
 class ToggleAppBar extends ConsumerWidget {
@@ -8,6 +9,7 @@ class ToggleAppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final selectedType = ref.watch(addTransactionTypeProvider);
@@ -34,7 +36,7 @@ class ToggleAppBar extends ConsumerWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              'Gasto',
+              TransactionType.expense.label(l10n, 1),
               style: ts.titleMedium?.copyWith(
                 color: selectedType == TransactionType.expense
                     ? selectedType.color
@@ -45,7 +47,7 @@ class ToggleAppBar extends ConsumerWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              'Ingreso',
+              TransactionType.income.label(l10n, 1),
               style: ts.titleMedium?.copyWith(
                 color: selectedType == TransactionType.expense
                     ? cs.onSurfaceVariant

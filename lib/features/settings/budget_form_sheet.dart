@@ -296,7 +296,7 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
                       color: Colors.white,
                     ),
                   )
-                : Text(_isEditing ? l10n.acumulateBudget : l10n.createBudget),
+                : Text(_isEditing ? l10n.acumulateBudget : l10n.btnCreateBudget),
           ),
 
           // ── Botón eliminar (solo al editar) ──

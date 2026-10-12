@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/widgets/receipt_viewer.dart';
 
 class TransactionDetailListConfig {
@@ -20,7 +21,9 @@ class TransactionDetailList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
+
     return Column(
       children: list
           .map(
@@ -67,7 +70,7 @@ class TransactionDetailList extends StatelessWidget {
                             : null,
                         icon: Icon(Icons.image),
                         label: Text(
-                          item.subtitle != null ? 'Ver recibo' : 'Sin recibo',
+                          item.subtitle != null ? l10n.viewReceipt : l10n.receiptEmpty,
                           textAlign: TextAlign.right,
                         ),
                         style: ButtonStyle(alignment: Alignment.centerRight),

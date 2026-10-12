@@ -38,10 +38,10 @@ class CategoryDetailScreen extends ConsumerWidget {
           data: (category) => Text(
             category != null
                 ? '${category.emoji} ${category.displayName(context)}'
-                : '${l10n.categoriesTitle(femenine: false)} $id',
+                : '${l10n.categoriesTitle(isPlural: 0)} $id',
           ),
-          error: (e, _) => Text('${l10n.categoriesTitle(femenine: false)} $id'),
-          loading: () => Text('${l10n.categoriesTitle(femenine: false)}...'),
+          error: (e, _) => Text('${l10n.categoriesTitle(isPlural: 0)} $id'),
+          loading: () => Text('${l10n.categoriesTitle(isPlural: 0)}...'),
         ),
         actions: categoryAsync.when(
           data: (category) {
@@ -69,8 +69,8 @@ class CategoryDetailScreen extends ConsumerWidget {
         error: (e, _) => const SizedBox.shrink(),
         data: (category) {
           if (category == null) {
-            return const ContentWidgetEmpty(
-              title: l10n.categoriesTitle(femenine: false),
+            return ContentWidgetEmpty(
+              title: l10n.categoriesTitle(isPlural: 0),
               message: l10n.categoryNotFound,
             );
           }
