@@ -49,7 +49,7 @@ class TransactionsList extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    l10n.transactionTitle(plural: 1),
+                    l10n.transactionTitle(1),
                     style: ts.titleMedium?.copyWith(
                       fontWeight: FontWeight.w700,
                     ),

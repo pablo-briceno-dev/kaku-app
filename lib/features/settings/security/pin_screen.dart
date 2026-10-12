@@ -29,7 +29,7 @@ class PinScreen extends StatefulWidget {
     final l10n = AppLocalizations.of(context)!;
     final pin = await Navigator.of(context, rootNavigator: true).push<String>(
       MaterialPageRoute(
-        builder: (_) => const PinScreen(
+        builder: (_) => PinScreen(
           mode: PinMode.create,
           title: l10n.createPin,
           subtitle: l10n.createPinSubtitle,
@@ -59,7 +59,7 @@ class PinScreen extends StatefulWidget {
     final l10n = AppLocalizations.of(context)!;
     final result = await Navigator.of(context, rootNavigator: true).push<bool>(
       MaterialPageRoute(
-        builder: (_) => const PinScreen(
+        builder: (_) => PinScreen(
           mode: PinMode.verify,
           title: l10n.pinConfirmTitle,
           canDismiss: false,

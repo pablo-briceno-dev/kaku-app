@@ -27,7 +27,7 @@ class SelectedAccount extends ConsumerWidget {
           ? null
           : () => AppBottomSheet.show(
               context,
-              title: l10n.accountsTitle(isPlural: 1),
+              title: l10n.accountsTitle(1),
               isFullScreen: true,
               child: AccountsBottomSheet(onTap: onTap),
             ),
@@ -52,7 +52,7 @@ class SelectedAccount extends ConsumerWidget {
             Expanded(
               flex: 4,
               child: Text(
-                account?.name ?? l10n.accountsTitle(isPlural: 0),
+                account?.name ?? l10n.accountsTitle(0),
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,

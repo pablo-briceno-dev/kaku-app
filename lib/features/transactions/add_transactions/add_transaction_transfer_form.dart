@@ -33,7 +33,6 @@ class _AddTransactionTransferFormState
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final currency = ref.watch(currencyProvider);
-    final selectedType = ref.watch(addTransactionTypeProvider);
     final fromAccount = ref.watch(selectedAccountProvider);
     final activeAccountsAsync = ref.watch(activeAccountsProvider);
 
@@ -42,7 +41,7 @@ class _AddTransactionTransferFormState
       error: (e, _) => const SizedBox.shrink(),
       data: (activeAccounts) {
         if (activeAccounts.isEmpty || activeAccounts.length < 2) {
-          return const Padding(
+          return Padding(
             padding: EdgeInsets.all(20),
             child: Center(
               child: ContentWidgetEmpty(
@@ -88,9 +87,7 @@ class _AddTransactionTransferFormState
                           CurrencyFormatter.inputFormatter(currency),
                         ],
                         decoration: InputDecoration(
-                          labelText: l10n.transferAmountLabel(
-                            currency: currency.label,
-                          ),
+                          labelText: l10n.transferAmountLabel(currency.label),
                           hintText: r'$0',
                           labelStyle: ts.titleLarge?.copyWith(
                             color: cs.onSurfaceVariant,

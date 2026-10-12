@@ -49,7 +49,7 @@ class CategoryItem extends ConsumerWidget {
                   foregroundColor: cs.primary,
                   borderRadius: BorderRadius.circular(12),
                   padding: EdgeInsets.zero,
-                  child: const Column(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.edit_outlined, size: 20),
@@ -182,9 +182,9 @@ class CategoryItem extends ConsumerWidget {
         title: Text(l10n.categoryDeactivateTitle),
         content: Text(
           l10n.categoryDeactivateSubtitle(
-            emoji: category.emoji,
-            category: category.displayName(context),
-            txCount: txCount,
+            category.emoji,
+            category.displayName(context),
+            txCount,
           ),
         ),
         actions: [
@@ -225,9 +225,9 @@ class CategoryItem extends ConsumerWidget {
           title: Text(l10n.categoryNotDeleted),
           content: Text(
             l10n.categoryNotDeletedSubtitle(
-              emoji: category.emoji,
-              category: category.displayName(context),
-              txCount: txCount,
+              category.emoji,
+              category.displayName(context),
+              txCount,
             ),
           ),
           actions: [
@@ -261,8 +261,8 @@ class CategoryItem extends ConsumerWidget {
         title: Text(l10n.categoryDeleteConfirm),
         content: Text(
           l10n.categoryDeleteConfirmSubtitle(
-            emoji: category.emoji,
-            category: category.displayName(context),
+            category.emoji,
+            category.displayName(context),
           ),
         ),
         actions: [

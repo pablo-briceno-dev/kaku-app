@@ -43,8 +43,8 @@ class _StorageSheetState extends ConsumerState<StorageSheet> {
         title: Text(l10n.storageClearReceipts),
         content: Text(
           l10n.storageReceiptsCleared(
-            count: _info?.count ?? 0,
-            size: _info?.sizeLabel ?? '0 MB',
+            _info?.count ?? 0,
+            _info?.sizeLabel ?? '0 MB',
           ),
         ),
         actions: [
@@ -111,8 +111,8 @@ class _StorageSheetState extends ConsumerState<StorageSheet> {
                         ),
                         Text(
                           l10n.storageReceiptsSummary(
-                            count: _info!.count,
-                            size: _info!.sizeLabel,
+                            _info!.count,
+                            _info!.sizeLabel,
                           ),
                           style: TextStyle(
                             fontSize: 12,
@@ -156,11 +156,7 @@ class _StorageSheetState extends ConsumerState<StorageSheet> {
               label: Text(
                 _clearing
                     ? l10n.storageCleaning
-                    : l10n.storageClearedInfo(
-                        count: _info!.count,
-                        size: _info!.sizeLabel,
-                      ),
-              ),
+                    : l10n.storageClearedInfo(_info!.count, _info!.sizeLabel),
               ),
             ),
           ],

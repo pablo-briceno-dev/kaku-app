@@ -49,7 +49,7 @@ class LocalBackupService {
         // Opción A: Share sheet — el usuario elige dónde guardarlo
         await SharePlus.instance.share(
           ShareParams(
-            text: l10n.backupShareText(date: _dateLabel()),
+            text: l10n.backupShareText(_dateLabel()),
             files: [
               XFile(
                 tempFile.path,

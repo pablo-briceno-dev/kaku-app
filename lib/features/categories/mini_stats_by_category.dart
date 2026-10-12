@@ -63,7 +63,7 @@ class MiniStatsByCategory extends ConsumerWidget {
           child: Column(
             children: [
               Text(
-                l10n.transactionTitle(plural: 1).toUpperCase(),
+                l10n.transactionTitle(1).toUpperCase(),
                 style: ts.bodySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: cs.onSurfaceVariant,
@@ -72,9 +72,7 @@ class MiniStatsByCategory extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(
                 '${transactions?.length ?? 0}',
-                style: ts.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                style: ts.titleSmall?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -100,9 +98,7 @@ class MiniStatsByCategory extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(
                 CurrencyFormatter.compact(average, currency),
-                style: ts.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                style: ts.titleSmall?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -128,9 +124,7 @@ class MiniStatsByCategory extends ConsumerWidget {
               const SizedBox(height: 4),
               Text(
                 CurrencyFormatter.compact(higherSpending, currency),
-                style: ts.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w500,
-                ),
+                style: ts.titleSmall?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),

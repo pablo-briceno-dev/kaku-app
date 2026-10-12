@@ -188,11 +188,11 @@ abstract class AppLocalizations {
   /// **'Usuario'**
   String get userDisplayName;
 
-  /// No description provided for @appSheelTabDashboard.
+  /// No description provided for @appShellTabDashboard.
   ///
   /// In es, this message translates to:
   /// **'Inicio'**
-  String get appSheelTabDashboard;
+  String get appShellTabDashboard;
 
   /// No description provided for @appShellTabStats.
   ///
@@ -1314,13 +1314,13 @@ abstract class AppLocalizations {
   ///
   /// In es, this message translates to:
   /// **'{spent} usado'**
-  String categorySpentUsed(int spent);
+  String categorySpentUsed(String spent);
 
   /// No description provided for @categorySpentLeft.
   ///
   /// In es, this message translates to:
   /// **'Quedan {spent}'**
-  String categorySpentLeft(int spent);
+  String categorySpentLeft(String spent);
 
   /// No description provided for @categoryEmptyTitle.
   ///
@@ -1470,7 +1470,7 @@ abstract class AppLocalizations {
   ///
   /// In es, this message translates to:
   /// **'Quedan {daysLeft} días y ya usaste el {percentage} de tu presupuesto.'**
-  String bannerStateNearEnd(String daysLeft, String percentage);
+  String bannerStateNearEnd(int daysLeft, String percentage);
 
   /// No description provided for @bannerConfigExceeded.
   ///

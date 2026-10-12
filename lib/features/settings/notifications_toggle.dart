@@ -42,7 +42,7 @@ class NotificationsToggle extends ConsumerWidget {
         context: context,
         builder: (_) => AlertDialog(
           title: Text(l10n.notifPermissionTitle),
-          content: const Text(l10n.notifPermissionSubtitle),
+          content: Text(l10n.notifPermissionSubtitle),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),

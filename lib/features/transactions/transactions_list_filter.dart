@@ -138,7 +138,7 @@ class TransactionsListFilter extends ConsumerWidget {
                             AppBottomSheet.show(
                               context,
                               title: l10n.transactionEditTitle(
-                                id: txWithCat.transaction.id,
+                                txWithCat.transaction.id,
                               ),
                               isFullScreen: true,
                               useRootNavigator: true,

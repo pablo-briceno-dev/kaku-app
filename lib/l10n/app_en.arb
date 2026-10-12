@@ -19,7 +19,7 @@
 
   "userDisplayName": "User",
 
-  "appSheelTabDashboard": "Home",
+  "appShellTabDashboard": "Home",
   "appShellTabStats": "Statistics",
   "appShellTabPersonal": "Goals",
   "appShellTabAccounts": "Accounts",

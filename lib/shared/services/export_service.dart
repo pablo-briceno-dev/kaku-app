@@ -46,8 +46,8 @@ class ExportService {
           '${context.dates.relative(tx.date)} ${context.dates.time(tx.date)}';
       final desc = (tx.description ?? cat).replaceAll(',', ' ');
       final type = tx.type == 'expense'
-          ? l10n.transactionTypeExpense(count: 1)
-          : l10n.transactionTypeIncome(count: 1);
+          ? l10n.transactionTypeExpense(1)
+          : l10n.transactionTypeIncome(1);
       final amt = CurrencyFormatter.format(tx.amount, currency);
       final quantity = tx.quantity.toString();
       final unitPrice = CurrencyFormatter.format(tx.unitPrice, currency);
@@ -110,7 +110,7 @@ class ExportService {
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
-                l10n.exportReportTitle(period: periodLabel),
+                l10n.exportReportTitle(periodLabel),
                 style: pw.TextStyle(
                   fontSize: 16,
                   fontWeight: pw.FontWeight.bold,
@@ -133,12 +133,12 @@ class ExportService {
               mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
               children: [
                 _summaryItem(
-                  l10n.transactionTypeIncome(count: 2),
+                  l10n.transactionTypeIncome(2),
                   CurrencyFormatter.format(totalIncome, currency),
                   PdfColors.green700,
                 ),
                 _summaryItem(
-                  l10n.transactionTypeExpense(count: 2),
+                  l10n.transactionTypeExpense(2),
                   CurrencyFormatter.format(totalExpenses, currency),
                   PdfColors.red700,
                 ),
@@ -206,8 +206,8 @@ class ExportService {
                     ),
                     _cell(
                       isExp
-                          ? l10n.transactionTypeExpense(count: 1)
-                          : l10n.transactionTypeIncome(count: 1),
+                          ? l10n.transactionTypeExpense(1)
+                          : l10n.transactionTypeIncome(1),
                     ),
                     _cell(tx.quantity.toString()),
                     _cell(CurrencyFormatter.format(tx.unitPrice, currency)),
@@ -300,7 +300,7 @@ class ExportService {
 
     await SharePlus.instance.share(
       ShareParams(
-        text: l10n.exportReportTitle(period: periodLabel),
+        text: l10n.exportReportTitle(periodLabel),
         files: [XFile(file.path, mimeType: 'application/pdf')],
       ),
     );

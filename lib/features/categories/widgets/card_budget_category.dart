@@ -72,7 +72,7 @@ class CardBudgetCategory extends StatelessWidget {
                   Text(
                     l10n
                         .spentInMonth(
-                          month: context.dates.monthLabelShort(
+                          context.dates.monthLabelShort(
                             DateTime.now().year,
                             month,
                           ),
@@ -114,14 +114,14 @@ class CardBudgetCategory extends StatelessWidget {
             children: [
               Text(
                 l10n.categorySpentUsed(
-                  spent: CurrencyFormatter.percentage((spent / limit) * 100),
+                  CurrencyFormatter.percentage((spent / limit) * 100),
                 ),
                 style: TextStyle(fontSize: 20, color: cs.primary),
               ),
               const Spacer(),
               Text(
                 l10n.categorySpentLeft(
-                  spent: CurrencyFormatter.format(limit - spent, currency),
+                  CurrencyFormatter.format(limit - spent, currency),
                 ),
                 style: TextStyle(fontSize: 20, color: cs.onSurfaceVariant),
               ),

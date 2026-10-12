@@ -204,27 +204,22 @@ class _BannerContent extends StatelessWidget {
 
     return switch (state) {
       _BannerState.exceeded => l10n.bannerStateExceeded(
-        spent: spentStr,
-        budget: budgStr,
-        over: overStr,
+        spentStr,
+        budgStr,
+        overStr,
       ),
 
       _BannerState.critical => l10n.bannerStateCritical(
-        avg: avgStr,
-        projection: projStr,
-        over: CurrencyFormatter.compact(projection - totalBudget),
+        avgStr,
+        projStr,
+        CurrencyFormatter.compact(projection - totalBudget),
       ),
 
-      _BannerState.warning => l10n.bannerStateWarning(
-        projection: projStr,
-        budget: budgStr,
-      ),
+      _BannerState.warning => l10n.bannerStateWarning(projStr, budgStr),
 
       _BannerState.nearEnd => l10n.bannerStateNearEnd(
-        daysLeft: daysLeft,
-        percentage: CurrencyFormatter.percentage(
-          (totalSpent / totalBudget) * 100,
-        ),
+        daysLeft,
+        CurrencyFormatter.percentage((totalSpent / totalBudget) * 100),
       ),
 
       _BannerState.safe => '',

@@ -254,7 +254,7 @@ class _BottomLabel extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             Text(
-              l10n.receiptName(name: fileName),
+              l10n.receiptName(fileName),
               style: const TextStyle(color: Colors.white60, fontSize: 12),
             ),
             const SizedBox(width: 8),
@@ -277,7 +277,7 @@ class _ErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

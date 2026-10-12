@@ -61,7 +61,7 @@ class TransactionsScreen extends ConsumerWidget {
         0;
 
     return Scaffold(
-      appBar: CustomAppBar(title: Text(l10n.transactionTitle(plural: 1))),
+      appBar: CustomAppBar(title: Text(l10n.transactionTitle(1))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(

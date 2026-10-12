@@ -95,7 +95,7 @@ class _PromoCodeSheetState extends State<PromoCodeSheet> {
             controller: _ctrl,
             autofocus: true,
             textCapitalization: TextCapitalization.characters,
-            onFieldSubmitted: (_) => _redeem(),
+            onFieldSubmitted: (_) => _redeem(l10n),
             decoration: InputDecoration(
               hintText: 'KAKU-XXXX-XXXX',
               errorText: _error,

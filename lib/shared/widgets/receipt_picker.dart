@@ -62,8 +62,8 @@ class _ReceiptPickerState extends State<ReceiptPicker>
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(l10n.permissionTitle(source: resource.toLowerCase())),
-        content: Text(l10n.permissionDesc(source: resource.toLowerCase())),
+        title: Text(l10n.permissionTitle(resource.toLowerCase())),
+        content: Text(l10n.permissionDesc(resource.toLowerCase())),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -344,7 +344,7 @@ class _PreviewCard extends StatelessWidget {
               left: 12,
               bottom: 10,
               child: Row(
-                children: const [
+                children: [
                   Icon(
                     Icons.receipt_long_rounded,
                     size: 12,

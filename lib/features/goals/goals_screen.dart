@@ -38,11 +38,11 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
               children: [
                 activeGoalsAsync.when(
                   data: (activeGoal) => Text(
-                    l10n.goalsActive(count: activeGoal.length),
+                    l10n.goalsActive(activeGoal.length),
                     style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                   error: (e, _) => Text(
-                    l10n.goalsActive(count: 0),
+                    l10n.goalsActive(0),
                     style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                   loading: () => Text(
@@ -52,11 +52,11 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
                 ),
                 completedGoalsAsync.when(
                   data: (completedGoal) => Text(
-                    l10n.goalComplete(count: completedGoal.length),
+                    l10n.goalComplete(completedGoal.length),
                     style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                   error: (e, _) => Text(
-                    l10n.goalComplete(count: 0),
+                    l10n.goalComplete(0),
                     style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
                   ),
                   loading: () => Text(
@@ -95,7 +95,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
               }
             },
             icon: Icon(Icons.add),
-            label: Text(l10n.btnNew(femenine: 1)),
+            label: Text(l10n.btnNew(1)),
           ),
         ],
       ),
@@ -107,7 +107,7 @@ class _GoalsScreenState extends ConsumerState<GoalsScreen> {
             error: (e, _) => const SizedBox.shrink(),
             data: (goals) {
               if (goals.isEmpty) {
-                return const ContentWidgetEmpty(
+                return ContentWidgetEmpty(
                   title: '🎯',
                   message: l10n.goalsNoActive,
                 );

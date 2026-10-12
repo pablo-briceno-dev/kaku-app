@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:kaku/l10n/app_localizations.dart';
 
 class UserProfile {

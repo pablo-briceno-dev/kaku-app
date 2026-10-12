@@ -85,7 +85,7 @@ class _CategoryFormSheetState extends ConsumerState<CategoryFormSheet> {
             keyboardType: TextInputType.text,
             maxLength: 30,
             validator: (value) => value!.isEmpty ? l10n.formRequired : null,
-            decoration: const InputDecoration(labelText: '${l10n.formName}*'),
+            decoration: InputDecoration(labelText: '${l10n.formName}*'),
           ),
           const SizedBox(height: 16),
           EmojiPickerField(

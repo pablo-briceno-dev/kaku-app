@@ -14,7 +14,7 @@ String localizeError(
     AppErrorCode.invalidAmount => l10n.errorInvalidAmount,
     AppErrorCode.networkError => l10n.errorNetworkError,
     AppErrorCode.messageNoReceipt => l10n.messageNoReceipt(
-      source: messageComplement ?? '',
+      messageComplement ?? '',
     ),
     AppErrorCode.errorDeletingData => l10n.errorDeletingData,
   };

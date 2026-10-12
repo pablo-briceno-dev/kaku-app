@@ -19,7 +19,7 @@
 
   "userDisplayName": "Usuario",
 
-  "appSheelTabDashboard": "Inicio",
+  "appShellTabDashboard": "Inicio",
   "appShellTabStats": "Estadísticas",
   "appShellTabPersonal": "Metas",
   "appShellTabAccounts": "Cuentas",
@@ -363,13 +363,13 @@
   "categorySpentUsed": "{spent} usado",
   "@categorySpentUsed": {
     "placeholders": {
-      "spent": { "type": "int" }
+      "spent": { "type": "String" }
     }
   },
   "categorySpentLeft": "Quedan {spent}",
   "@categorySpentLeft": {
     "placeholders": {
-      "spent": { "type": "int" }
+      "spent": { "type": "String" }
     }
   },
   "categoryEmptyTitle": "Sin categorías",
@@ -464,7 +464,7 @@
   "bannerStateNearEnd": "Quedan {daysLeft} días y ya usaste el {percentage} de tu presupuesto.",
   "@bannerStateNearEnd": {
     "placeholders": {
-      "daysLeft": { "type": "String" },
+      "daysLeft": { "type": "int" },
       "percentage": { "type": "String" }
     }
   },

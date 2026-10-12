@@ -39,7 +39,7 @@ class _DailyBarChartState extends State<DailyBarChart> {
       children: [
         Text(
           l10n.statsDailyBarChartTitle(
-            avg: CurrencyFormatter.compact(_avg, widget.currency),
+            CurrencyFormatter.compact(_avg, widget.currency),
           ),
           style: TextStyle(
             fontSize: 12,
@@ -60,11 +60,8 @@ class _DailyBarChartState extends State<DailyBarChart> {
                     if (amount == 0) return null;
                     return BarTooltipItem(
                       l10n.statsDailyBarChartTooltip(
-                        day: day,
-                        money: CurrencyFormatter.compact(
-                          amount,
-                          widget.currency,
-                        ),
+                        day,
+                        CurrencyFormatter.compact(amount, widget.currency),
                       ),
                       const TextStyle(
                         color: Colors.white,

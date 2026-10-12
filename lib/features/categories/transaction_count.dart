@@ -18,7 +18,7 @@ class TransactionCount extends ConsumerWidget {
       builder: (context, snap) {
         final count = snap.data ?? 0;
         return Text(
-          l10n.transactionCount(count: count),
+          l10n.transactionCount(count),
           style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
         );
       },

@@ -36,9 +36,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                profile.displayName == l10n.userDisplayName
+                profile.displayName(l10n) == l10n.userDisplayName
                     ? l10n.welcomeToKaku
-                    : l10n.welcomeToKakuName(profile.displayName),
+                    : l10n.welcomeToKakuName(profile.displayName(l10n)),
                 style: TextStyle(
                   color: cs.onSurfaceVariant,
                   fontWeight: FontWeight.normal,

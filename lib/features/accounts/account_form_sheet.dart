@@ -109,7 +109,7 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
             keyboardType: TextInputType.text,
             maxLength: 50,
             validator: (value) => value!.isEmpty ? l10n.formRequired : null,
-            decoration: const InputDecoration(labelText: '${l10n.formName}*'),
+            decoration: InputDecoration(labelText: '${l10n.formName}*'),
           ),
           const SizedBox(height: 16),
           Text(l10n.accountType, style: ts.titleMedium),

@@ -116,7 +116,7 @@ class GoalsList extends ConsumerWidget {
               ),
               progress: (goal.savedAmount / goal.targetAmount) * 100,
               estimate: (goal.savedAmount / goal.targetAmount) * 100 == 100
-                  ? l10n.goalComplete
+                  ? l10n.goalCompleteSuccess
                   : BudgetCalculator.getEstimatedSavingTime(
                       context,
                       goalRemaining,
@@ -125,7 +125,7 @@ class GoalsList extends ConsumerWidget {
                     ),
               onTap: () => AppBottomSheet.show(
                 context,
-                title: l10n.goalEditTitle(name: goal.name),
+                title: l10n.goalEditTitle(goal.name),
                 useRootNavigator: true,
                 isFullScreen: true,
                 child: GoalFormSheet(

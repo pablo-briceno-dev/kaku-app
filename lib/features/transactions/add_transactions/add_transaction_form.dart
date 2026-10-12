@@ -80,7 +80,7 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
       error: (e, _) => const SizedBox.shrink(),
       data: (activeAccounts) {
         if (activeAccounts.isEmpty) {
-          return const Padding(
+          return Padding(
             padding: EdgeInsets.all(20),
             child: Center(
               child: ContentWidgetEmpty(
@@ -118,9 +118,7 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                           CurrencyFormatter.inputFormatter(currency),
                         ],
                         decoration: InputDecoration(
-                          labelText: l10n.amountOrValueUnit(
-                            currency: currency.label,
-                          ),
+                          labelText: l10n.amountOrValueUnit(currency.label),
                           hintText: r'$0',
                           labelStyle: ts.titleLarge?.copyWith(
                             color: cs.onSurfaceVariant,
@@ -169,7 +167,7 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                                   return l10n.formRequired;
                                 }
                                 if (int.parse(value) <= 0) {
-                                  return l10n.formMajorOrEqual(value: 1);
+                                  return l10n.formMajorOrEqual(1);
                                 }
                                 return null;
                               },
@@ -192,9 +190,7 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                               ],
                               decoration: InputDecoration(
                                 labelText: l10n
-                                    .transactionTotalLabel(
-                                      currency: currency.label,
-                                    )
+                                    .transactionTotalLabel(currency.label)
                                     .toUpperCase(),
                                 hintText: r'$0',
                                 labelStyle: ts.titleLarge?.copyWith(
@@ -233,9 +229,7 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              l10n
-                                  .categoriesTitle(isPlural: 0)
-                                  .toUpperCase(),
+                              l10n.categoriesTitle(0).toUpperCase(),
                               style: ts.titleMedium?.copyWith(
                                 color: cs.onSurfaceVariant,
                               ),
@@ -349,17 +343,19 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                                 selectedType == TransactionType.expense
                                     ? l10n.transactionExpenseSaved
                                     : selectedType == TransactionType.income
-                                        ? l10n.transactionIncomeSaved
-                                        : l10n.transactionSavedGeneric,
+                                    ? l10n.transactionIncomeSaved
+                                    : l10n.transactionSavedGeneric,
                               );
                               Navigator.pop(context);
                             }
                           },
-                          child: Text(selectedType == TransactionType.expense
-                              ? l10n.transactionExpenseBtnSaved
-                              : selectedType == TransactionType.income
-                                  ? l10n.transactionIncomeBtnSaved
-                                  : l10n.transactionBtnSavedGeneric),
+                          child: Text(
+                            selectedType == TransactionType.expense
+                                ? l10n.transactionExpenseBtnSaved
+                                : selectedType == TransactionType.income
+                                ? l10n.transactionIncomeBtnSaved
+                                : l10n.transactionBtnSavedGeneric,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),

@@ -91,7 +91,7 @@ class _ContributeGoalSheetState extends ConsumerState<ContributeGoalSheet> {
                   ),
                   Text(
                     l10n.leftToContribute(
-                      amount: CurrencyFormatter.format(
+                      CurrencyFormatter.format(
                         BudgetCalculator.goalRemaining(
                           widget.savedAmount,
                           widget.targetAmount,

@@ -108,7 +108,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
                   textAlign: TextAlign.justify,
                 ),
                 Text(
-                  l10n.nameGoal(name: controllers['name']?.text ?? ''),
+                  l10n.nameGoal(controllers['name']?.text ?? ''),
                   style: ts.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
                   textAlign: TextAlign.justify,
                 ),
@@ -124,7 +124,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
             maxLength: 60,
             validator: (value) => value!.isEmpty ? l10n.formRequired : null,
             autovalidateMode: AutovalidateMode.onUserInteraction,
-            decoration: const InputDecoration(labelText: '${l10n.formName}*'),
+            decoration: InputDecoration(labelText: '${l10n.formName}*'),
           ),
           const SizedBox(height: 16),
           EmojiPickerField(
@@ -150,7 +150,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
               }
               return null;
             },
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: '${l10n.amountGoal}*',
               hintText: r'$0',
             ),

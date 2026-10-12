@@ -228,7 +228,7 @@ class _DangerZoneSheetState extends ConsumerState<DangerZoneSheet> {
           // ── Botón cancelar ──
           OutlinedButton(
             onPressed: _isDeleting ? null : () => Navigator.of(context).pop(),
-            child: const Text(l10n.btnCancel),
+            child: Text(l10n.btnCancel),
           ),
         ],
       ),

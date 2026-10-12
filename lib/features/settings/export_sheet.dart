@@ -107,7 +107,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
         return (
           DateTime(now.year, 1, 1),
           DateTime(now.year, 12, 31, 23, 59, 59),
-          AppLocalizations.of(context)!.thisYear(year: now.year),
+          AppLocalizations.of(context)!.thisYear(now.year),
         );
       case _ExportPeriod.customRange:
         if (_range == null) {
@@ -115,7 +115,7 @@ class _ExportSheetState extends ConsumerState<ExportSheet> {
           return (
             DateTime(selected.year, selected.month, 1),
             DateTime(selected.year, selected.month + 1, 0, 23, 59, 59),
-            rangeCustom,
+            AppLocalizations.of(context)!.rangeCustom,
           );
         }
         final start = _range!.start;

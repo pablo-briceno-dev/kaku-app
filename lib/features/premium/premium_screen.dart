@@ -220,7 +220,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
 
   Future<void> _onRestore(AppLocalizations l10n) async {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Text(l10n.verifyingPurchase),
         behavior: SnackBarBehavior.floating,
         duration: Duration(seconds: 10),

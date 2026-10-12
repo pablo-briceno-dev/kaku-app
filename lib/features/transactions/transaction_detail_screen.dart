@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
-import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/l10n/category_l10n.dart';
 import 'package:kaku/core/l10n/date_context_x.dart';
@@ -81,9 +80,7 @@ class TransactionDetailScreen extends ConsumerWidget {
       data: (transaction) {
         if (transaction == null) {
           return Scaffold(
-            appBar: CustomAppBar(
-              title: Text(l10n.transactionTitle(plural: 0)),
-            ),
+            appBar: CustomAppBar(title: Text(l10n.transactionTitle(0))),
             body: Center(
               child: ContentWidgetEmpty(
                 title: '💱​',
@@ -104,9 +101,7 @@ class TransactionDetailScreen extends ConsumerWidget {
             .value;
 
         return Scaffold(
-          appBar: CustomAppBar(
-            title: Text(l10n.transactionTitle(plural: 0)),
-          ),
+          appBar: CustomAppBar(title: Text(l10n.transactionTitle(0))),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -157,7 +152,7 @@ class TransactionDetailScreen extends ConsumerWidget {
                       ),
                     ),
                     Text(
-                      '${category != null ? '${category.displayName(context)} · ' : ''} ${DateFormatter.fullDateTime(transaction.date)}',
+                      '${category != null ? '${category.displayName(context)} · ' : ''} ${context.dates.fullDateTime(transaction.date)}',
                       style: TextStyle(
                         fontSize: 15,
                         color: cs.onSurface.withValues(alpha: 0.76),
@@ -225,12 +220,12 @@ class TransactionDetailScreen extends ConsumerWidget {
                                 ' - ',
                           ),
                           TransactionDetailListConfig(
-                            title: l10n.categoryTitle(isPlural: 0),
+                            title: l10n.categoryTitle(0),
                             subtitle:
                                 '${category?.emoji ?? ''} ${category?.displayName(context) ?? ' - '}',
                           ),
                           TransactionDetailListConfig(
-                            title: l10n.accountsTitle(isPlural: 0),
+                            title: l10n.accountsTitle(0),
                             subtitle:
                                 '${account?.icon ?? ''} ${account?.name ?? ' - '}',
                           ),
@@ -243,12 +238,8 @@ class TransactionDetailScreen extends ConsumerWidget {
                           TransactionDetailListConfig(
                             title: l10n.transactionRecurrentLabel,
                             subtitle: transaction.isRecurring
-                                ? l10n.transactionIsRecurringLabel(
-                                    recurring: 1,
-                                  )
-                                : l10n.transactionIsRecurringLabel(
-                                    recurring: 0,
-                                  ),
+                                ? l10n.transactionIsRecurringLabel(1)
+                                : l10n.transactionIsRecurringLabel(0),
                           ),
                           TransactionDetailListConfig(
                             title: l10n.transactionReceiptLabel,
@@ -286,7 +277,7 @@ class TransactionDetailScreen extends ConsumerWidget {
                                 AppBottomSheet.show(
                                   context,
                                   title: l10n.transactionEditTitle(
-                                    id: transaction.id,
+                                    transaction.id,
                                   ),
                                   isFullScreen: true,
                                   useRootNavigator: true,
@@ -330,11 +321,11 @@ class TransactionDetailScreen extends ConsumerWidget {
         );
       },
       error: (e, _) => Scaffold(
-        appBar: CustomAppBar(title: Text(l10n.transactionTitle(plural: 0))),
+        appBar: CustomAppBar(title: Text(l10n.transactionTitle(0))),
         body: TransactionDetailSkeleton(),
       ),
       loading: () => Scaffold(
-        appBar: CustomAppBar(title: Text(l10n.transactionTitle(plural: 0))),
+        appBar: CustomAppBar(title: Text(l10n.transactionTitle(0))),
         body: TransactionDetailSkeleton(),
       ),
     );

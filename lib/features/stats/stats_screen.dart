@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/currency_type.dart';
@@ -123,7 +122,7 @@ class StatsScreen extends ConsumerWidget {
                 // ── Dona de categorías ── siempre del mes actual
                 SectionTitle(
                   title: l10n.statsDonutTitle,
-                  subtitle: l10n.statsDonutSubtitle(monthName: monthName),
+                  subtitle: l10n.statsDonutSubtitle(monthName),
                 ),
                 slicesAsync.when(
                   data: (slices) => slices.isEmpty
@@ -228,10 +227,7 @@ class StatsScreen extends ConsumerWidget {
             SectionTitle(
               title: l10n.statsExpensesDiaryTitle,
               subtitle: l10n.statsExpensesDiarySubtitle(
-                daysInMonth: BudgetCalculator.daysInMonth(
-                  params.year,
-                  params.month,
-                ),
+                BudgetCalculator.daysInMonth(params.year, params.month),
               ),
             ),
             dailyAsync.when(

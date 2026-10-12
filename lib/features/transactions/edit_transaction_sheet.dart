@@ -179,7 +179,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                       },
                       decoration: InputDecoration(
                         labelText: l10n
-                            .amountOrValueUnit(currency: currency.label)
+                            .amountOrValueUnit(currency.label)
                             .toUpperCase(),
                         // hintText: r'$0',
                         labelStyle: ts.titleLarge?.copyWith(
@@ -217,7 +217,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                                 return l10n.formRequired;
                               }
                               if (int.parse(value) <= 1) {
-                                return l10n.formMajorOrEqual(value: 1);
+                                return l10n.formMajorOrEqual(1);
                               }
                               return null;
                             },
@@ -239,9 +239,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                             ],
                             decoration: InputDecoration(
                               labelText: l10n
-                                  .transactionTotalLabel(
-                                    currency: currency.label,
-                                  )
+                                  .transactionTotalLabel(currency.label)
                                   .toUpperCase(),
                               hintText: r'$0',
                               labelStyle: ts.titleLarge?.copyWith(
@@ -277,7 +275,7 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            l10n.categoriesTitle(isPlural: 0).toUpperCase(),
+                            l10n.categoriesTitle(0).toUpperCase(),
                             style: ts.titleMedium?.copyWith(
                               color: cs.onSurfaceVariant,
                             ),

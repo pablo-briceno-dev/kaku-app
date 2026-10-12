@@ -33,11 +33,11 @@ extension TransactionTypeL10n on TransactionType {
   String label(AppLocalizations l10n, int count) {
     switch (this) {
       case TransactionType.expense:
-        return l10n.transactionTypeExpense(count: count);
+        return l10n.transactionTypeExpense(count);
       case TransactionType.income:
-        return l10n.transactionTypeIncome(count: count);
+        return l10n.transactionTypeIncome(count);
       case TransactionType.transfer:
-        return l10n.transactionTypeTransfer(count: count);
+        return l10n.transactionTypeTransfer(count);
     }
   }
 }

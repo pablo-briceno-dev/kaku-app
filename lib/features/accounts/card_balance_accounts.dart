@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/budget_calculator.dart';
 import 'package:kaku/core/currency_formatter.dart';
+import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
@@ -40,7 +41,8 @@ class CardBalanceAccounts extends ConsumerWidget {
     return CardBalance(
       title: l10n.balanceTotal,
       amount: totalBalance.value ?? 0,
-      subtitle: '${l10n.accountsActive(count: activeAccounts)} · ${currency.label}',
+      subtitle:
+          '${l10n.accountsActive(activeAccounts ?? 0)} · ${currency.label}',
       chipItems: [
         ChipItemConfig(
           title: l10n.thisMonth,
@@ -52,7 +54,7 @@ class CardBalanceAccounts extends ConsumerWidget {
           colorDescription: Colors.green,
         ),
         ChipItemConfig(
-          title: l10n.transactionTypeExpense(count: 2),
+          title: l10n.transactionTypeExpense(2),
           description: CurrencyFormatter.withSign(
             expense,
             compact: true,

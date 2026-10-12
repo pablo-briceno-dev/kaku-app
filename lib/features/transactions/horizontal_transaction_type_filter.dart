@@ -46,7 +46,7 @@ class HorizontalTransactionTypeFilter extends ConsumerWidget {
                     if (transactionFilter == TransactionTypeFilter.byCategory) {
                       AppBottomSheet.show(
                         context,
-                        title: l10n.categoriesTitle(isPlural: 1),
+                        title: l10n.categoriesTitle(1),
                         // isFullScreen: true,
                         child: CategoriesChipsBottomSheet(),
                       );

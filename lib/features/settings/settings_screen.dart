@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/theme_model.dart';
@@ -103,11 +102,11 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const Divider(height: 1),
               ListTileChild(
-                label: l10n.categoriesTitle(isPlural: 1),
+                label: l10n.categoriesTitle(1),
                 subtitle: categoriesAsync.when(
                   data: (categories) =>
-                      l10n.countActiveCategories(count: categories.length),
-                  error: (_, _) => l10n.countActiveCategories(count: 0),
+                      l10n.countActiveCategories(categories.length),
+                  error: (_, _) => l10n.countActiveCategories(0),
                   loading: () => l10n.loading,
                 ),
                 icon: Icons.category,
@@ -121,14 +120,14 @@ class SettingsScreen extends ConsumerWidget {
               ListTileChild(
                 label: l10n.budgetByCategoryTitle,
                 subtitle: l10n.budgetByCategorySubtitle(
-                  monthYear: context.dates.monthYear(
-                    selectedMonth.year,
-                    selectedMonth.month,
-                  ),
-                  count: budgetsProgress.when(
+                  budgetsProgress.when(
                     data: (budgets) => budgets.length,
                     error: (e, _) => 0,
                     loading: () => 0,
+                  ),
+                  context.dates.monthYear(
+                    selectedMonth.year,
+                    selectedMonth.month,
                   ),
                 ),
                 icon: Icons.bar_chart,
@@ -189,8 +188,8 @@ class SettingsScreen extends ConsumerWidget {
                   data: (info) {
                     if (info == null) return l10n.storageNoReceipts;
                     return l10n.storageSummary(
-                      size: info.sizeLabel,
-                      count: info.count,
+                      info.sizeLabel,
+                      info.count,
                     );
                   },
                   error: (e, _) => l10n.notAvailable,

@@ -54,7 +54,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get userDisplayName => 'Usuario';
 
   @override
-  String get appSheelTabDashboard => 'Inicio';
+  String get appShellTabDashboard => 'Inicio';
 
   @override
   String get appShellTabStats => 'Estadísticas';
@@ -724,12 +724,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get categoryLimit => 'Límite';
 
   @override
-  String categorySpentUsed(int spent) {
+  String categorySpentUsed(String spent) {
     return '$spent usado';
   }
 
   @override
-  String categorySpentLeft(int spent) {
+  String categorySpentLeft(String spent) {
     return 'Quedan $spent';
   }
 
@@ -857,7 +857,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String bannerStateNearEnd(String daysLeft, String percentage) {
+  String bannerStateNearEnd(int daysLeft, String percentage) {
     return 'Quedan $daysLeft días y ya usaste el $percentage de tu presupuesto.';
   }
 

@@ -106,8 +106,8 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
         title: Text(l10n.deleteBudgetConfirm),
         content: Text(
           l10n.deleteBudgetConfirmSubtitle(
-            emoji: widget.category.emoji,
-            category: widget.category.displayName(context),
+            widget.category.emoji,
+            widget.category.displayName(context),
           ),
         ),
         actions: [
@@ -296,7 +296,9 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
                       color: Colors.white,
                     ),
                   )
-                : Text(_isEditing ? l10n.acumulateBudget : l10n.btnCreateBudget),
+                : Text(
+                    _isEditing ? l10n.acumulateBudget : l10n.btnCreateBudget,
+                  ),
           ),
 
           // ── Botón eliminar (solo al editar) ──
