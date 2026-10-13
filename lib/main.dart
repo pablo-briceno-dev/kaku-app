@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:kaku/kaku_app.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:kaku/shared/services/backup_service.dart';
 import 'package:kaku/shared/services/billing_service.dart';
 import 'package:kaku/shared/services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

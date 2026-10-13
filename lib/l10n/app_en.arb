@@ -358,6 +358,9 @@
   "pdfWithReceiptsDecription": "Full PDF with attached photos.",
   "periodTitle": "Period",
   "rangeTitle": "Date range",
+  "languageTitle": "Language",
+  "languageSubtitle": "Choose the app language",
+  "languageSystem": "Device language",
 
   "budgetTitle": "{plural, plural, =1 {Budgets} other {Budget}}",
   "deleteBudgetConfirm": "Delete budget",
@@ -510,5 +513,7 @@
   "loading": "Loading...",
   "error": "Error",
   "notAvailable": "Not available",
-  "generatingLabel": "Generating..."
+  "generatingLabel": "Generating...",
+  "localeEn": "English",
+  "localeEs": "Spanish"
 }

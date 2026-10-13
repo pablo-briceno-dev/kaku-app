@@ -96,7 +96,7 @@ class _AccountFormSheetState extends ConsumerState<AccountFormSheet> {
               icon: accountType.icon,
               label: controllers['name']?.text,
               subtitle:
-                  '${accountType.label} · ${controllers['balance']?.text ?? ''}',
+                  '${accountType.label(l10n)} · ${controllers['balance']?.text ?? ''}',
               size: 90,
             ),
           ),

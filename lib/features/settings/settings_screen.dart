@@ -21,6 +21,7 @@ import 'package:kaku/features/settings/widgets/section_header.dart';
 import 'package:kaku/features/settings/widgets/switch_list_tile_child.dart';
 import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/providers/locale_provider.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/premium_service.dart';
@@ -42,6 +43,11 @@ class SettingsScreen extends ConsumerWidget {
     final storageSubtitle = ref.watch(storageSubtitleProvider);
     final packageInfoAsync = ref.watch(packageInfoProvider);
     final l10n = AppLocalizations.of(context)!;
+    final options = <(Locale?, String)>[
+      (null, l10n.languageSystem),
+      (const Locale('es'), l10n.localeEs),
+      (const Locale('en'), l10n.localeEn),
+    ];
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -98,6 +104,40 @@ class SettingsScreen extends ConsumerWidget {
                   useRootNavigator: false,
                   isFullScreen: false,
                   child: CurrencySheet(),
+                ),
+              ),
+              const Divider(height: 1),
+              ListTileChild(
+                label: l10n.languageTitle,
+                subtitle: l10n.languageSubtitle,
+                icon: Icons.language,
+                onTap: () => AppBottomSheet.show(
+                  context,
+                  title: l10n.languageTitle,
+                  useRootNavigator: false,
+                  isFullScreen: false,
+                  child: SizedBox(
+                    child: RadioGroup<Locale?>(
+                      groupValue: ref.watch(localeProvider),
+                      onChanged: (v) {
+                        ref.read(localeProvider.notifier).setLocale(v);
+                        Navigator.pop(context);
+                      },
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            for (final (locale, label) in options)
+                              RadioListTile<Locale?>(
+                                title: Text(label),
+                                value: locale, // ← solo el valor, nada más
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const Divider(height: 1),
@@ -187,10 +227,7 @@ class SettingsScreen extends ConsumerWidget {
                 subtitle: storageSubtitle.when(
                   data: (info) {
                     if (info == null) return l10n.storageNoReceipts;
-                    return l10n.storageSummary(
-                      info.sizeLabel,
-                      info.count,
-                    );
+                    return l10n.storageSummary(info.sizeLabel, info.count);
                   },
                   error: (e, _) => l10n.notAvailable,
                   loading: () => l10n.loading,

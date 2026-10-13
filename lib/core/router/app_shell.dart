@@ -6,6 +6,7 @@ import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
+import 'package:kaku/shared/services/last_route_service.dart';
 
 class AppShell extends ConsumerStatefulWidget {
   final Widget child;
@@ -37,22 +38,30 @@ class _AppShellState extends ConsumerState<AppShell>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused) {
       ref.read(authenticationStateProvider.notifier).state = false;
+      LastRouteService.markInactive();
     }
     if (state == AppLifecycleState.resumed) {
-      _checkLock();
+      _onResumed();
     }
   }
 
-  Future<void> _checkLock() async {
-    if (ref.read(authenticationStateProvider)) return;
-
+  Future<void> _onResumed() async {
     final pinEnabled = await AppPinService.isEnabled();
     final biometricEnabled = await BiometricService.isEnabled();
-    if (!pinEnabled && !biometricEnabled) return;
-
     if (!mounted) return;
-    // Navega a /lock que volverá a pedir autenticación
-    context.go(AppRoutes.root);
+
+    final locked = pinEnabled || biometricEnabled;
+    if (locked && !ref.read(authenticationStateProvider)) {
+      // LockScreen decide el destino con goToStartRoute (respeta la expiración)
+      context.go(AppRoutes.root);
+      return;
+    }
+
+    // Sin bloqueo: si pasó mucho tiempo, vuelve al dashboard
+    if (await LastRouteService.isExpired()) {
+      if (!mounted) return;
+      context.go(AppRoutes.dashboard);
+    }
   }
 
   @override

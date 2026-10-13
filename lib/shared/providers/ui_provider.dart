@@ -118,7 +118,9 @@ final lastBackupSubtitleProvider = FutureProvider.autoDispose<DateTime?>((
 //  También observa las transacciones para detectar cuando
 //  se adjunta o elimina una foto de recibo.
 // ════════════════════════════════════════════════════════
-final storageSubtitleProvider = FutureProvider.autoDispose<StorageInfo?>((ref) async {
+final storageSubtitleProvider = FutureProvider.autoDispose<StorageInfo?>((
+  ref,
+) async {
   // Señal manual (al limpiar recibos desde el sheet)
   ref.watch(storageRefreshSignalProvider);
 

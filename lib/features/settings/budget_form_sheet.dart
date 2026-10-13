@@ -169,7 +169,7 @@ class _BudgetFormSheetState extends ConsumerState<BudgetFormSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.category.name,
+                    widget.category.displayName(context),
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,

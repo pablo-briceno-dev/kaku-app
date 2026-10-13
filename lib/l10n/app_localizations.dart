@@ -2126,6 +2126,24 @@ abstract class AppLocalizations {
   /// **'Rango de fechas'**
   String get rangeTitle;
 
+  /// No description provided for @languageTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Idioma'**
+  String get languageTitle;
+
+  /// No description provided for @languageSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige el idioma de la app'**
+  String get languageSubtitle;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In es, this message translates to:
+  /// **'Idioma del dispositivo'**
+  String get languageSystem;
+
   /// No description provided for @budgetTitle.
   ///
   /// In es, this message translates to:
@@ -2998,6 +3016,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Generando...'**
   String get generatingLabel;
+
+  /// No description provided for @localeEn.
+  ///
+  /// In es, this message translates to:
+  /// **'Inglés'**
+  String get localeEn;
+
+  /// No description provided for @localeEs.
+  ///
+  /// In es, this message translates to:
+  /// **'Español'**
+  String get localeEs;
 }
 
 class _AppLocalizationsDelegate

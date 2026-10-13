@@ -19,11 +19,12 @@ import 'package:kaku/features/transactions/transactions_screen.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
+import 'package:kaku/shared/services/last_route_service.dart';
 
 // Provider que expone el router a toda la app
 // Se consume en main.dart con: router: ref.watch(routerProvider)
 final routerProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: AppRoutes.root,
     // debugLogDiagnostics: true, //! Quitar en producción
     routes: [
@@ -115,7 +116,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Ya en /lock → no redirigir
       if (isLockRoute) return null;
 
-      final authenticated = ref.watch(authenticationStateProvider);
+      final authenticated = ref.read(authenticationStateProvider);
       // ✅ FIX 2: si ya autenticó en esta sesión → dejar pasar
       if (authenticated) return null;
 
@@ -131,6 +132,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       return AppRoutes.root;
     },
   );
+
+  void onRouteChange() {
+    final location = router.routerDelegate.currentConfiguration.uri.toString();
+    LastRouteService.save(location);
+  }
+
+  router.routerDelegate.addListener(onRouteChange);
+  ref.onDispose(() {
+    router.routerDelegate.removeListener(onRouteChange);
+    router.dispose();
+  });
+
+  return router;
 });
 
 Future<bool> _isLocked() async {

@@ -618,6 +618,9 @@
   "pdfWithReceiptsDecription": "PDF completo con fotos adjuntas.",
   "periodTitle": "Periodo",
   "rangeTitle": "Rango de fechas",
+  "languageTitle": "Idioma",
+  "languageSubtitle": "Elige el idioma de la app",
+  "languageSystem": "Idioma del dispositivo",
 
   "budgetTitle": "{plural, plural, =1 {Presupuestos} other {Presupuesto}}",
   "@budgetTitle": {
@@ -934,5 +937,7 @@
   "loading": "Cargando...",
   "error": "Error",
   "notAvailable": "No disponible",
-  "generatingLabel": "Generando..."
+  "generatingLabel": "Generando...",
+  "localeEn": "Inglés",
+  "localeEs": "Español"
 }

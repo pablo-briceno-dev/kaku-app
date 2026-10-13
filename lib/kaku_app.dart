@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/router/app_router.dart';
 import 'package:kaku/core/theme/app_theme.dart';
 import 'package:kaku/l10n/app_localizations.dart';
+import 'package:kaku/shared/providers/locale_provider.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 
 class KakuApp extends ConsumerWidget {
@@ -13,6 +14,7 @@ class KakuApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     final themePref = ref.watch(themeProvider);
+    final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
       title: 'Kaku',
@@ -21,6 +23,7 @@ class KakuApp extends ConsumerWidget {
       themeMode: themePref.flutterThemeMode,
       theme: AppTheme.light(themePref.accent),
       darkTheme: AppTheme.dark(themePref.accent),
+      locale: locale,
       localizationsDelegates: const [
         AppLocalizations.delegate, // tus traducciones
         GlobalMaterialLocalizations.delegate, // widgets Material en español

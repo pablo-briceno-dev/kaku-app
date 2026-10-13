@@ -53,7 +53,6 @@ class MiniStatsByCategory extends ConsumerWidget {
     return Row(
       children: [
         Container(
-          height: 80,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
@@ -79,7 +78,6 @@ class MiniStatsByCategory extends ConsumerWidget {
         ),
         const Spacer(),
         Container(
-          height: 80,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
@@ -105,7 +103,6 @@ class MiniStatsByCategory extends ConsumerWidget {
         ),
         const Spacer(),
         Container(
-          height: 80,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: cs.surfaceContainerHighest.withValues(alpha: 0.4),

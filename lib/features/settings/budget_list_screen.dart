@@ -262,7 +262,7 @@ class _CategoryBudgetTile extends ConsumerWidget {
                   // Nombre
                   Expanded(
                     child: Text(
-                      category.name,
+                      category.displayName(context),
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,

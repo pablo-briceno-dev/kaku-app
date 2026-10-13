@@ -91,7 +91,7 @@ class CardAccountItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${type.label} ${isActive ? '' : '  ·  ${l10n.archived}'}',
+                    '${type.label(l10n)} ${isActive ? '' : '  ·  ${l10n.archived}'}',
                     style: ts.titleSmall?.copyWith(
                       color: cs.onSurfaceVariant.withValues(alpha: 0.5),
                     ),

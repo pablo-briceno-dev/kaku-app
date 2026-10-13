@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
+import 'package:kaku/core/l10n/category_l10n.dart';
 import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/l10n/app_localizations.dart';
@@ -80,7 +81,9 @@ class TransactionItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    tx.description ?? cat?.name ?? l10n.noDescription,
+                    tx.description ??
+                        cat?.displayName(context) ??
+                        l10n.noDescription,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -92,7 +95,7 @@ class TransactionItem extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     [
-                      if (cat != null) cat.name,
+                      if (cat != null) cat.displayName(context),
                       context.dates.relativeShort(tx.date),
                     ].join(' · '),
                     style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),

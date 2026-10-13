@@ -13,7 +13,7 @@ class CategoriesChipsBottomSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categoriesAsync = ref.watch(expenseCategoriesProvider);
+    final categoriesAsync = ref.watch(allCategoriesProvider);
     final categorySelected = ref.watch(selectedCategoryProvider);
 
     return categoriesAsync.when(
@@ -36,7 +36,8 @@ class CategoriesChipsBottomSheet extends ConsumerWidget {
                       bottom: index == categories.length - 1 ? 20 : 12,
                     ),
                     child: ChipHorizontalItem(
-                      label: '${category.emoji} ${category.displayName(context)}',
+                      label:
+                          '${category.emoji} ${category.displayName(context)}',
                       isSelected: category.id == categorySelected,
                       onTap: category.id == categorySelected
                           ? null

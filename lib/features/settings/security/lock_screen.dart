@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/settings/security/pin_screen.dart';
 import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
+import 'package:kaku/shared/services/last_route_service.dart';
 
 class LockScreen extends ConsumerStatefulWidget {
   const LockScreen({super.key});
@@ -36,7 +35,7 @@ class _LockScreenState extends ConsumerState<LockScreen> {
         // Sin bloqueo → ir directo al dashboard
         ref.read(authenticationStateProvider.notifier).state = true;
         if (mounted) {
-          context.go(AppRoutes.dashboard);
+          await LastRouteService.goToStart(context);
         }
         return;
       }
@@ -56,7 +55,9 @@ class _LockScreenState extends ConsumerState<LockScreen> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(AppLocalizations.of(context)!.biometricAuthFailed),
+                content: Text(
+                  AppLocalizations.of(context)!.biometricAuthFailed,
+                ),
                 duration: Duration(seconds: 2),
               ),
             );
@@ -66,7 +67,7 @@ class _LockScreenState extends ConsumerState<LockScreen> {
 
       if (authenticated && mounted) {
         ref.read(authenticationStateProvider.notifier).state = true;
-        context.go(AppRoutes.dashboard);
+        await LastRouteService.goToStart(context);
       } else {
         // Si falla, no se navega y se queda en la pantalla de bloqueo
         setState(() => _isAuthenticating = false);
@@ -76,8 +77,8 @@ class _LockScreenState extends ConsumerState<LockScreen> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        setState(() => _isAuthenticating = false);
       }
-      setState(() => _isAuthenticating = false);
     }
   }
 
@@ -105,7 +106,9 @@ class _LockScreenState extends ConsumerState<LockScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              _isAuthenticating ? l10n.biometricLockVerifying : l10n.biometricAuthUnlocking,
+              _isAuthenticating
+                  ? l10n.biometricLockVerifying
+                  : l10n.biometricLockSubtitle,
               style: TextStyle(color: cs.onSurfaceVariant),
             ),
             const SizedBox(height: 28),

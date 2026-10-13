@@ -1242,6 +1242,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rangeTitle => 'Date range';
 
   @override
+  String get languageTitle => 'Language';
+
+  @override
+  String get languageSubtitle => 'Choose the app language';
+
+  @override
+  String get languageSystem => 'Device language';
+
+  @override
   String budgetTitle(int plural) {
     String _temp0 = intl.Intl.pluralLogic(
       plural,
@@ -1807,4 +1816,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generatingLabel => 'Generating...';
+
+  @override
+  String get localeEn => 'English';
+
+  @override
+  String get localeEs => 'Spanish';
 }
