@@ -359,7 +359,7 @@ class BudgetCalculator {
     }
 
     if (months >= 1) {
-      return l10n.estimateTimeMonths( months);
+      return l10n.estimateTimeMonths(months);
     } else {
       final days = endDate.difference(startDate).inDays;
       return l10n.estimateTimeDays(days);
