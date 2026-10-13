@@ -30,7 +30,7 @@ class ProfileCard extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         decoration: BoxDecoration(
-          color: cs.surfaceContainerHighest.withAlpha(60),
+          color: cs.onSurface.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -44,11 +44,7 @@ class ProfileCard extends ConsumerWidget {
                 children: [
                   Text(
                     profile.displayName(l10n),
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      // color: cs.onSurfaceVariant,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 2),
                   Text(

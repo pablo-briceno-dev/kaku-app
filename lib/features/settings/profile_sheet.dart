@@ -15,13 +15,16 @@ class ProfileSheet extends ConsumerStatefulWidget {
 class _ProfileSheetState extends ConsumerState<ProfileSheet> {
   final TextEditingController _nameController = TextEditingController();
   String? _receiptPath;
+  bool _initialized = false; // ← evita re-ejecuciones
 
   @override
-  void initState() {
-    super.initState();
-    _nameController.text = ref
-        .read(profileProvider)
-        .displayName(AppLocalizations.of(context)!);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialized) return; // solo la primera vez
+    _initialized = true;
+
+    final l10n = AppLocalizations.of(context)!;
+    _nameController.text = ref.read(profileProvider).displayName(l10n);
     _receiptPath = ref.read(profileProvider).avatarPath;
   }
 

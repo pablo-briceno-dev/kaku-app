@@ -4,7 +4,8 @@ Kaku Budget es una aplicación de finanzas personales para organizar ingresos, g
 
 Está diseñada para ser sencilla, flexible y respetuosa con la privacidad: no requiere crear una cuenta y puede utilizarse sin conexión a Internet.
 
-> **Estado:** En desarrollo / preparación para publicación en Google Play.
+> **Estado:** En producción / publicada en Google Play.
+> **Link Google Play:** https://play.google.com/store/apps/details?id=com.pablobricenodev.kaku&pcampaignid=web_share
 
 ## ✨ Características
 
@@ -121,18 +122,18 @@ Antes de publicar una versión estable se deben comprobar:
 
 ## 🔴 Prioridad alta
 
-- [ ] Preparar versión de producción.
-- [ ] Completar ficha de Google Play Console.
-- [ ] Revisar política de privacidad.
-- [ ] Revisar términos y condiciones.
-- [ ] Revisar página de soporte.
+- [X] Preparar versión de producción.
+- [X] Completar ficha de Google Play Console.
+- [X] Revisar política de privacidad.
+- [X] Revisar términos y condiciones.
+- [X] Revisar página de soporte.
 
 ## 🟡 Prioridad media
 
 - [ ] Mejorar animaciones y transiciones.
 - [ ] Revisar accesibilidad.
 - [ ] Optimizar rendimiento.
-- [ ] Revisar textos y traducciones.
+- [X] Revisar textos y traducciones.
 - [ ] Mejorar estados vacíos.
 - [ ] Mejorar mensajes de error.
 - [ ] Mejorar experiencia de usuario.
@@ -157,7 +158,7 @@ Antes de publicar una versión estable se deben comprobar:
 
 ## 💡 Ideas futuras
 
-- [ ] Traducción al inglés.
+- [X] Traducción al inglés.
 
 # 📝 Notas de desarrollo
 
