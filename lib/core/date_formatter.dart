@@ -54,7 +54,11 @@ class DateFormatter {
 
   /// "20-may-2026" — usado para nombres de archivo, no se traduce al usuario
   static String abbrMonthDayYear(DateTime date, String localeCode) {
-    final f = _skeleton(DateFormat.yMMMd, localeCode, 'abbr');
+    final f = _skeleton(
+      (locale) => DateFormat('dd-MM-yyyy', locale),
+      localeCode,
+      'abbr',
+    );
     return f.format(date).replaceAll('/', '-'); // normaliza separador
   }
 

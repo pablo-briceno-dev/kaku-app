@@ -436,7 +436,6 @@ class _EditTransactionSheetState extends ConsumerState<EditTransactionSheet> {
                         child: Text(l10n.btnSaveChanges),
                       ),
                     ),
-                    const SizedBox(height: 25),
                   ],
                 ),
               ],

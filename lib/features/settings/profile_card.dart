@@ -62,7 +62,7 @@ class ProfileCard extends ConsumerWidget {
             OutlinedButton.icon(
               onPressed: premiumAsync.when(
                 data: (premium) =>
-                    premium ? null : () => context.push(AppRoutes.premium),
+                    !premium ? null : () => context.push(AppRoutes.premium),
                 loading: () => null,
                 error: (_, _) =>
                     () => context.push(AppRoutes.premium),

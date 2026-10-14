@@ -46,7 +46,7 @@ class CardAccountDetail extends ConsumerWidget {
 
     return CardBalance(
       title:
-          '${account.icon} ${account.name} · ${AccountType.values[account.type].label}',
+          '${account.icon} ${account.name} · ${AccountType.values[account.type].label(l10n)}',
       amount: account.balance,
       subtitle: l10n.currentBalance,
       chipItems: [
