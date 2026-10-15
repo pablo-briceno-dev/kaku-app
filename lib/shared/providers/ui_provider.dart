@@ -27,6 +27,10 @@ extension SelectedMonthExtension on StateController<({int month, int year})> {
     state = (month: next.month, year: next.year);
   }
 
+  void setMonth({required int year, required int month}) {
+    state = (month: month, year: year);
+  }
+
   bool isCurrentMonth() =>
       BudgetCalculator.isCurrentMonth(state.year, state.month);
 }

@@ -69,6 +69,12 @@ class ContextDates {
 
   /// Solo el Mes "Enero" (es) / "January" (en)
   String justMonth(DateTime date) => DateFormatter.justMonth(date, _localeCode);
+
+  /// Solo el mes pero Capitalizado "Enero" (es) / "January" (en)
+  String monthOnlyCapitalized(int month, int year) {
+    final monthName = justMonth(DateTime(year, month, 1));
+    return '${monthName[0].toUpperCase()}${monthName.substring(1)}';
+  }
 }
 
 extension DateContextX on BuildContext {

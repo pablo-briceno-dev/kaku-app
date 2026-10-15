@@ -920,6 +920,7 @@
   "btnSave": "Guardar",
   "btnClear": "Limpiar",
   "btnSaveChanges": "Guardar cambios",
+  "btnConfirm": "Confirmar",
 
   "emojiLabel": "Emoji",
   "emojiHint": "Elige un emoji",
@@ -939,5 +940,6 @@
   "notAvailable": "No disponible",
   "generatingLabel": "Generando...",
   "localeEn": "Inglés",
-  "localeEs": "Español"
+  "localeEs": "Español",
+  "selectMonthYear": "Selecciona mes y año"
 }

@@ -2915,6 +2915,12 @@ abstract class AppLocalizations {
   /// **'Guardar cambios'**
   String get btnSaveChanges;
 
+  /// No description provided for @btnConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar'**
+  String get btnConfirm;
+
   /// No description provided for @emojiLabel.
   ///
   /// In es, this message translates to:
@@ -3028,6 +3034,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Español'**
   String get localeEs;
+
+  /// No description provided for @selectMonthYear.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona mes y año'**
+  String get selectMonthYear;
 }
 
 class _AppLocalizationsDelegate

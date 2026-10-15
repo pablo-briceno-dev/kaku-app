@@ -17,6 +17,7 @@ import 'package:kaku/shared/providers/stats_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/premium_service.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
+import 'package:kaku/shared/widgets/month_navigator.dart';
 import 'package:kaku/shared/widgets/premium_gate.dart';
 
 class StatsScreen extends ConsumerWidget {
@@ -28,55 +29,77 @@ class StatsScreen extends ConsumerWidget {
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final isPremium = ref.watch(isPremiumProvider);
-    final params = ref.watch(selectedMonthProvider);
+    final selectedMonth = ref.watch(selectedMonthProvider);
     final currency = ref.watch(currencyProvider);
 
     // ✅ Ahora sí se lee el período seleccionado
     final period = ref.watch(statsPeriodProvider);
 
     final prevParams = BudgetCalculator.previousMonth(
-      params.year,
-      params.month,
+      selectedMonth.year,
+      selectedMonth.month,
     );
 
-    final slicesAsync = ref.watch(categorySlicesProvider(params));
-    final dailyAsync = ref.watch(dailyExpensesProvider(params));
-    final trendAsync = ref.watch(sixMonthTrendProvider(params));
+    final slicesAsync = ref.watch(categorySlicesProvider(selectedMonth));
+    final dailyAsync = ref.watch(dailyExpensesProvider(selectedMonth));
+    final trendAsync = ref.watch(sixMonthTrendProvider(selectedMonth));
     final prevAsync = ref.watch(dailyExpensesProvider(prevParams));
 
     // ✅ Provider nuevo — trimestre (3) o año (12) según el período
     final quarterAsync = ref.watch(
       multiMonthExpensesProvider((
-        month: params.month,
-        year: params.year,
+        month: selectedMonth.month,
+        year: selectedMonth.year,
         count: 3,
       )),
     );
     final yearAsync = ref.watch(
       multiMonthExpensesProvider((
-        month: params.month,
-        year: params.year,
+        month: selectedMonth.month,
+        year: selectedMonth.year,
         count: 12,
       )),
     );
 
     final monthName = context.dates
-        .monthYear(params.year, params.month)
+        .monthYear(selectedMonth.year, selectedMonth.month)
         .toUpperCase();
+
+    final isCurrentMonth = ref.watch(
+      selectedMonthProvider.select(
+        (m) => BudgetCalculator.isCurrentMonth(m.year, m.month),
+      ),
+    );
 
     return Scaffold(
       appBar: CustomAppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.statsTitle),
+            Text(l10n.statsTitle, overflow: TextOverflow.ellipsis, maxLines: 1),
             Text(
               monthName,
+              overflow: TextOverflow.ellipsis, maxLines: 1,
               style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
             ),
           ],
         ),
         defaultActions: true,
+        actions: [
+          MonthNavigator(
+            compact: true,
+            isViewLabelMonth: false,
+            selectedMonth: selectedMonth,
+            isCurrentMonth: isCurrentMonth,
+            onPreviousMonth: () => ref.read(selectedMonthProvider.notifier).toPrevious(),
+            onNextMonth: () => ref.read(selectedMonthProvider.notifier).toNext(),
+            onMonthSelected: (date) {
+              ref
+                  .read(selectedMonthProvider.notifier)
+                  .setMonth(year: date.year, month: date.month);
+            },
+          ),
+        ],
       ),
       body: CustomScrollView(
         slivers: [
@@ -145,7 +168,7 @@ class StatsScreen extends ConsumerWidget {
                     key: ValueKey(period),
                     context: context,
                     period: period,
-                    params: params,
+                    params: selectedMonth,
                     currency: currency,
                     dailyAsync: dailyAsync,
                     quarterAsync: quarterAsync,
@@ -186,7 +209,7 @@ class StatsScreen extends ConsumerWidget {
                         ),
                         _buildComparison(
                           context,
-                          params,
+                          selectedMonth,
                           prevParams,
                           prevAsync,
                           currency,

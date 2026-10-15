@@ -1767,6 +1767,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btnSaveChanges => 'Save changes';
 
   @override
+  String get btnConfirm => 'Confirm';
+
+  @override
   String get emojiLabel => 'Emoji';
 
   @override
@@ -1822,4 +1825,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get localeEs => 'Spanish';
+
+  @override
+  String get selectMonthYear => 'Select month and year';
 }

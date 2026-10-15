@@ -496,6 +496,7 @@
   "btnSave": "Save",
   "btnClear": "Clear",
   "btnSaveChanges": "Save changes",
+  "btnConfirm": "Confirm",
 
   "emojiLabel": "Emoji",
   "emojiHint": "Choose an emoji",
@@ -515,5 +516,6 @@
   "notAvailable": "Not available",
   "generatingLabel": "Generating...",
   "localeEn": "English",
-  "localeEs": "Spanish"
+  "localeEs": "Spanish",
+  "selectMonthYear": "Select month and year"
 }

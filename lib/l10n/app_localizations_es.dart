@@ -1777,6 +1777,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btnSaveChanges => 'Guardar cambios';
 
   @override
+  String get btnConfirm => 'Confirmar';
+
+  @override
   String get emojiLabel => 'Emoji';
 
   @override
@@ -1832,4 +1835,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get localeEs => 'Español';
+
+  @override
+  String get selectMonthYear => 'Selecciona mes y año';
 }
