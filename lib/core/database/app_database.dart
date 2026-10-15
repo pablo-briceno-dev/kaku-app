@@ -80,7 +80,7 @@ class AppDatabase extends _$AppDatabase {
           ('Otros ingresos', 'otherIncome'),
         ];
         var count = 1;
-        for (final (name, key) in nameToKey) {
+        for (final (_, key) in nameToKey) {
           await customStatement(
             'UPDATE categories_table SET system_key = ?  WHERE id = ?',
             [key, count],

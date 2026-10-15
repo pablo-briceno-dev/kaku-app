@@ -17,49 +17,75 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     int month,
     int year,
   ) {
-    final range = _monthRange(year, month);
-    final query =
-        (select(transactionsTable)
-            ..where((t) => t.date.isBetweenValues(range.start, range.end)))
-          ..orderBy([(t) => OrderingTerm.desc(t.date)]);
-    return query
-        .join([
-          leftOuterJoin(
-            categoriesTable,
-            categoriesTable.id.equalsExp(transactionsTable.categoryId),
-          ),
-        ])
-        .watch()
-        .map(
-          (rows) => rows
-              .map(
-                (row) => TransactionWithCategory(
-                  transaction: row.readTable(transactionsTable),
-                  category: row.readTableOrNull(categoriesTable),
-                ),
-              )
-              .toList(),
-        );
+    return _buildTransactionsQuery(
+      year: year,
+      month: month,
+    ).watch().map((rows) => rows.map(_toTransactionWithCategory).toList());
+    // final start = DateTime(year, month);
+    // final nextMonth = DateTime(year, month + 1);
+
+    // final query =
+    //     (select(transactionsTable)..where(
+    //         (t) =>
+    //             t.date.isBiggerOrEqualValue(start) &
+    //             t.date.isSmallerThanValue(nextMonth),
+    //       ))
+    //       ..orderBy([(t) => OrderingTerm.desc(t.date)]);
+    // return query
+    //     .join([
+    //       leftOuterJoin(
+    //         categoriesTable,
+    //         categoriesTable.id.equalsExp(transactionsTable.categoryId),
+    //       ),
+    //     ])
+    //     .watch()
+    //     .map(
+    //       (rows) => rows
+    //           .map(
+    //             (row) => TransactionWithCategory(
+    //               transaction: row.readTable(transactionsTable),
+    //               category: row.readTableOrNull(categoriesTable),
+    //             ),
+    //           )
+    //           .toList(),
+    //     );
   }
 
   // TOTAL de gastos por categoría en un mes (Stream)
   Stream<Map<int, double>> watchExpensesByCategory(int month, int year) {
-    final range = _monthRange(year, month);
+    return _buildTransactionsQuery(
+      year: year,
+      month: month,
+      transactionType: 'expense',
+    ).watch().map((rows) => rows.map(_toTransactionWithCategory).toList()).map((
+      rows,
+    ) {
+      final Map<int, double> result = {};
+      for (final tx in rows) {
+        final key = tx.category?.id ?? 0;
+        result[key] = (result[key] ?? 0) + tx.transaction.amount;
+      }
+      return result;
+    });
 
-    return (select(transactionsTable)..where(
-          (t) =>
-              t.type.equals('expense') &
-              t.date.isBetweenValues(range.start, range.end),
-        ))
-        .watch()
-        .map((rows) {
-          final Map<int, double> result = {};
-          for (final tx in rows) {
-            final key = tx.categoryId ?? 0;
-            result[key] = (result[key] ?? 0) + tx.amount;
-          }
-          return result;
-        });
+    // final start = DateTime(year, month);
+    // final nextMonth = DateTime(year, month + 1);
+
+    // return (select(transactionsTable)..where(
+    //       (t) =>
+    //           t.type.equals('expense') &
+    //           t.date.isBiggerOrEqualValue(start) &
+    //           t.date.isSmallerThanValue(nextMonth),
+    //     ))
+    //     .watch()
+    //     .map((rows) {
+    //       final Map<int, double> result = {};
+    //       for (final tx in rows) {
+    //         final key = tx.categoryId ?? 0;
+    //         result[key] = (result[key] ?? 0) + tx.amount;
+    //       }
+    //       return result;
+    //     });
   }
 
   // INSERTAR transacción
@@ -72,10 +98,17 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
 
   // SUMA de ingresos del mes
   Future<double> getTotalIncome(int month, int year) async {
+    final start = DateTime(year, month);
+    final nextMonth = DateTime(year, month + 1);
+
     final result =
         await (selectOnly(transactionsTable)
               ..addColumns([transactionsTable.amount.sum()])
-              ..where(transactionsTable.type.equals('income')))
+              ..where(
+                transactionsTable.type.equals('income') &
+                    transactionsTable.date.isBiggerOrEqualValue(start) &
+                    transactionsTable.date.isSmallerThanValue(nextMonth),
+              ))
             .getSingleOrNull();
 
     return result?.read(transactionsTable.amount.sum()) ?? 0.0;
@@ -85,27 +118,30 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
   Stream<List<TransactionWithCategory>> watchTransactionsByAccount(
     int accountId,
   ) {
-    final query =
-        (select(transactionsTable)..where((t) => t.accountId.equals(accountId)))
-          ..orderBy([(t) => OrderingTerm.desc(t.date)]);
-    return query
-        .join([
-          leftOuterJoin(
-            categoriesTable,
-            categoriesTable.id.equalsExp(transactionsTable.categoryId),
-          ),
-        ])
-        .watch()
-        .map(
-          (rows) => rows
-              .map(
-                (row) => TransactionWithCategory(
-                  transaction: row.readTable(transactionsTable),
-                  category: row.readTableOrNull(categoriesTable),
-                ),
-              )
-              .toList(),
-        );
+    return _buildTransactionsQuery(
+      accountId: accountId,
+    ).watch().map((rows) => rows.map(_toTransactionWithCategory).toList());
+    // final query =
+    //     (select(transactionsTable)..where((t) => t.accountId.equals(accountId)))
+    //       ..orderBy([(t) => OrderingTerm.desc(t.date)]);
+    // return query
+    //     .join([
+    //       leftOuterJoin(
+    //         categoriesTable,
+    //         categoriesTable.id.equalsExp(transactionsTable.categoryId),
+    //       ),
+    //     ])
+    //     .watch()
+    //     .map(
+    //       (rows) => rows
+    //           .map(
+    //             (row) => TransactionWithCategory(
+    //               transaction: row.readTable(transactionsTable),
+    //               category: row.readTableOrNull(categoriesTable),
+    //             ),
+    //           )
+    //           .toList(),
+    //     );
   }
 
   Stream<Transaction?> watchTransactionById(int id) => (select(
@@ -116,13 +152,15 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
       update(transactionsTable).replace(transaction);
 
   Future<double> getTotalExpenses(int month, int year) async {
-    final range = _monthRange(year, month);
+    final start = DateTime(year, month);
+    final nextMonth = DateTime(year, month + 1);
 
     final rows =
         await (select(transactionsTable)..where(
               (t) =>
                   t.type.equals('expense') &
-                  t.date.isBetweenValues(range.start, range.end),
+                  t.date.isBiggerOrEqualValue(start) &
+                  t.date.isSmallerThanValue(nextMonth),
             ))
             .get();
 
@@ -145,7 +183,11 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
   ) async {
     final query =
         (select(transactionsTable)
-              ..where((t) => t.date.isBetweenValues(start, end))
+              ..where(
+                (t) =>
+                    t.date.isBiggerOrEqualValue(start) &
+                    t.date.isSmallerThanValue(end),
+              )
               ..orderBy([(t) => OrderingTerm.desc(t.date)]))
             .join([
               leftOuterJoin(
@@ -170,13 +212,15 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     required int month,
     required int year,
   }) async {
-    final range = _monthRange(year, month);
+    final start = DateTime(year, month);
+    final nextMonth = DateTime(year, month + 1);
     final rows =
         await (select(transactionsTable)..where(
               (t) =>
                   t.categoryId.equals(categoryId) &
                   t.type.equals('expense') &
-                  t.date.isBetweenValues(range.start, range.end),
+                  t.date.isBiggerOrEqualValue(start) &
+                  t.date.isSmallerThanValue(nextMonth),
             ))
             .get();
     return rows.fold(0.0, (sum, tx) => sum + tx.amount).toDouble();
@@ -232,10 +276,108 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     });
   }
 
-  MonthRange _monthRange(int year, int month) => MonthRange(
-    start: DateTime(year, month, 1),
-    end: DateTime(year, month + 1, 0, 23, 59),
-  );
+  /// Consulta base reutilizable: todos los filtros son opcionales
+  JoinedSelectStatement<HasResultSet, dynamic> _buildTransactionsQuery({
+    int? accountId,
+    int? categoryId,
+    int? year,
+    int? month,
+    String? transactionType,
+    int? limit,
+    int offset = 0,
+  }) {
+    assert(
+      (year == null) == (month == null),
+      'year y month deben enviarse juntos o ninguno (year=$year, month=$month)',
+    );
+    assert(limit != null || offset != 0, 'Offset requiere limit');
+
+    final query = select(transactionsTable).join([
+      leftOuterJoin(
+        categoriesTable,
+        categoriesTable.id.equalsExp(transactionsTable.categoryId),
+      ),
+    ]);
+
+    final filters = <Expression<bool>>[];
+
+    if (categoryId != null) {
+      filters.add(transactionsTable.categoryId.equals(categoryId));
+    }
+
+    if (year != null && month != null) {
+      final start = DateTime(year, month);
+      final nextMonth = DateTime(year, month + 1);
+      filters.add(
+        transactionsTable.date.isBiggerOrEqualValue(start) &
+            transactionsTable.date.isSmallerThanValue(nextMonth),
+      );
+    }
+
+    if (accountId != null) {
+      filters.add(transactionsTable.accountId.equals(accountId));
+    }
+
+    if (transactionType != null) {
+      filters.add(transactionsTable.type.equals(transactionType));
+    }
+
+    if (filters.isNotEmpty) {
+      query.where(filters.reduce((a, b) => a & b));
+    }
+
+    query.orderBy([
+      OrderingTerm.desc(transactionsTable.date),
+      OrderingTerm.desc(transactionsTable.id),
+    ]);
+
+    if (limit != null) {
+      query.limit(limit, offset: offset);
+    }
+
+    return query;
+  }
+
+  TransactionWithCategory _toTransactionWithCategory(TypedResult row) =>
+      TransactionWithCategory(
+        transaction: row.readTable(transactionsTable),
+        category: row.readTableOrNull(categoriesTable),
+      );
+
+  // Una sola vez: scroll infinito, exportaciones, etc.
+  Future<List<TransactionWithCategory>> getTransactions({
+    int? categoryId,
+    int? year,
+    int? month,
+    int? limit,
+    int offset = 0,
+  }) async {
+    final rows = await _buildTransactionsQuery(
+      categoryId: categoryId,
+      year: year,
+      month: month,
+      limit: limit,
+      offset: offset,
+    ).get();
+    return rows.map(_toTransactionWithCategory).toList();
+  }
+
+  // Reactivo: Dashboard (se actualiza solo al agregar o borrar)
+  Stream<List<TransactionWithCategory>> watchTransactions({
+    int? categoryId,
+    int? year,
+    int? month,
+    int? limit,
+    int offset = 0,
+  }) {
+    return _buildTransactionsQuery(
+      categoryId: categoryId,
+      year: year,
+      month: month,
+      limit: limit,
+      offset: offset,
+    ).watch().map((rows) => rows.map(_toTransactionWithCategory).toList());
+  }
 }
 
 // Clase de resultado typesafe para JOIN ──

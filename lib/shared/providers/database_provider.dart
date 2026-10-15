@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/database/daos/accounts_dao.dart';
@@ -10,6 +11,7 @@ import 'package:riverpod/legacy.dart';
 import 'package:rxdart/rxdart.dart';
 
 final appRefreshCounterProvider = StateProvider<int>((ref) => 0);
+const _pageSize = 10;
 
 // Provider singleton de la base de datos
 final databaseProvider = Provider<AppDatabase>((ref) {
@@ -50,6 +52,23 @@ final monthTransactionsProvider =
           .watch(transactionsDaoProvider)
           .watchMonthTransactions(params.month, params.year),
     );
+
+final monthTransactionsWithLimitProvider =
+    StreamProvider.family<
+      List<TransactionWithCategory>,
+      ({int month, int year, int limit})
+    >((ref, params) {
+      debugPrint(
+        'monthTransactionsWithLimitProvider params: ${params.toString()}',
+      );
+      return ref
+          .watch(transactionsDaoProvider)
+          .watchTransactions(
+            month: params.month,
+            year: params.year,
+            limit: params.limit,
+          );
+    });
 
 // Progreso de presupuestos - StreamProvider para que sea reactivo
 // Combina el stream de budgets con el cálculo de gastos reales
@@ -144,7 +163,72 @@ final transactionByIdProvider = StreamProvider.family<Transaction?, int>(
   (ref, id) => ref.watch(transactionsDaoProvider).watchTransactionById(id),
 );
 
+class PagedTxState {
+  const PagedTxState({
+    this.items = const [],
+    this.hasMore = true,
+    this.isLoadingMore = false,
+  });
+
+  final List<TransactionWithCategory> items;
+  final bool hasMore;
+  final bool isLoadingMore;
+
+  PagedTxState copyWith({
+    List<TransactionWithCategory>? items,
+    bool? hasMore,
+    bool? isLoadingMore,
+  }) => PagedTxState(
+    items: items ?? this.items,
+    hasMore: hasMore ?? this.hasMore,
+    isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+  );
+}
+
 // Categorías
+typedef CategoryTxArgs = ({int categoryId, int? year, int? month});
+
+class CategoryTxNotifier extends AsyncNotifier<PagedTxState> {
+  CategoryTxNotifier(this.args);
+  final CategoryTxArgs args;
+
+  Future<List<TransactionWithCategory>> _fetch(int offset) {
+    final dao = ref.read(transactionsDaoProvider);
+    return dao.getTransactions(
+      categoryId: args.categoryId,
+      year: args.year,
+      month: args.month,
+      limit: _pageSize,
+      offset: offset,
+    );
+  }
+
+  @override
+  Future<PagedTxState> build() async {
+    final first = await _fetch(0);
+    return PagedTxState(items: first, hasMore: first.length == _pageSize);
+  }
+
+  Future<void> loadMore() async {
+    final current = state.value;
+    if (current == null || current.isLoadingMore || !current.hasMore) return;
+
+    state = AsyncData(current.copyWith(isLoadingMore: true));
+    try {
+      final next = await _fetch(current.items.length);
+      state = AsyncData(
+        current.copyWith(
+          items: [...current.items, ...next],
+          hasMore: next.length == _pageSize,
+          isLoadingMore: false,
+        ),
+      );
+    } catch (_) {
+      state = AsyncData(current.copyWith(isLoadingMore: false));
+    }
+  }
+}
+
 final allCategoriesProvider = StreamProvider<List<Category>>(
   (ref) => ref.watch(categoriesDaoProvider).watchAllCategories(),
 );
@@ -161,6 +245,11 @@ final categoryByIdProvider = StreamProvider.family<Category?, int?>((ref, id) {
   if (id == null) return Stream.value(null);
   return ref.watch(categoriesDaoProvider).watchCategoryById(id);
 });
+
+final categoryTxProvider = AsyncNotifierProvider.autoDispose
+    .family<CategoryTxNotifier, PagedTxState, CategoryTxArgs>(
+      CategoryTxNotifier.new,
+    );
 
 // Metas
 final allGoalsProvider = StreamProvider<List<Goal>>(

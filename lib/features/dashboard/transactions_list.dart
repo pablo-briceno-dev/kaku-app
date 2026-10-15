@@ -21,7 +21,13 @@ class TransactionsList extends ConsumerWidget {
     final cs = Theme.of(context).colorScheme;
     final ts = Theme.of(context).textTheme;
     final selectedMonth = ref.watch(selectedMonthProvider);
-    final txAsync = ref.watch(monthTransactionsProvider(selectedMonth));
+    final txAsync = ref.watch(
+      monthTransactionsWithLimitProvider((
+        month: selectedMonth.month,
+        year: selectedMonth.year,
+        limit: 10,
+      )),
+    );
 
     return txAsync.when(
       loading: () => const TransactionsListSkeleton(),
@@ -35,7 +41,7 @@ class TransactionsList extends ConsumerWidget {
         }
         // Agrupar por día usando groupKey como clave
         final Map<String, List<TransactionWithCategory>> grouped = {};
-        for (final tx in transactions.take(10)) {
+        for (final tx in transactions) {
           final key = DateFormatter.groupKey(tx.transaction.date);
           grouped.putIfAbsent(key, () => []).add(tx);
         }
