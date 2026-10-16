@@ -2459,6 +2459,42 @@ abstract class AppLocalizations {
   /// **'{percent}% {improved, plural, =1 {menos} other {más}}'**
   String statsMonthComparationLegend(String percent, int improved);
 
+  /// No description provided for @statsIncomeExpenseTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresos vs gastos'**
+  String get statsIncomeExpenseTitle;
+
+  /// No description provided for @statsIncomeExpenseSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Últimos {months} meses'**
+  String statsIncomeExpenseSubtitle(int months);
+
+  /// No description provided for @statsIncomeExpenseNet.
+  ///
+  /// In es, this message translates to:
+  /// **'Neto del periodo: {amount}'**
+  String statsIncomeExpenseNet(String amount);
+
+  /// No description provided for @statsIncomeExpenseLocked.
+  ///
+  /// In es, this message translates to:
+  /// **'Disponible con Premium'**
+  String get statsIncomeExpenseLocked;
+
+  /// No description provided for @premiumFeatureIncomeExpense.
+  ///
+  /// In es, this message translates to:
+  /// **'Gráfica de ingresos vs gastos'**
+  String get premiumFeatureIncomeExpense;
+
+  /// No description provided for @premiumFeatureIncomeExpenseSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Compara cuánto entra y cuánto sale cada mes'**
+  String get premiumFeatureIncomeExpenseSubtitle;
+
   /// No description provided for @transactionTypeFilterAll.
   ///
   /// In es, this message translates to:

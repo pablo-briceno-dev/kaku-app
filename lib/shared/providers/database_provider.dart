@@ -305,3 +305,15 @@ final budgetProgressProviderByCategory =
         });
       });
     });
+
+// Estadísticas
+final monthlyFlowProvider =
+    StreamProvider.family<List<MonthFlow>, ({int months, int year, int month})>(
+      (ref, params) => ref
+          .watch(transactionsDaoProvider)
+          .watchMonthlyFlow(
+            months: params.months,
+            year: params.year,
+            month: params.month,
+          ),
+    );

@@ -1479,6 +1479,29 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get statsIncomeExpenseTitle => 'Ingresos vs gastos';
+
+  @override
+  String statsIncomeExpenseSubtitle(int months) {
+    return 'Últimos $months meses';
+  }
+
+  @override
+  String statsIncomeExpenseNet(String amount) {
+    return 'Neto del periodo: $amount';
+  }
+
+  @override
+  String get statsIncomeExpenseLocked => 'Disponible con Premium';
+
+  @override
+  String get premiumFeatureIncomeExpense => 'Gráfica de ingresos vs gastos';
+
+  @override
+  String get premiumFeatureIncomeExpenseSubtitle =>
+      'Compara cuánto entra y cuánto sale cada mes';
+
+  @override
   String get transactionTypeFilterAll => 'Todos';
 
   @override

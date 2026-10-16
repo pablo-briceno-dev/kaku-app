@@ -109,9 +109,9 @@ class MonthNavigator extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
-        Expanded(child: prevBtn),
-        Expanded(child: centerWidget),
-        Expanded(child: nextBtn),
+        Expanded(flex: 1, child: prevBtn),
+        Expanded(flex: 2, child: centerWidget),
+        Expanded(flex: 1, child: nextBtn),
       ],
     );
   }

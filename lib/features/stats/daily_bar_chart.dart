@@ -23,6 +23,47 @@ class DailyBarChart extends StatefulWidget {
 
 class _DailyBarChartState extends State<DailyBarChart> {
   int _touched = -1;
+  late Set<int> _labelDays;
+
+  @override
+  void initState() {
+    super.initState();
+    _labelDays = _computeLabelDays(widget.daysInMonth);
+  }
+
+  @override
+  void didUpdateWidget(DailyBarChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Solo recalcula si el número de días cambió
+    if (oldWidget.daysInMonth != widget.daysInMonth) {
+      _labelDays = _computeLabelDays(widget.daysInMonth);
+    }
+  }
+
+  Set<int> _computeLabelDays(int daysInMonth) {
+    final days = <int>{1}; // el día 1 siempre va
+
+    // Múltiplos de 5 dentro del rango (5, 10, 15, ...)
+    for (int d = 5; d <= daysInMonth; d += 5) {
+      days.add(d);
+    }
+
+    final last = daysInMonth;
+
+    // Si el último día NO es múltiplo de 5, evaluamos si añadirlo
+    if (last % 5 != 0) {
+      final prevMultiple = (last ~/ 5) * 5;
+      final gap = last - prevMultiple;
+
+      if (gap <= 1) {
+        // Colisión: preferimos el último día y quitamos el múltiplo
+        days.remove(prevMultiple);
+      }
+      days.add(last);
+    }
+
+    return days;
+  }
 
   double get _total => widget.dailyData.values.fold(0, (a, b) => a + b);
   double get _avg => BudgetCalculator.dailyAverage(_total, widget.daysInMonth);
@@ -51,7 +92,7 @@ class _DailyBarChartState extends State<DailyBarChart> {
           height: 140,
           child: BarChart(
             BarChartData(
-              maxY: _maxVal * 1.2, // 20% de margen superior
+              maxY: _maxVal * 1.25, // 20% de margen superior
               barTouchData: BarTouchData(
                 touchTooltipData: BarTouchTooltipData(
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
@@ -87,19 +128,23 @@ class _DailyBarChartState extends State<DailyBarChart> {
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 18,
+                    reservedSize: 22,
                     getTitlesWidget: (value, meta) {
                       final day = value.toInt() + 1;
-                      if (day != 1 &&
-                          day % 5 != 0 &&
-                          day != widget.daysInMonth) {
+
+                      // ✅ Consulta el Set calculado
+                      if (!_labelDays.contains(day)) {
                         return const SizedBox.shrink();
                       }
-                      return Text(
-                        '$day',
-                        style: TextStyle(
-                          fontSize: 9,
-                          color: Colors.white.withValues(alpha: 0.3),
+
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          '$day',
+                          style: TextStyle(
+                            fontSize: 9,
+                            color: Colors.white.withValues(alpha: 0.3),
+                          ),
                         ),
                       );
                     },
@@ -126,7 +171,8 @@ class _DailyBarChartState extends State<DailyBarChart> {
                     dashArray: [4, 4],
                     label: HorizontalLineLabel(
                       show: true,
-                      alignment: Alignment.centerRight,
+                      alignment: Alignment.topRight,
+                      padding: const EdgeInsets.only(left: 4),
                       style: TextStyle(
                         fontSize: 9,
                         color: Colors.white.withValues(alpha: 0.35),

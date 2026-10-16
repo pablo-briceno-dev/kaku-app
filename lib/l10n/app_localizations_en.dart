@@ -1470,6 +1470,29 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get statsIncomeExpenseTitle => 'Income vs expenses';
+
+  @override
+  String statsIncomeExpenseSubtitle(int months) {
+    return 'Last $months months';
+  }
+
+  @override
+  String statsIncomeExpenseNet(String amount) {
+    return 'Period net: $amount';
+  }
+
+  @override
+  String get statsIncomeExpenseLocked => 'Available with Premium';
+
+  @override
+  String get premiumFeatureIncomeExpense => 'Income vs expenses chart';
+
+  @override
+  String get premiumFeatureIncomeExpenseSubtitle =>
+      'Compare what comes in and what goes out each month';
+
+  @override
   String get transactionTypeFilterAll => 'All';
 
   @override

@@ -6,9 +6,11 @@ import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/stats_models.dart';
 import 'package:kaku/features/stats/category_donut_chart.dart';
 import 'package:kaku/features/stats/daily_bar_chart.dart';
+import 'package:kaku/features/stats/income_expense_chart.dart';
 import 'package:kaku/features/stats/month_comparison_card.dart';
 import 'package:kaku/features/stats/spending_line_chart.dart';
 import 'package:kaku/features/stats/widgets/chart_skeleton.dart';
+import 'package:kaku/features/stats/widgets/locked_content.dart';
 import 'package:kaku/features/stats/widgets/section_title.dart';
 import 'package:kaku/features/stats/widgets/stats_empty_state.dart';
 import 'package:kaku/l10n/app_localizations.dart';
@@ -61,9 +63,10 @@ class StatsScreen extends ConsumerWidget {
       )),
     );
 
-    final monthName = context.dates
-        .monthYear(selectedMonth.year, selectedMonth.month)
-        .toUpperCase();
+    final monthName = context.dates.monthYear(
+      selectedMonth.year,
+      selectedMonth.month,
+    );
 
     final isCurrentMonth = ref.watch(
       selectedMonthProvider.select(
@@ -79,7 +82,8 @@ class StatsScreen extends ConsumerWidget {
             Text(l10n.statsTitle, overflow: TextOverflow.ellipsis, maxLines: 1),
             Text(
               monthName,
-              overflow: TextOverflow.ellipsis, maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
               style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
             ),
           ],
@@ -91,8 +95,10 @@ class StatsScreen extends ConsumerWidget {
             isViewLabelMonth: false,
             selectedMonth: selectedMonth,
             isCurrentMonth: isCurrentMonth,
-            onPreviousMonth: () => ref.read(selectedMonthProvider.notifier).toPrevious(),
-            onNextMonth: () => ref.read(selectedMonthProvider.notifier).toNext(),
+            onPreviousMonth: () =>
+                ref.read(selectedMonthProvider.notifier).toPrevious(),
+            onNextMonth: () =>
+                ref.read(selectedMonthProvider.notifier).toNext(),
             onMonthSelected: (date) {
               ref
                   .read(selectedMonthProvider.notifier)
@@ -193,13 +199,57 @@ class StatsScreen extends ConsumerWidget {
                           subtitle: l10n.statsTrendSubtitle,
                         ),
                         trendAsync.when(
-                          data: (trend) => SpendingLineChart(
-                            points: trend,
-                            currency: currency,
-                          ),
+                          data: (trend) {
+                            if (!isPrem) {
+                              return LockedContent(
+                                child: SpendingLineChart(
+                                  points: [
+                                    MonthPoint(
+                                      month: 1,
+                                      year: 2022,
+                                      totalExpenses: 50000,
+                                    ),
+                                    MonthPoint(
+                                      month: 2,
+                                      year: 2022,
+                                      totalExpenses: 100000,
+                                    ),
+                                    MonthPoint(
+                                      month: 3,
+                                      year: 2022,
+                                      totalExpenses: 30000,
+                                    ),
+                                    MonthPoint(
+                                      month: 4,
+                                      year: 2022,
+                                      totalExpenses: 200000,
+                                    ),
+                                    MonthPoint(
+                                      month: 5,
+                                      year: 2022,
+                                      totalExpenses: 10000,
+                                    ),
+                                    MonthPoint(
+                                      month: 6,
+                                      year: 2022,
+                                      totalExpenses: 60000,
+                                    ),
+                                  ],
+                                  currency: currency,
+                                ),
+                              );
+                            }
+
+                            return SpendingLineChart(
+                              points: trend,
+                              currency: currency,
+                            );
+                          },
                           error: (e, _) => Text('Error: $e'),
                           loading: () => const ChartSkeleton(height: 160),
                         ),
+                        const SizedBox(height: 28),
+                        IncomeExpenseChart(isPremium: isPrem),
                         const SizedBox(height: 28),
                         SectionTitle(
                           title: l10n.statsTrendMonthVsPreviousTitle,
@@ -211,8 +261,10 @@ class StatsScreen extends ConsumerWidget {
                           context,
                           selectedMonth,
                           prevParams,
+                          dailyAsync,
                           prevAsync,
                           currency,
+                          isPrem,
                         ),
                       ],
                     );
@@ -312,26 +364,51 @@ class StatsScreen extends ConsumerWidget {
     BuildContext context,
     ({int month, int year}) current,
     ({int month, int year}) prev,
+    AsyncValue<Map<int, double>> currentAsync,
     AsyncValue<Map<int, double>> prevAsync,
     CurrencyType currency,
+    bool isPremium,
   ) {
-    return prevAsync.when(
+    return currentAsync.when(
       loading: () => const ChartSkeleton(height: 110),
       error: (e, _) => Text('Error: $e'),
-      data: (prevDaily) {
-        final prevTotal = prevDaily.values.fold(0.0, (a, b) => a + b);
-        final currentLabel = context.dates.justMonth(
-          DateTime(current.year, current.month),
-        );
-        final prevLabel = context.dates.justMonth(
-          DateTime(prev.year, prev.month),
-        );
-        return MonthComparisonCard(
-          currentAmount: 0,
-          previousAmount: prevTotal,
-          currentLabel: currentLabel,
-          previousLabel: prevLabel,
-          currency: currency,
+      data: (currentDaily) {
+        return prevAsync.when(
+          loading: () => const ChartSkeleton(height: 110),
+          error: (e, _) => Text('Error: $e'),
+          data: (prevDaily) {
+            final currentLabel = context.dates.justMonth(
+              DateTime(current.year, current.month),
+            );
+            final prevLabel = context.dates.justMonth(
+              DateTime(prev.year, prev.month),
+            );
+
+            // Bloqueado para usuarios free
+            if (!isPremium) {
+              return LockedContent(
+                child: MonthComparisonCard(
+                  currentAmount: 0,
+                  previousAmount: 100000,
+                  currentLabel: currentLabel,
+                  previousLabel: prevLabel,
+                  currency: currency,
+                ),
+              );
+            }
+
+            // ✅ Cálculo real de totales
+            final currentTotal = currentDaily.values.fold(0.0, (a, b) => a + b);
+            final prevTotal = prevDaily.values.fold(0.0, (a, b) => a + b);
+
+            return MonthComparisonCard(
+              currentAmount: currentTotal, // ← ahora sí
+              previousAmount: prevTotal,
+              currentLabel: currentLabel,
+              previousLabel: prevLabel,
+              currency: currency,
+            );
+          },
         );
       },
     );

@@ -753,6 +753,14 @@
       "improved": { "type": "int" }
     }
   },
+  "statsIncomeExpenseTitle": "Ingresos vs gastos",
+  "statsIncomeExpenseSubtitle": "Últimos {months} meses",
+  "@statsIncomeExpenseSubtitle": { "placeholders": { "months": { "type": "int" } } },
+  "statsIncomeExpenseNet": "Neto del periodo: {amount}",
+  "@statsIncomeExpenseNet": { "placeholders": { "amount": { "type": "String" } } },
+  "statsIncomeExpenseLocked": "Disponible con Premium",
+  "premiumFeatureIncomeExpense": "Gráfica de ingresos vs gastos",
+  "premiumFeatureIncomeExpenseSubtitle": "Compara cuánto entra y cuánto sale cada mes",
   
   "transactionTypeFilterAll": "Todos",
   "transactionTypeFilterByCategory": "Por categoría",

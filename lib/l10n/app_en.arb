@@ -417,6 +417,12 @@
   "statsDailyBarChartAverage": "Average",
   "statsMonthComparationExpense": "You spent",
   "statsMonthComparationLegend": "{percent}% {improved, plural, =1 {less} other {more}}",
+  "statsIncomeExpenseTitle": "Income vs expenses",
+  "statsIncomeExpenseSubtitle": "Last {months} months",
+  "statsIncomeExpenseNet": "Period net: {amount}",
+  "statsIncomeExpenseLocked": "Available with Premium",
+  "premiumFeatureIncomeExpense": "Income vs expenses chart",
+  "premiumFeatureIncomeExpenseSubtitle": "Compare what comes in and what goes out each month",
 
   "transactionTypeFilterAll": "All",
   "transactionTypeFilterByCategory": "By category",

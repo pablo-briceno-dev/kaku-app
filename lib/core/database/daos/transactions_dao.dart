@@ -290,7 +290,11 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
       (year == null) == (month == null),
       'year y month deben enviarse juntos o ninguno (year=$year, month=$month)',
     );
-    assert(limit != null || offset != 0, 'Offset requiere limit');
+    // assert((limit == null) == (offset == 0), 'Offset requiere limit');
+    assert(
+      limit != null || offset == 0,
+      'Offset requiere limit (limit=$limit, offset=$offset)',
+    );
 
     final query = select(transactionsTable).join([
       leftOuterJoin(
@@ -378,6 +382,45 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
       offset: offset,
     ).watch().map((rows) => rows.map(_toTransactionWithCategory).toList());
   }
+
+  // Totales de ingresos y gastos por mes, de los últimos [months] meses (reactivo)
+  Stream<List<MonthFlow>> watchMonthlyFlow({
+    required int months,
+    required int year,
+    required int month,
+  }) {
+    final now = DateTime(year, month);
+    final start = DateTime(now.year, now.month - (months - 1));
+    final end = DateTime(now.year, now.month + 1);
+
+    final query = select(transactionsTable)
+      ..where(
+        (t) =>
+            t.type.isIn(['income', 'expense']) &
+            t.date.isBiggerOrEqualValue(start) &
+            t.date.isSmallerThanValue(end),
+      );
+
+    return query.watch().map((rows) {
+      final income = <DateTime, double>{};
+      final expense = <DateTime, double>{};
+      for (final t in rows) {
+        final key = DateTime(t.date.year, t.date.month);
+        final bucket = t.type == 'income' ? income : expense;
+        bucket[key] = (bucket[key] ?? 0) + t.amount;
+      }
+
+      final result = <MonthFlow>[];
+      for (var i = 0; i < months; i++) {
+        final m = DateTime(start.year, start.month + i);
+        result.add(
+          MonthFlow(month: m, income: income[m] ?? 0, expense: expense[m] ?? 0),
+        );
+      }
+
+      return result;
+    });
+  }
 }
 
 // Clase de resultado typesafe para JOIN ──
@@ -387,8 +430,16 @@ class TransactionWithCategory {
   const TransactionWithCategory({required this.transaction, this.category});
 }
 
-class MonthRange {
-  final DateTime start;
-  final DateTime end;
-  const MonthRange({required this.start, required this.end});
+class MonthFlow {
+  final DateTime month;
+  final double income;
+  final double expense;
+
+  const MonthFlow({
+    required this.month,
+    required this.income,
+    required this.expense,
+  });
+
+  double get net => income - expense;
 }
