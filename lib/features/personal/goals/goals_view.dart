@@ -14,10 +14,10 @@ class GoalsView extends ConsumerStatefulWidget {
   const GoalsView({super.key});
 
   @override
-  ConsumerState<GoalsView> createState() => _GoalsScreenState();
+  ConsumerState<GoalsView> createState() => _GoalsViewState();
 }
 
-class _GoalsScreenState extends ConsumerState<GoalsView> {
+class _GoalsViewState extends ConsumerState<GoalsView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;

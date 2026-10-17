@@ -203,7 +203,7 @@ abstract class AppLocalizations {
   /// No description provided for @appShellTabPersonal.
   ///
   /// In es, this message translates to:
-  /// **'Personal'**
+  /// **'Planificar'**
   String get appShellTabPersonal;
 
   /// No description provided for @appShellTabAccounts.
@@ -217,6 +217,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Calendario'**
   String get calendarTab;
+
+  /// No description provided for @calendarTabSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Programa tus gastos'**
+  String get calendarTabSubtitle;
 
   /// No description provided for @calendarAddEntry.
   ///

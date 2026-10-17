@@ -21,10 +21,11 @@
 
   "appShellTabDashboard": "Inicio",
   "appShellTabStats": "Estadísticas",
-  "appShellTabPersonal": "Personal",
+  "appShellTabPersonal": "Planificar",
   "appShellTabAccounts": "Cuentas",
 
   "calendarTab": "Calendario",
+  "calendarTabSubtitle": "Programa tus gastos",
   "calendarAddEntry": "Agregar",
   "calendarEntryTitleLabel": "Título",
   "calendarEntryAmountLabel": "Monto estimado (vacío = nota)",

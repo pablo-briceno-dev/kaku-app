@@ -60,13 +60,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appShellTabStats => 'Statistics';
 
   @override
-  String get appShellTabPersonal => 'Personal';
+  String get appShellTabPersonal => 'Plan';
 
   @override
   String get appShellTabAccounts => 'Accounts';
 
   @override
   String get calendarTab => 'Calendar';
+
+  @override
+  String get calendarTabSubtitle => 'Program your expenses';
 
   @override
   String get calendarAddEntry => 'Add';

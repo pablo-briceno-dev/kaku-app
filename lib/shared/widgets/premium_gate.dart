@@ -86,7 +86,7 @@ class _LockBadge extends StatelessWidget {
 //  Úsalo antes de insertar un nuevo registro para verificar
 //  si el usuario ya llegó al límite del plan free.
 //
-//  Uso en GoalsScreen al tocar "+ Nueva meta":
+//  Uso en GoalsView al tocar "+ Nueva meta":
 //
 //    final blocked = await PremiumLimitChecker.check(
 //      context: context,

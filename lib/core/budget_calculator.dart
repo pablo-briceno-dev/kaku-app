@@ -234,12 +234,12 @@ class BudgetCalculator {
 
   // ════════════════════════════════════════════════════
   //  SECCIÓN 5 — METAS DE AHORRO
-  //  Usadas en: GoalsScreen (tarjetas de progreso y estimación)
+  //  Usadas en: GoalsView (tarjetas de progreso y estimación)
   // ════════════════════════════════════════════════════
 
   /// Progreso de una meta de ahorro como valor entre 0.0 y 1.0.
   /// Se clampea en 1.0 porque savedAmount no puede superar targetAmount.
-  /// Usado en la barra de progreso de cada tarjeta en GoalsScreen.
+  /// Usado en la barra de progreso de cada tarjeta en GoalsView.
   ///
   /// Ejemplo: goalProgress(780_000, 1_200_000) → 0.65  (65%)
   static double goalProgress(double saved, double target) {
@@ -256,7 +256,7 @@ class BudgetCalculator {
 
   /// Estimación de meses para completar la meta al ritmo de ahorro actual.
   /// Devuelve null si no hay historial de ahorro (no se puede estimar).
-  /// Usado en GoalsScreen para mostrar "Estimado: 5 meses".
+  /// Usado en GoalsView para mostrar "Estimado: 5 meses".
   ///
   /// [remaining]          : resultado de goalRemaining()
   /// [avgMonthlySavings]  : promedio de (ingresos - gastos) de los últimos 3 meses
@@ -270,7 +270,7 @@ class BudgetCalculator {
 
   /// Fecha estimada de completar la meta.
   /// Devuelve null si estimatedMonths() devuelve null.
-  /// Usado en GoalsScreen para mostrar "Meta: enero 2027".
+  /// Usado en GoalsView para mostrar "Meta: enero 2027".
   ///
   /// Ejemplo: estimatedDate(DateTime(2026,5,1), 3.0) → DateTime(2026, 8, 1)
   static DateTime? estimatedDate(DateTime from, double? months) {
@@ -283,7 +283,7 @@ class BudgetCalculator {
 
   /// Promedio de ahorro mensual de los últimos N meses.
   /// Se usa como entrada de estimatedMonths().
-  /// Usado en GoalsScreen para calcular la estimación de todas las metas.
+  /// Usado en GoalsView para calcular la estimación de todas las metas.
   ///
   /// [monthlySurpluses] : lista de (ingresos - gastos) de cada mes pasado
   ///
@@ -342,7 +342,7 @@ class BudgetCalculator {
   }
 
   /// Obtiene los meses/días estimados para completar la meta
-  /// Usado en GoalsScreen para mostrar "Estimado: 5 meses" o "Estimado: 1 día" real
+  /// Usado en GoalsView para mostrar "Estimado: 5 meses" o "Estimado: 1 día" real
   static String getEstimatedTime(
     BuildContext context,
     DateTime startDate,
@@ -367,7 +367,7 @@ class BudgetCalculator {
   }
 
   /// Obtiene la estimación de tiempo para completar la meta
-  /// Usado en GoalsScreen para mostrar "Estimado: 5 meses" o "Estimado: 1 día" real
+  /// Usado en GoalsView para mostrar "Estimado: 5 meses" o "Estimado: 1 día" real
   static String getEstimatedSavingTime(
     BuildContext context,
     double remaining,
