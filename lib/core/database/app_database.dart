@@ -4,11 +4,13 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:kaku/core/database/daos/accounts_dao.dart';
 import 'package:kaku/core/database/daos/budgets_dao.dart';
+import 'package:kaku/core/database/daos/calendar_dao.dart';
 import 'package:kaku/core/database/daos/categories_dao.dart';
 import 'package:kaku/core/database/daos/goals_dao.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/database/tables/accounts_table.dart';
 import 'package:kaku/core/database/tables/budgets_table.dart';
+import 'package:kaku/core/database/tables/calendar_entries_table.dart';
 import 'package:kaku/core/database/tables/categories_table.dart';
 import 'package:kaku/core/database/tables/goals_table.dart';
 import 'package:kaku/core/database/tables/transactions_table.dart';
@@ -25,6 +27,7 @@ part 'app_database.g.dart';
     BudgetsTable,
     GoalsTable,
     TransactionsTable,
+    CalendarEntriesTable,
   ],
   daos: [
     AccountsDao, // CRUD de cuentas + balance
@@ -32,13 +35,14 @@ part 'app_database.g.dart';
     BudgetsDao, // CRUD de presupuestos mensuales
     GoalsDao, // CRUD de metas + lógica de aportes
     CategoriesDao, // CRUD de categorías personalizadas
+    CalendarDao, // CRUD de calendario
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   // Aquí irán las migraciones cuando actualice el schema
   @override
@@ -87,6 +91,9 @@ class AppDatabase extends _$AppDatabase {
           );
           count++;
         }
+      }
+      if (from == 4 && to == 5) {
+        await m.createTable(calendarEntriesTable);
       }
     },
   );

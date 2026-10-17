@@ -115,7 +115,7 @@ class _AppShellState extends ConsumerState<AppShell>
 
             // Grupo derecho: Metas + Cuentas
             _NavItem(
-              icon: Icons.flag_outlined,
+              icon: Icons.person_outline,
               selectedIcon: Icons.flag,
               label: l10n.appShellTabPersonal,
               index: 2,

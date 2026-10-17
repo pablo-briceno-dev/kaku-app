@@ -60,10 +60,31 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appShellTabStats => 'Estadísticas';
 
   @override
-  String get appShellTabPersonal => 'Metas';
+  String get appShellTabPersonal => 'Personal';
 
   @override
   String get appShellTabAccounts => 'Cuentas';
+
+  @override
+  String get calendarTab => 'Calendario';
+
+  @override
+  String get calendarAddEntry => 'Agregar';
+
+  @override
+  String get calendarEntryTitleLabel => 'Título';
+
+  @override
+  String get calendarEntryAmountLabel => 'Monto estimado (vacío = nota)';
+
+  @override
+  String get calendarEmptyDay => 'Nada programado para este día';
+
+  @override
+  String get calendarPlannedExpense => 'Gasto programado';
+
+  @override
+  String get calendarNote => 'Nota';
 
   @override
   String get budgetCalculatorSavingsRateMenorCero =>

@@ -55,8 +55,9 @@ class LastRouteService {
   static Future<void> goToStart(BuildContext context) async {
     final target = await restore();
     if (!context.mounted) return;
+    final path = Uri.parse(target).path;
 
-    if (AppRoutes.shellTabs.contains(target)) {
+    if (AppRoutes.shellTabs.contains(path)) {
       context.go(target); // es un tab, se navega directo
     } else {
       // Detalle u otra pantalla: primero el Dashboard y encima el destino,

@@ -4,6 +4,7 @@ abstract class AppRoutes {
   // Tabs principales (dentro del ShellRoute)
   static const String dashboard = '/';
   static const String stats = '/stats';
+  static const String personal = '/personal';
   static const String goals = '/goals';
   static const String accounts = '/accounts';
   static const String settings = '/settings';

@@ -203,7 +203,7 @@ abstract class AppLocalizations {
   /// No description provided for @appShellTabPersonal.
   ///
   /// In es, this message translates to:
-  /// **'Metas'**
+  /// **'Personal'**
   String get appShellTabPersonal;
 
   /// No description provided for @appShellTabAccounts.
@@ -211,6 +211,48 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Cuentas'**
   String get appShellTabAccounts;
+
+  /// No description provided for @calendarTab.
+  ///
+  /// In es, this message translates to:
+  /// **'Calendario'**
+  String get calendarTab;
+
+  /// No description provided for @calendarAddEntry.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar'**
+  String get calendarAddEntry;
+
+  /// No description provided for @calendarEntryTitleLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Título'**
+  String get calendarEntryTitleLabel;
+
+  /// No description provided for @calendarEntryAmountLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Monto estimado (vacío = nota)'**
+  String get calendarEntryAmountLabel;
+
+  /// No description provided for @calendarEmptyDay.
+  ///
+  /// In es, this message translates to:
+  /// **'Nada programado para este día'**
+  String get calendarEmptyDay;
+
+  /// No description provided for @calendarPlannedExpense.
+  ///
+  /// In es, this message translates to:
+  /// **'Gasto programado'**
+  String get calendarPlannedExpense;
+
+  /// No description provided for @calendarNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Nota'**
+  String get calendarNote;
 
   /// No description provided for @budgetCalculatorSavingsRateMenorCero.
   ///

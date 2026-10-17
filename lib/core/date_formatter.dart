@@ -139,4 +139,10 @@ class DateFormatter {
     final f = _skeleton(DateFormat.MMMM, localeCode, 'justMonth');
     return f.format(date);
   }
+
+  /// Formateo para calendario
+  static String calendarDayLabel(DateTime date, String localeCode) {
+    final f = _skeleton(DateFormat.EEEEE, localeCode, 'calendarDayLabel');
+    return f.format(date);
+  }
 }

@@ -2948,6 +2948,609 @@ class TransactionsTableCompanion extends UpdateCompanion<Transaction> {
   }
 }
 
+class $CalendarEntriesTableTable extends CalendarEntriesTable
+    with TableInfo<$CalendarEntriesTableTable, CalendarEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CalendarEntriesTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 120,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<double> amount = GeneratedColumn<double>(
+    'amount',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<int> categoryId = GeneratedColumn<int>(
+    'category_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<int> accountId = GeneratedColumn<int>(
+    'account_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _remindAtMeta = const VerificationMeta(
+    'remindAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> remindAt = GeneratedColumn<DateTime>(
+    'remind_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant("pending"),
+  );
+  static const VerificationMeta _transactionIdMeta = const VerificationMeta(
+    'transactionId',
+  );
+  @override
+  late final GeneratedColumn<int> transactionId = GeneratedColumn<int>(
+    'transaction_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    date,
+    title,
+    note,
+    amount,
+    categoryId,
+    accountId,
+    remindAt,
+    status,
+    transactionId,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'calendar_entries_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CalendarEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    }
+    if (data.containsKey('remind_at')) {
+      context.handle(
+        _remindAtMeta,
+        remindAt.isAcceptableOrUnknown(data['remind_at']!, _remindAtMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('transaction_id')) {
+      context.handle(
+        _transactionIdMeta,
+        transactionId.isAcceptableOrUnknown(
+          data['transaction_id']!,
+          _transactionIdMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CalendarEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CalendarEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      ),
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}amount'],
+      ),
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}category_id'],
+      ),
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}account_id'],
+      ),
+      remindAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}remind_at'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      transactionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}transaction_id'],
+      ),
+    );
+  }
+
+  @override
+  $CalendarEntriesTableTable createAlias(String alias) {
+    return $CalendarEntriesTableTable(attachedDatabase, alias);
+  }
+}
+
+class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
+  final int id;
+  final DateTime date;
+  final String title;
+  final String? note;
+  final double? amount;
+  final int? categoryId;
+  final int? accountId;
+  final DateTime? remindAt;
+  final String status;
+  final int? transactionId;
+  const CalendarEntry({
+    required this.id,
+    required this.date,
+    required this.title,
+    this.note,
+    this.amount,
+    this.categoryId,
+    this.accountId,
+    this.remindAt,
+    required this.status,
+    this.transactionId,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['date'] = Variable<DateTime>(date);
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
+    if (!nullToAbsent || amount != null) {
+      map['amount'] = Variable<double>(amount);
+    }
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<int>(categoryId);
+    }
+    if (!nullToAbsent || accountId != null) {
+      map['account_id'] = Variable<int>(accountId);
+    }
+    if (!nullToAbsent || remindAt != null) {
+      map['remind_at'] = Variable<DateTime>(remindAt);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || transactionId != null) {
+      map['transaction_id'] = Variable<int>(transactionId);
+    }
+    return map;
+  }
+
+  CalendarEntriesTableCompanion toCompanion(bool nullToAbsent) {
+    return CalendarEntriesTableCompanion(
+      id: Value(id),
+      date: Value(date),
+      title: Value(title),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      amount: amount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(amount),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
+      accountId: accountId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(accountId),
+      remindAt: remindAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remindAt),
+      status: Value(status),
+      transactionId: transactionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(transactionId),
+    );
+  }
+
+  factory CalendarEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CalendarEntry(
+      id: serializer.fromJson<int>(json['id']),
+      date: serializer.fromJson<DateTime>(json['date']),
+      title: serializer.fromJson<String>(json['title']),
+      note: serializer.fromJson<String?>(json['note']),
+      amount: serializer.fromJson<double?>(json['amount']),
+      categoryId: serializer.fromJson<int?>(json['categoryId']),
+      accountId: serializer.fromJson<int?>(json['accountId']),
+      remindAt: serializer.fromJson<DateTime?>(json['remindAt']),
+      status: serializer.fromJson<String>(json['status']),
+      transactionId: serializer.fromJson<int?>(json['transactionId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'date': serializer.toJson<DateTime>(date),
+      'title': serializer.toJson<String>(title),
+      'note': serializer.toJson<String?>(note),
+      'amount': serializer.toJson<double?>(amount),
+      'categoryId': serializer.toJson<int?>(categoryId),
+      'accountId': serializer.toJson<int?>(accountId),
+      'remindAt': serializer.toJson<DateTime?>(remindAt),
+      'status': serializer.toJson<String>(status),
+      'transactionId': serializer.toJson<int?>(transactionId),
+    };
+  }
+
+  CalendarEntry copyWith({
+    int? id,
+    DateTime? date,
+    String? title,
+    Value<String?> note = const Value.absent(),
+    Value<double?> amount = const Value.absent(),
+    Value<int?> categoryId = const Value.absent(),
+    Value<int?> accountId = const Value.absent(),
+    Value<DateTime?> remindAt = const Value.absent(),
+    String? status,
+    Value<int?> transactionId = const Value.absent(),
+  }) => CalendarEntry(
+    id: id ?? this.id,
+    date: date ?? this.date,
+    title: title ?? this.title,
+    note: note.present ? note.value : this.note,
+    amount: amount.present ? amount.value : this.amount,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
+    accountId: accountId.present ? accountId.value : this.accountId,
+    remindAt: remindAt.present ? remindAt.value : this.remindAt,
+    status: status ?? this.status,
+    transactionId: transactionId.present
+        ? transactionId.value
+        : this.transactionId,
+  );
+  CalendarEntry copyWithCompanion(CalendarEntriesTableCompanion data) {
+    return CalendarEntry(
+      id: data.id.present ? data.id.value : this.id,
+      date: data.date.present ? data.date.value : this.date,
+      title: data.title.present ? data.title.value : this.title,
+      note: data.note.present ? data.note.value : this.note,
+      amount: data.amount.present ? data.amount.value : this.amount,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      remindAt: data.remindAt.present ? data.remindAt.value : this.remindAt,
+      status: data.status.present ? data.status.value : this.status,
+      transactionId: data.transactionId.present
+          ? data.transactionId.value
+          : this.transactionId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CalendarEntry(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('title: $title, ')
+          ..write('note: $note, ')
+          ..write('amount: $amount, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('accountId: $accountId, ')
+          ..write('remindAt: $remindAt, ')
+          ..write('status: $status, ')
+          ..write('transactionId: $transactionId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    date,
+    title,
+    note,
+    amount,
+    categoryId,
+    accountId,
+    remindAt,
+    status,
+    transactionId,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CalendarEntry &&
+          other.id == this.id &&
+          other.date == this.date &&
+          other.title == this.title &&
+          other.note == this.note &&
+          other.amount == this.amount &&
+          other.categoryId == this.categoryId &&
+          other.accountId == this.accountId &&
+          other.remindAt == this.remindAt &&
+          other.status == this.status &&
+          other.transactionId == this.transactionId);
+}
+
+class CalendarEntriesTableCompanion extends UpdateCompanion<CalendarEntry> {
+  final Value<int> id;
+  final Value<DateTime> date;
+  final Value<String> title;
+  final Value<String?> note;
+  final Value<double?> amount;
+  final Value<int?> categoryId;
+  final Value<int?> accountId;
+  final Value<DateTime?> remindAt;
+  final Value<String> status;
+  final Value<int?> transactionId;
+  const CalendarEntriesTableCompanion({
+    this.id = const Value.absent(),
+    this.date = const Value.absent(),
+    this.title = const Value.absent(),
+    this.note = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.remindAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.transactionId = const Value.absent(),
+  });
+  CalendarEntriesTableCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime date,
+    required String title,
+    this.note = const Value.absent(),
+    this.amount = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.remindAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.transactionId = const Value.absent(),
+  }) : date = Value(date),
+       title = Value(title);
+  static Insertable<CalendarEntry> custom({
+    Expression<int>? id,
+    Expression<DateTime>? date,
+    Expression<String>? title,
+    Expression<String>? note,
+    Expression<double>? amount,
+    Expression<int>? categoryId,
+    Expression<int>? accountId,
+    Expression<DateTime>? remindAt,
+    Expression<String>? status,
+    Expression<int>? transactionId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (date != null) 'date': date,
+      if (title != null) 'title': title,
+      if (note != null) 'note': note,
+      if (amount != null) 'amount': amount,
+      if (categoryId != null) 'category_id': categoryId,
+      if (accountId != null) 'account_id': accountId,
+      if (remindAt != null) 'remind_at': remindAt,
+      if (status != null) 'status': status,
+      if (transactionId != null) 'transaction_id': transactionId,
+    });
+  }
+
+  CalendarEntriesTableCompanion copyWith({
+    Value<int>? id,
+    Value<DateTime>? date,
+    Value<String>? title,
+    Value<String?>? note,
+    Value<double?>? amount,
+    Value<int?>? categoryId,
+    Value<int?>? accountId,
+    Value<DateTime?>? remindAt,
+    Value<String>? status,
+    Value<int?>? transactionId,
+  }) {
+    return CalendarEntriesTableCompanion(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      title: title ?? this.title,
+      note: note ?? this.note,
+      amount: amount ?? this.amount,
+      categoryId: categoryId ?? this.categoryId,
+      accountId: accountId ?? this.accountId,
+      remindAt: remindAt ?? this.remindAt,
+      status: status ?? this.status,
+      transactionId: transactionId ?? this.transactionId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<double>(amount.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<int>(categoryId.value);
+    }
+    if (accountId.present) {
+      map['account_id'] = Variable<int>(accountId.value);
+    }
+    if (remindAt.present) {
+      map['remind_at'] = Variable<DateTime>(remindAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (transactionId.present) {
+      map['transaction_id'] = Variable<int>(transactionId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CalendarEntriesTableCompanion(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('title: $title, ')
+          ..write('note: $note, ')
+          ..write('amount: $amount, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('accountId: $accountId, ')
+          ..write('remindAt: $remindAt, ')
+          ..write('status: $status, ')
+          ..write('transactionId: $transactionId')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2959,6 +3562,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $GoalsTableTable goalsTable = $GoalsTableTable(this);
   late final $TransactionsTableTable transactionsTable =
       $TransactionsTableTable(this);
+  late final $CalendarEntriesTableTable calendarEntriesTable =
+      $CalendarEntriesTableTable(this);
   late final AccountsDao accountsDao = AccountsDao(this as AppDatabase);
   late final TransactionsDao transactionsDao = TransactionsDao(
     this as AppDatabase,
@@ -2966,6 +3571,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final BudgetsDao budgetsDao = BudgetsDao(this as AppDatabase);
   late final GoalsDao goalsDao = GoalsDao(this as AppDatabase);
   late final CategoriesDao categoriesDao = CategoriesDao(this as AppDatabase);
+  late final CalendarDao calendarDao = CalendarDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2976,6 +3582,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     budgetsTable,
     goalsTable,
     transactionsTable,
+    calendarEntriesTable,
   ];
 }
 
@@ -5277,6 +5884,324 @@ typedef $$TransactionsTableTableProcessedTableManager =
       Transaction,
       PrefetchHooks Function({bool accountId, bool categoryId, bool goalId})
     >;
+typedef $$CalendarEntriesTableTableCreateCompanionBuilder =
+    CalendarEntriesTableCompanion Function({
+      Value<int> id,
+      required DateTime date,
+      required String title,
+      Value<String?> note,
+      Value<double?> amount,
+      Value<int?> categoryId,
+      Value<int?> accountId,
+      Value<DateTime?> remindAt,
+      Value<String> status,
+      Value<int?> transactionId,
+    });
+typedef $$CalendarEntriesTableTableUpdateCompanionBuilder =
+    CalendarEntriesTableCompanion Function({
+      Value<int> id,
+      Value<DateTime> date,
+      Value<String> title,
+      Value<String?> note,
+      Value<double?> amount,
+      Value<int?> categoryId,
+      Value<int?> accountId,
+      Value<DateTime?> remindAt,
+      Value<String> status,
+      Value<int?> transactionId,
+    });
+
+class $$CalendarEntriesTableTableFilterComposer
+    extends Composer<_$AppDatabase, $CalendarEntriesTableTable> {
+  $$CalendarEntriesTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get remindAt => $composableBuilder(
+    column: $table.remindAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get transactionId => $composableBuilder(
+    column: $table.transactionId,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CalendarEntriesTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $CalendarEntriesTableTable> {
+  $$CalendarEntriesTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get remindAt => $composableBuilder(
+    column: $table.remindAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get transactionId => $composableBuilder(
+    column: $table.transactionId,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CalendarEntriesTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CalendarEntriesTableTable> {
+  $$CalendarEntriesTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<double> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<int> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get accountId =>
+      $composableBuilder(column: $table.accountId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get remindAt =>
+      $composableBuilder(column: $table.remindAt, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get transactionId => $composableBuilder(
+    column: $table.transactionId,
+    builder: (column) => column,
+  );
+}
+
+class $$CalendarEntriesTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CalendarEntriesTableTable,
+          CalendarEntry,
+          $$CalendarEntriesTableTableFilterComposer,
+          $$CalendarEntriesTableTableOrderingComposer,
+          $$CalendarEntriesTableTableAnnotationComposer,
+          $$CalendarEntriesTableTableCreateCompanionBuilder,
+          $$CalendarEntriesTableTableUpdateCompanionBuilder,
+          (
+            CalendarEntry,
+            BaseReferences<
+              _$AppDatabase,
+              $CalendarEntriesTableTable,
+              CalendarEntry
+            >,
+          ),
+          CalendarEntry,
+          PrefetchHooks Function()
+        > {
+  $$CalendarEntriesTableTableTableManager(
+    _$AppDatabase db,
+    $CalendarEntriesTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CalendarEntriesTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CalendarEntriesTableTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$CalendarEntriesTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<DateTime> date = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> note = const Value.absent(),
+                Value<double?> amount = const Value.absent(),
+                Value<int?> categoryId = const Value.absent(),
+                Value<int?> accountId = const Value.absent(),
+                Value<DateTime?> remindAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int?> transactionId = const Value.absent(),
+              }) => CalendarEntriesTableCompanion(
+                id: id,
+                date: date,
+                title: title,
+                note: note,
+                amount: amount,
+                categoryId: categoryId,
+                accountId: accountId,
+                remindAt: remindAt,
+                status: status,
+                transactionId: transactionId,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required DateTime date,
+                required String title,
+                Value<String?> note = const Value.absent(),
+                Value<double?> amount = const Value.absent(),
+                Value<int?> categoryId = const Value.absent(),
+                Value<int?> accountId = const Value.absent(),
+                Value<DateTime?> remindAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int?> transactionId = const Value.absent(),
+              }) => CalendarEntriesTableCompanion.insert(
+                id: id,
+                date: date,
+                title: title,
+                note: note,
+                amount: amount,
+                categoryId: categoryId,
+                accountId: accountId,
+                remindAt: remindAt,
+                status: status,
+                transactionId: transactionId,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CalendarEntriesTableTable, CalendarEntry>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $CalendarEntriesTableTable,
+                    CalendarEntry
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CalendarEntriesTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CalendarEntriesTableTable,
+      CalendarEntry,
+      $$CalendarEntriesTableTableFilterComposer,
+      $$CalendarEntriesTableTableOrderingComposer,
+      $$CalendarEntriesTableTableAnnotationComposer,
+      $$CalendarEntriesTableTableCreateCompanionBuilder,
+      $$CalendarEntriesTableTableUpdateCompanionBuilder,
+      (
+        CalendarEntry,
+        BaseReferences<
+          _$AppDatabase,
+          $CalendarEntriesTableTable,
+          CalendarEntry
+        >,
+      ),
+      CalendarEntry,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5291,4 +6216,6 @@ class $AppDatabaseManager {
       $$GoalsTableTableTableManager(_db, _db.goalsTable);
   $$TransactionsTableTableTableManager get transactionsTable =>
       $$TransactionsTableTableTableManager(_db, _db.transactionsTable);
+  $$CalendarEntriesTableTableTableManager get calendarEntriesTable =>
+      $$CalendarEntriesTableTableTableManager(_db, _db.calendarEntriesTable);
 }

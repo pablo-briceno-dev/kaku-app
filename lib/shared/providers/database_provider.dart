@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/database/daos/accounts_dao.dart';
 import 'package:kaku/core/database/daos/budgets_dao.dart';
+import 'package:kaku/core/database/daos/calendar_dao.dart';
 import 'package:kaku/core/database/daos/categories_dao.dart';
 import 'package:kaku/core/database/daos/goals_dao.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
@@ -40,6 +41,10 @@ final goalsDaoProvider = Provider.autoDispose<GoalsDao>(
 
 final categoriesDaoProvider = Provider.autoDispose<CategoriesDao>(
   (ref) => ref.watch(databaseProvider).categoriesDao,
+);
+
+final calendarDaoProvider = Provider.autoDispose<CalendarDao>(
+  (ref) => ref.watch(databaseProvider).calendarDao,
 );
 
 // Stream de transacciones del mes - se actualiza en tiempo real
@@ -316,4 +321,11 @@ final monthlyFlowProvider =
             year: params.year,
             month: params.month,
           ),
+    );
+
+// Calendario
+final calendarMonthProvider = StreamProvider.autoDispose
+    .family<List<CalendarEntry>, ({int month, int year})>(
+      (ref, params) =>
+          ref.watch(calendarDaoProvider).watchMonth(params.year, params.month),
     );

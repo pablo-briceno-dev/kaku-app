@@ -7,7 +7,7 @@ import 'package:kaku/features/accounts/accounts_screen.dart';
 import 'package:kaku/features/categories/categories_screen.dart';
 import 'package:kaku/features/categories/category_detail_screen.dart';
 import 'package:kaku/features/dashboard/dashboard_screen.dart';
-import 'package:kaku/features/goals/goals_screen.dart';
+import 'package:kaku/features/personal/personal_screen.dart';
 import 'package:kaku/features/premium/premium_screen.dart';
 import 'package:kaku/features/settings/budget_list_screen.dart';
 import 'package:kaku/features/settings/security/lock_screen.dart';
@@ -43,8 +43,16 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const StatsScreen(),
           ),
           GoRoute(
+            path: AppRoutes.personal,
+            builder: (context, state) => PersonalScreen(
+              initialTab: state.uri.queryParameters['tab'] == 'calendar'
+                  ? 1
+                  : 0,
+            ),
+          ),
+          GoRoute(
             path: AppRoutes.goals,
-            builder: (context, state) => const GoalsScreen(),
+            redirect: (_, _) => AppRoutes.personal,
           ),
           GoRoute(
             path: AppRoutes.accounts,

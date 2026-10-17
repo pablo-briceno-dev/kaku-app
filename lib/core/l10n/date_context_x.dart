@@ -75,6 +75,10 @@ class ContextDates {
     final monthName = justMonth(DateTime(year, month, 1));
     return '${monthName[0].toUpperCase()}${monthName.substring(1)}';
   }
+
+  /// Formateo para calendario
+  String calendarDayLabel(DateTime date) =>
+      DateFormatter.calendarDayLabel(date, _localeCode);
 }
 
 extension DateContextX on BuildContext {

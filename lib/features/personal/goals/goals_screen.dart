@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kaku/features/goals/goal_form_sheet.dart';
-import 'package:kaku/features/goals/goals_list.dart';
-import 'package:kaku/features/goals/widgets/goals_list_skeleton.dart';
+import 'package:kaku/features/personal/goals/goal_form_sheet.dart';
+import 'package:kaku/features/personal/goals/goals_list.dart';
+import 'package:kaku/features/personal/goals/widgets/goals_list_skeleton.dart';
 import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/services/premium_service.dart';

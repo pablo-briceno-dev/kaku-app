@@ -21,8 +21,16 @@
 
   "appShellTabDashboard": "Inicio",
   "appShellTabStats": "Estadísticas",
-  "appShellTabPersonal": "Metas",
+  "appShellTabPersonal": "Personal",
   "appShellTabAccounts": "Cuentas",
+
+  "calendarTab": "Calendario",
+  "calendarAddEntry": "Agregar",
+  "calendarEntryTitleLabel": "Título",
+  "calendarEntryAmountLabel": "Monto estimado (vacío = nota)",
+  "calendarEmptyDay": "Nada programado para este día",
+  "calendarPlannedExpense": "Gasto programado",
+  "calendarNote": "Nota",
 
   "budgetCalculatorSavingsRateMenorCero": "Gastaste más de lo que ganaste",
   "budgetCalculatorSavingsRateMenor20": "Puedes mejorar",
