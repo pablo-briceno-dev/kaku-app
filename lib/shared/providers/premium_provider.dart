@@ -2,9 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/shared/services/premium_service.dart';
 import 'package:riverpod/legacy.dart';
 
-final isPremiumProvider = FutureProvider<bool>(
-  (ref) => PremiumService.isPremium(),
-);
+final isPremiumProvider = Provider<bool>((ref) {
+  return ref.watch(premiumNotifierProvider).value ?? false;
+});
 
 // StateNotifier para invalidar el provider cuando cambia
 final premiumNotifierProvider =

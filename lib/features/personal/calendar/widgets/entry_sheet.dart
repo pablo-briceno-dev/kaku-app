@@ -175,7 +175,7 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
             .read(calendarControllerProvider)
             .rescheduleAll(ref.read(localeProvider));
       }
-      if(mounted) nav.pop();
+      if (mounted) nav.pop();
       return;
     }
     final int id;
@@ -216,7 +216,7 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
         ref.watch(expenseCategoriesProvider).value ?? const <Category>[];
     final accounts =
         ref.watch(activeAccountsProvider).value ?? const <Account>[];
-    final isPremium = ref.watch(isPremiumProvider).value ?? false;
+    final isPremium = ref.watch(isPremiumProvider);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(
@@ -320,8 +320,7 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
                 selected: {_recurrence},
                 onSelectionChanged: (s) async {
                   final v = s.first;
-                  if (v != Recurrence.none &&
-                      !ref.read(isPremiumProvider).value!) {
+                  if (v != Recurrence.none && !ref.read(isPremiumProvider)) {
                     await PremiumLimitChecker.check(
                       context: context,
                       feature: PremiumFeature.blockedCalendarRecurring,

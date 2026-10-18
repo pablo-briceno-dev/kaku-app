@@ -17,10 +17,8 @@ import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/premium_provider.dart';
 import 'package:kaku/shared/providers/stats_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
-import 'package:kaku/shared/services/premium_service.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
 import 'package:kaku/shared/widgets/month_navigator.dart';
-import 'package:kaku/shared/widgets/premium_gate.dart';
 
 class StatsScreen extends ConsumerWidget {
   const StatsScreen({super.key});
@@ -183,94 +181,77 @@ class StatsScreen extends ConsumerWidget {
                 ),
 
                 // ── Secciones premium ────────────────────────
-                isPremium.when(
-                  loading: () => const SizedBox.shrink(),
-                  error: (e, _) => const SizedBox.shrink(),
-                  data: (isPrem) {
-                    if (!isPrem) {
-                      // Muestra un teaser bloqueado
-                      return _PremiumStatsTeaser();
-                    }
-                    return Column(
-                      children: [
-                        const SizedBox(height: 28),
-                        SectionTitle(
-                          title: l10n.statsTrendTitle,
-                          subtitle: l10n.statsTrendSubtitle,
-                        ),
-                        trendAsync.when(
-                          data: (trend) {
-                            if (!isPrem) {
-                              return LockedContent(
-                                child: SpendingLineChart(
-                                  points: [
-                                    MonthPoint(
-                                      month: 1,
-                                      year: 2022,
-                                      totalExpenses: 50000,
-                                    ),
-                                    MonthPoint(
-                                      month: 2,
-                                      year: 2022,
-                                      totalExpenses: 100000,
-                                    ),
-                                    MonthPoint(
-                                      month: 3,
-                                      year: 2022,
-                                      totalExpenses: 30000,
-                                    ),
-                                    MonthPoint(
-                                      month: 4,
-                                      year: 2022,
-                                      totalExpenses: 200000,
-                                    ),
-                                    MonthPoint(
-                                      month: 5,
-                                      year: 2022,
-                                      totalExpenses: 10000,
-                                    ),
-                                    MonthPoint(
-                                      month: 6,
-                                      year: 2022,
-                                      totalExpenses: 60000,
-                                    ),
-                                  ],
-                                  currency: currency,
-                                ),
-                              );
-                            }
-
-                            return SpendingLineChart(
-                              points: trend,
-                              currency: currency,
-                            );
-                          },
-                          error: (e, _) => Text('Error: $e'),
-                          loading: () => const ChartSkeleton(height: 160),
-                        ),
-                        const SizedBox(height: 28),
-                        IncomeExpenseChart(isPremium: isPrem),
-                        const SizedBox(height: 28),
-                        SectionTitle(
-                          title: l10n.statsTrendMonthVsPreviousTitle,
-                          subtitle: context.dates.justMonth(
-                            DateTime(prevParams.year, prevParams.month),
-                          ),
-                        ),
-                        _buildComparison(
-                          context,
-                          selectedMonth,
-                          prevParams,
-                          dailyAsync,
-                          prevAsync,
-                          currency,
-                          isPrem,
-                        ),
-                      ],
-                    );
-                  },
+                const SizedBox(height: 28),
+                SectionTitle(
+                  title: l10n.statsTrendTitle,
+                  subtitle: l10n.statsTrendSubtitle,
                 ),
+                trendAsync.when(
+                  data: (trend) {
+                    if (!isPremium) {
+                      return LockedContent(
+                        child: SpendingLineChart(
+                          points: [
+                            MonthPoint(
+                              month: 1,
+                              year: 2022,
+                              totalExpenses: 50000,
+                            ),
+                            MonthPoint(
+                              month: 2,
+                              year: 2022,
+                              totalExpenses: 100000,
+                            ),
+                            MonthPoint(
+                              month: 3,
+                              year: 2022,
+                              totalExpenses: 30000,
+                            ),
+                            MonthPoint(
+                              month: 4,
+                              year: 2022,
+                              totalExpenses: 200000,
+                            ),
+                            MonthPoint(
+                              month: 5,
+                              year: 2022,
+                              totalExpenses: 10000,
+                            ),
+                            MonthPoint(
+                              month: 6,
+                              year: 2022,
+                              totalExpenses: 60000,
+                            ),
+                          ],
+                          currency: currency,
+                        ),
+                      );
+                    }
 
+                    return SpendingLineChart(points: trend, currency: currency);
+                  },
+                  error: (e, _) => Text('Error: $e'),
+                  loading: () => const ChartSkeleton(height: 160),
+                ),
+                const SizedBox(height: 28),
+                IncomeExpenseChart(isPremium: isPremium),
+                const SizedBox(height: 28),
+                SectionTitle(
+                  title: l10n.statsTrendMonthVsPreviousTitle,
+                  subtitle: context.dates.justMonth(
+                    DateTime(prevParams.year, prevParams.month),
+                  ),
+                ),
+                _buildComparison(
+                  context,
+                  selectedMonth,
+                  prevParams,
+                  dailyAsync,
+                  prevAsync,
+                  currency,
+                  isPremium,
+                ),
+                
                 const SizedBox(height: 32),
               ]),
             ),
@@ -411,74 +392,6 @@ class StatsScreen extends ConsumerWidget {
           },
         );
       },
-    );
-  }
-}
-
-// ── Teaser para usuarios free ─────────────────────────────────
-class _PremiumStatsTeaser extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final cs = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.only(top: 28),
-      child: PremiumGate(
-        feature: PremiumFeature.viewHistory,
-        showLockBadge: true,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: cs.surfaceContainerHighest.withValues(alpha: 0.4),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.3)),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '📈 ${l10n.statsTrend6MonthsTitle}',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 8),
-              // Gráfica simulada borrosa
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: ImageFiltered(
-                  imageFilter: ColorFilter.matrix(const [
-                    0.2,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0.2,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0.2,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    1,
-                    0,
-                  ]),
-                  child: const ChartSkeleton(height: 130),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                l10n.statsTrend6MonthsSubtitle,
-                style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

@@ -31,7 +31,7 @@ class MonthLimitCard extends ConsumerWidget {
     final currency = ref.watch(currencyProvider);
     String money(double v) => CurrencyFormatter.format(v, currency);
 
-    if (!ref.watch(isPremiumProvider).value!) {
+    if (!ref.watch(isPremiumProvider)) {
       return Card(
         child: ListTile(
           leading: Icon(Icons.lock_outline_rounded, color: cs.primary),
