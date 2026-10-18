@@ -22,7 +22,7 @@ class NotificationService {
 
     await _plugin.initialize(
       settings: const InitializationSettings(android: android, iOS: iOS),
-      onDidReceiveBackgroundNotificationResponse: (r) =>
+      onDidReceiveNotificationResponse: (r) =>
           handleNotificationPayload(r.payload),
     );
 
