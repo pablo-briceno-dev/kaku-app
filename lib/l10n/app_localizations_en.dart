@@ -90,6 +90,53 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarNote => 'Note';
 
   @override
+  String get calendarMarkPaid => 'Mark as paid';
+
+  @override
+  String get calendarSkip => 'Skip';
+
+  @override
+  String get calendarEntryCategoryLabel => 'Category (optional)';
+
+  @override
+  String get calendarEntryAccountLabel => 'Account (optional)';
+
+  @override
+  String get calendarReminderToggle => 'Remind me';
+
+  @override
+  String calendarReminderFreeHint(int max) {
+    return 'Free plan: up to $max active reminders';
+  }
+
+  @override
+  String get calendarReminderSameDay => 'Same day';
+
+  @override
+  String get calendarReminderDayBefore => '1 day before';
+
+  @override
+  String get calendarReminderInPast => 'The reminder time has already passed';
+
+  @override
+  String get calendarReminderChannel => 'Payment reminders';
+
+  @override
+  String calendarReminderBody(String amount, String date) {
+    return 'Planned expense of $amount on $date';
+  }
+
+  @override
+  String calendarReminderBodyNote(String date) {
+    return 'Note for $date';
+  }
+
+  @override
+  String premiumBlockedUnlimitedReminders(int max) {
+    return 'You have reached the free plan limit of $max reminders.';
+  }
+
+  @override
   String get budgetCalculatorSavingsRateMenorCero =>
       'You spent more than you earned';
 

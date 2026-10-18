@@ -20,6 +20,10 @@ extension PremiumBlockReasonX on PremiumBlockReason {
         l10n.premiumBlockedUnlimitedCategories(
           PremiumLimits.maxCustomCategories,
         ),
+      PremiumBlockReason.unlimitedCalendarReminders =>
+        l10n.premiumBlockedUnlimitedReminders(
+          PremiumLimits.maxCalendarReminders,
+        ),
     };
   }
 }

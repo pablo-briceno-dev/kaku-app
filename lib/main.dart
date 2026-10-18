@@ -7,6 +7,7 @@ import 'package:kaku/shared/providers/theme_provider.dart';
 import 'package:kaku/shared/services/backup_service.dart';
 import 'package:kaku/shared/services/billing_service.dart';
 import 'package:kaku/shared/services/notification_service.dart';
+import 'package:kaku/shared/services/reminder_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -20,6 +21,7 @@ void main() async {
   await BillingService.initialize();
   await initializeDateFormatting('es');
   await initializeDateFormatting('en');
+  await ReminderService.initTimezone();
 
   runApp(
     ProviderScope(

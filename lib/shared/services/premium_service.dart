@@ -19,6 +19,8 @@ class PremiumLimits {
   static const bool canViewHistory = false; // solo premium (>1 mes)
   // Seguridad
   static const bool canUsePinLock = false; // solo premium
+  // Notificaciones del calendario
+  static const int maxCalendarReminders = 3;
 }
 
 class PremiumService {
@@ -76,6 +78,7 @@ class PremiumService {
       PremiumFeature.unlimitedBudgets => PremiumBlockReason.unlimitedBudgets,
       PremiumFeature.unlimitedCategories =>
         PremiumBlockReason.unlimitedCategories,
+      PremiumFeature.unlimitedCalendarReminders => PremiumBlockReason.unlimitedCalendarReminders,
     };
   }
 }
@@ -99,6 +102,7 @@ enum PremiumFeature {
   unlimitedGoals,
   unlimitedBudgets,
   unlimitedCategories,
+  unlimitedCalendarReminders,
 }
 
 /// Razones por las que una acción está bloqueada.
@@ -112,4 +116,5 @@ enum PremiumBlockReason {
   unlimitedGoals,
   unlimitedBudgets,
   unlimitedCategories,
+  unlimitedCalendarReminders,
 }

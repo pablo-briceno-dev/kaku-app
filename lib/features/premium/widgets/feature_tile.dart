@@ -12,11 +12,11 @@ class FeatureTile extends StatelessWidget {
   final Feature feature;
 
   const FeatureTile({super.key, required this.feature});
- 
+
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
- 
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -24,18 +24,17 @@ class FeatureTile extends StatelessWidget {
         children: [
           // Ícono con fondo
           Container(
-            width:  44,
+            width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color:        cs.primaryContainer.withValues(alpha: 0.35),
+              color: cs.primaryContainer.withValues(alpha: 0.35),
               borderRadius: BorderRadius.circular(12),
             ),
             alignment: Alignment.center,
-            child: Text(feature.emoji,
-                style: const TextStyle(fontSize: 20)),
+            child: Text(feature.emoji, style: const TextStyle(fontSize: 20)),
           ),
           const SizedBox(width: 14),
- 
+
           // Textos
           Expanded(
             child: Column(
@@ -45,7 +44,7 @@ class FeatureTile extends StatelessWidget {
                 Text(
                   feature.title,
                   style: const TextStyle(
-                    fontSize:   13.5,
+                    fontSize: 13.5,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -54,20 +53,20 @@ class FeatureTile extends StatelessWidget {
                   feature.desc,
                   style: TextStyle(
                     fontSize: 12,
-                    color:    cs.onSurfaceVariant,
-                    height:   1.4,
+                    color: cs.onSurfaceVariant,
+                    height: 1.4,
                   ),
                 ),
               ],
             ),
           ),
- 
+
           // Check
           Padding(
             padding: const EdgeInsets.only(top: 2),
             child: Icon(
               Icons.check_circle_rounded,
-              size:  18,
+              size: 18,
               color: cs.primary,
             ),
           ),

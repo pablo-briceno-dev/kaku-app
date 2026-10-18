@@ -83,11 +83,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.addTransaction, // '/add-transaction'
         builder: (_, state) {
-          final accountIdStr = state.uri.queryParameters['accountId'];
-          final accountId = accountIdStr != null
-              ? int.tryParse(accountIdStr)
-              : null;
-          return AddTransactionScreen(accountId: accountId);
+          final accountId = int.tryParse(state.uri.queryParameters['accountId'] ?? '');
+          final entryId = int.tryParse(state.uri.queryParameters['entryId'] ?? '');
+          return AddTransactionScreen(accountId: accountId, entryId: entryId);
         },
       ),
       GoRoute(

@@ -90,6 +90,53 @@ class AppLocalizationsEs extends AppLocalizations {
   String get calendarNote => 'Nota';
 
   @override
+  String get calendarMarkPaid => 'Marcar como pagado';
+
+  @override
+  String get calendarSkip => 'Omitir';
+
+  @override
+  String get calendarEntryCategoryLabel => 'Categoría (opcional)';
+
+  @override
+  String get calendarEntryAccountLabel => 'Cuenta (opcional)';
+
+  @override
+  String get calendarReminderToggle => 'Recordarme';
+
+  @override
+  String calendarReminderFreeHint(int max) {
+    return 'Plan gratis: hasta $max recordatorios activos';
+  }
+
+  @override
+  String get calendarReminderSameDay => 'El mismo día';
+
+  @override
+  String get calendarReminderDayBefore => '1 día antes';
+
+  @override
+  String get calendarReminderInPast => 'La hora del recordatorio ya pasó';
+
+  @override
+  String get calendarReminderChannel => 'Recordatorios de pagos';
+
+  @override
+  String calendarReminderBody(String amount, String date) {
+    return 'Gasto programado de $amount para el $date';
+  }
+
+  @override
+  String calendarReminderBodyNote(String date) {
+    return 'Nota para el $date';
+  }
+
+  @override
+  String premiumBlockedUnlimitedReminders(int max) {
+    return 'Llegaste al límite de $max recordatorios del plan gratis.';
+  }
+
+  @override
   String get budgetCalculatorSavingsRateMenorCero =>
       'Gastaste más de lo que ganaste';
 

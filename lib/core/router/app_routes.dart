@@ -1,6 +1,6 @@
 abstract class AppRoutes {
   static const String root = '/lock';
-  
+
   // Tabs principales (dentro del ShellRoute)
   static const String dashboard = '/';
   static const String stats = '/stats';
@@ -35,9 +35,15 @@ abstract class AppRoutes {
       '${categoryDetail.replaceAll(':id', id.toString())}?month=$month&year=$year';
   static String toAccountDetail(int id) =>
       accountDetail.replaceAll(':id', id.toString());
-  static String toAddTransaction({int? accountId}) => accountId != null
-      ? '$addTransaction?accountId=$accountId'
-      : addTransaction;
+  static String toAddTransaction({int? accountId, int? entryId}) {
+    final params = <String, String>{
+      if (accountId != null) 'accountId': accountId.toString(),
+      if (entryId != null) 'entryId': entryId.toString(),
+    };
+    return params.isEmpty
+        ? addTransaction
+        : Uri(path: addTransaction, queryParameters: params).toString();
+  }
 
   // Lista de tabs del bottom nav (mismo orden que los BottomNavigationBarItems)
   static const List<String> shellTabs = [dashboard, stats, goals, accounts];

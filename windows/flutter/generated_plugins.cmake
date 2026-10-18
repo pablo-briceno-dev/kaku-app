@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   emoji_picker_flutter
   file_selector_windows
+  flutter_timezone
   local_auth_windows
   permission_handler_windows
   printing

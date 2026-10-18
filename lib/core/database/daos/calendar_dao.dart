@@ -32,8 +32,8 @@ class CalendarDao extends DatabaseAccessor<AppDatabase>
   Future<bool> updateEntry(CalendarEntry entry) =>
       update(calendarEntriesTable).replace(entry);
 
-  Future<int> deleteEntry(CalendarEntry entry) =>
-      (delete(calendarEntriesTable)..where((e) => e.id.equals(entry.id))).go();
+  Future<int> deleteEntry(int id) =>
+      (delete(calendarEntriesTable)..where((e) => e.id.equals(id))).go();
 
   Future<void> setStatus(int id, EntryStatus status, {int? transactionId}) =>
       (update(calendarEntriesTable)..where((e) => e.id.equals(id))).write(
@@ -42,4 +42,24 @@ class CalendarDao extends DatabaseAccessor<AppDatabase>
           transactionId: Value(transactionId),
         ),
       );
+
+  Future<CalendarEntry?> getById(int id) => (select(
+    calendarEntriesTable,
+  )..where((e) => e.id.equals(id))).getSingleOrNull();
+
+  // Recordatorios futuros de entradas pendientes (para el límite del plan gratuito)
+  Future<int> countActiveReminders({int? excludeId}) async {
+    final count = calendarEntriesTable.id.count();
+    final query = selectOnly(calendarEntriesTable)
+      ..addColumns([count])
+      ..where(
+        calendarEntriesTable.remindAt.isBiggerThanValue(DateTime.now()) &
+            calendarEntriesTable.status.equals(EntryStatus.pending.name) &
+            (excludeId == null
+                ? const Constant(true)
+                : calendarEntriesTable.id.equals(excludeId).not()),
+      );
+    final row = await query.getSingle();
+    return row.read(count) ?? 0;
+  }
 }

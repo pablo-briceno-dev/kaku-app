@@ -260,6 +260,84 @@ abstract class AppLocalizations {
   /// **'Nota'**
   String get calendarNote;
 
+  /// No description provided for @calendarMarkPaid.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar como pagado'**
+  String get calendarMarkPaid;
+
+  /// No description provided for @calendarSkip.
+  ///
+  /// In es, this message translates to:
+  /// **'Omitir'**
+  String get calendarSkip;
+
+  /// No description provided for @calendarEntryCategoryLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría (opcional)'**
+  String get calendarEntryCategoryLabel;
+
+  /// No description provided for @calendarEntryAccountLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta (opcional)'**
+  String get calendarEntryAccountLabel;
+
+  /// No description provided for @calendarReminderToggle.
+  ///
+  /// In es, this message translates to:
+  /// **'Recordarme'**
+  String get calendarReminderToggle;
+
+  /// No description provided for @calendarReminderFreeHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Plan gratis: hasta {max} recordatorios activos'**
+  String calendarReminderFreeHint(int max);
+
+  /// No description provided for @calendarReminderSameDay.
+  ///
+  /// In es, this message translates to:
+  /// **'El mismo día'**
+  String get calendarReminderSameDay;
+
+  /// No description provided for @calendarReminderDayBefore.
+  ///
+  /// In es, this message translates to:
+  /// **'1 día antes'**
+  String get calendarReminderDayBefore;
+
+  /// No description provided for @calendarReminderInPast.
+  ///
+  /// In es, this message translates to:
+  /// **'La hora del recordatorio ya pasó'**
+  String get calendarReminderInPast;
+
+  /// No description provided for @calendarReminderChannel.
+  ///
+  /// In es, this message translates to:
+  /// **'Recordatorios de pagos'**
+  String get calendarReminderChannel;
+
+  /// No description provided for @calendarReminderBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Gasto programado de {amount} para el {date}'**
+  String calendarReminderBody(String amount, String date);
+
+  /// No description provided for @calendarReminderBodyNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Nota para el {date}'**
+  String calendarReminderBodyNote(String date);
+
+  /// No description provided for @premiumBlockedUnlimitedReminders.
+  ///
+  /// In es, this message translates to:
+  /// **'Llegaste al límite de {max} recordatorios del plan gratis.'**
+  String premiumBlockedUnlimitedReminders(int max);
+
   /// No description provided for @budgetCalculatorSavingsRateMenorCero.
   ///
   /// In es, this message translates to:

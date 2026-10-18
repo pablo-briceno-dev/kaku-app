@@ -10,8 +10,9 @@ import 'package:kaku/shared/widgets/custom_app_bar.dart';
 
 class AddTransactionScreen extends ConsumerStatefulWidget {
   final int? accountId;
+  final int? entryId;
 
-  const AddTransactionScreen({super.key, this.accountId});
+  const AddTransactionScreen({super.key, this.accountId, this.entryId});
 
   @override
   ConsumerState<AddTransactionScreen> createState() =>
@@ -107,7 +108,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          AddTransactionForm(),
+          AddTransactionForm(entryId: widget.entryId),
           AddTransactionForm(),
           AddTransactionTransferForm(),
         ],

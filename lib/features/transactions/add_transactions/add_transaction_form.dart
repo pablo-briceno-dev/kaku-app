@@ -6,10 +6,12 @@ import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/helpers/app_snackbar.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/core/models/entry_status.dart';
 import 'package:kaku/core/models/transaction_type.dart';
 import 'package:kaku/features/transactions/horizontal_chips_categories.dart';
 import 'package:kaku/features/transactions/selected_account.dart';
 import 'package:kaku/l10n/app_localizations.dart';
+import 'package:kaku/shared/providers/calendar_provider.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/content_widget_empty.dart';
@@ -17,7 +19,9 @@ import 'package:kaku/shared/widgets/date_picker_field.dart';
 import 'package:kaku/shared/widgets/receipt_picker.dart';
 
 class AddTransactionForm extends ConsumerStatefulWidget {
-  const AddTransactionForm({super.key});
+  final int? entryId;
+
+  const AddTransactionForm({super.key, this.entryId});
 
   @override
   ConsumerState<AddTransactionForm> createState() => _AddTransactionFormState();
@@ -33,19 +37,58 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
     text: '1',
   );
   final TextEditingController _unitPriceController = TextEditingController();
+  int? _entryId;
+  bool _saving = false;
 
   @override
   void initState() {
     super.initState();
+    _entryId = widget.entryId;
 
     // Listener para actualizar el total cuando cambia el unitario
     _unitPriceController.addListener(_updateTotal);
     // Listener para actualizar el total cuando cambia la cantidad
     _quantityController.addListener(_updateTotal);
+
+    if (_entryId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _loadEntry());
+    }
+  }
+
+  Future<void> _loadEntry() async {
+    final id = _entryId;
+    if (id == null) return;
+    final entry = await ref.read(calendarDaoProvider).getById(id);
+    if (!mounted) return;
+
+    if (entry == null || entry.status != EntryStatus.pending.name) {
+      _entryId = null;
+      return;
+    }
+
+    final currency = ref.read(currencyProvider);
+    _descriptionController.text = entry.title.length > 100
+        ? entry.title.substring(0, 100)
+        : entry.title;
+    _quantityController.text = '1';
+    final amount = entry.amount;
+    if (amount != null) {
+      _unitPriceController.text = CurrencyFormatter.format(amount, currency);
+    }
+
+    final categories = await ref.read(expenseCategoriesProvider.future);
+    final accounts = await ref.read(accountsDaoProvider).getActiveAccounts();
+    if (!mounted) return;
+    if (categories.any((c) => c.id == entry.categoryId)) {
+      ref.read(selectedCategoryProvider.notifier).state = entry.categoryId;
+    }
+    if (accounts.any((a) => a.id == entry.accountId)) {
+      ref.read(selectedAccountProvider.notifier).state = entry.accountId;
+    }
   }
 
   void _updateTotal() {
-    final currency = ref.watch(currencyProvider);
+    final currency = ref.read(currencyProvider);
     // CurrencyFormatter.parse(_amountController.text,currency,)
     final unitPrice = CurrencyFormatter.parse(
       _unitPriceController.text,
@@ -288,67 +331,97 @@ class _AddTransactionFormState extends ConsumerState<AddTransactionForm> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            final valid =
-                                _formKey.currentState?.validate() ?? false;
+                          onPressed: _saving
+                              ? null
+                              : () async {
+                                  final valid =
+                                      _formKey.currentState?.validate() ??
+                                      false;
+                                  if (!valid) return;
 
-                            if (!valid) return;
-                            final dao = ref.read(transactionsDaoProvider);
-                            await dao.insertTransaction(
-                              TransactionsTableCompanion.insert(
-                                type: selectedType.name,
-                                amount: CurrencyFormatter.parse(
-                                  _amountController.text,
-                                  currency,
-                                ),
-                                description: drift.Value(
-                                  _descriptionController.text,
-                                ),
-                                categoryId: drift.Value(selectedCategory),
-                                accountId: selectedAccount!,
-                                receiptPath: drift.Value(_receiptPath),
-                                date: _selectedDate,
-                                unitPrice: drift.Value(
-                                  CurrencyFormatter.parse(
-                                    _unitPriceController.text,
-                                    currency,
-                                  ),
-                                ),
-                                quantity: drift.Value(
-                                  int.tryParse(_quantityController.text) ?? 1,
-                                ),
-                              ),
-                            );
-                            final accountDao = ref.read(accountsDaoProvider);
-                            await accountDao.updateBalance(
-                              account!.id,
-                              account.balance +
-                                  BudgetCalculator.balanceDelta(
-                                    selectedType,
-                                    CurrencyFormatter.parse(
-                                      _amountController.text,
-                                      currency,
-                                    ),
-                                  ),
-                            );
-                            if (_receiptPath != null) {
-                              ref
-                                  .read(storageRefreshSignalProvider.notifier)
-                                  .state++;
-                            }
+                                  setState(() => _saving = true);
+                                  try {
+                                    final dao = ref.read(
+                                      transactionsDaoProvider,
+                                    );
+                                    final txId = await dao.insertTransaction(
+                                      TransactionsTableCompanion.insert(
+                                        type: selectedType.name,
+                                        amount: CurrencyFormatter.parse(
+                                          _amountController.text,
+                                          currency,
+                                        ),
+                                        description: drift.Value(
+                                          _descriptionController.text,
+                                        ),
+                                        categoryId: drift.Value(
+                                          selectedCategory,
+                                        ),
+                                        accountId: selectedAccount!,
+                                        receiptPath: drift.Value(_receiptPath),
+                                        date: _selectedDate,
+                                        unitPrice: drift.Value(
+                                          CurrencyFormatter.parse(
+                                            _unitPriceController.text,
+                                            currency,
+                                          ),
+                                        ),
+                                        quantity: drift.Value(
+                                          int.tryParse(
+                                                _quantityController.text,
+                                              ) ??
+                                              1,
+                                        ),
+                                      ),
+                                    );
 
-                            if (context.mounted) {
-                              AppSnackbar.success(
-                                context,
-                                selectedType == TransactionType.expense
-                                    ? l10n.transactionExpenseSaved
-                                    : selectedType == TransactionType.income
-                                    ? l10n.transactionIncomeSaved
-                                    : l10n.transactionSavedGeneric,
-                              );
-                              Navigator.pop(context);
-                            }
-                          },
+                                    final accountDao = ref.read(
+                                      accountsDaoProvider,
+                                    );
+                                    await accountDao.updateBalance(
+                                      account!.id,
+                                      account.balance +
+                                          BudgetCalculator.balanceDelta(
+                                            selectedType,
+                                            CurrencyFormatter.parse(
+                                              _amountController.text,
+                                              currency,
+                                            ),
+                                          ),
+                                    );
+
+                                    // Entrada del calendario → pagada, enlazada a esta transacción
+                                    if (_entryId != null) {
+                                      await completeEntry(ref, _entryId!, txId);
+                                    }
+
+                                    if (_receiptPath != null) {
+                                      ref
+                                          .read(
+                                            storageRefreshSignalProvider
+                                                .notifier,
+                                          )
+                                          .state++;
+                                    }
+
+                                    if (context.mounted) {
+                                      AppSnackbar.success(
+                                        context,
+                                        selectedType == TransactionType.expense
+                                            ? l10n.transactionExpenseSaved
+                                            : selectedType ==
+                                                  TransactionType.income
+                                            ? l10n.transactionIncomeSaved
+                                            : l10n.transactionSavedGeneric,
+                                      );
+                                      Navigator.pop(context);
+                                    }
+                                  } finally {
+                                    if (mounted) {
+                                      setState(() => _saving = false);
+                                    }
+                                  }
+                                },
                           child: Text(
                             selectedType == TransactionType.expense
                                 ? l10n.transactionExpenseBtnSaved
