@@ -48,6 +48,9 @@ final routerProvider = Provider<GoRouter>((ref) {
               initialTab: state.uri.queryParameters['tab'] == 'calendar'
                   ? 1
                   : 0,
+              initialDay: DateTime.tryParse(
+                state.uri.queryParameters['date'] ?? '',
+              ),
             ),
           ),
           GoRoute(
@@ -83,8 +86,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.addTransaction, // '/add-transaction'
         builder: (_, state) {
-          final accountId = int.tryParse(state.uri.queryParameters['accountId'] ?? '');
-          final entryId = int.tryParse(state.uri.queryParameters['entryId'] ?? '');
+          final accountId = int.tryParse(
+            state.uri.queryParameters['accountId'] ?? '',
+          );
+          final entryId = int.tryParse(
+            state.uri.queryParameters['entryId'] ?? '',
+          );
           return AddTransactionScreen(accountId: accountId, entryId: entryId);
         },
       ),

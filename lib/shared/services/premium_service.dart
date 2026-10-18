@@ -79,6 +79,8 @@ class PremiumService {
       PremiumFeature.unlimitedCategories =>
         PremiumBlockReason.unlimitedCategories,
       PremiumFeature.unlimitedCalendarReminders => PremiumBlockReason.unlimitedCalendarReminders,
+      PremiumFeature.blockedCalendarLimit => PremiumBlockReason.blockedCalendarLimit,
+      PremiumFeature.blockedCalendarRecurring => PremiumBlockReason.blockedCalendarRecurring,
     };
   }
 }
@@ -103,6 +105,8 @@ enum PremiumFeature {
   unlimitedBudgets,
   unlimitedCategories,
   unlimitedCalendarReminders,
+  blockedCalendarLimit,
+  blockedCalendarRecurring,
 }
 
 /// Razones por las que una acción está bloqueada.
@@ -117,4 +121,6 @@ enum PremiumBlockReason {
   unlimitedBudgets,
   unlimitedCategories,
   unlimitedCalendarReminders,
+  blockedCalendarLimit,
+  blockedCalendarRecurring,
 }

@@ -12,4 +12,7 @@ class CalendarEntriesTable extends Table {
   DateTimeColumn get remindAt => dateTime().nullable()();
   TextColumn get status => text().withDefault(const Constant("pending"))();
   IntColumn get transactionId => integer().nullable()(); // se llena al pagarlo
+  TextColumn get recurrence =>
+      text().withDefault(const Constant("none"))(); // none | weekly | monthly
+  IntColumn get seriesId => integer().nullable()();
 }

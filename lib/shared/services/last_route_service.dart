@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
+import 'package:kaku/shared/services/notification_navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LastRouteService {
@@ -53,6 +54,13 @@ class LastRouteService {
   }
 
   static Future<void> goToStart(BuildContext context) async {
+    final pending = pendingNotificationRoute.value;
+    if (pending != null) {
+      pendingNotificationRoute.value = null;
+      if (context.mounted) context.go(pending);
+      return;
+    }
+
     final target = await restore();
     if (!context.mounted) return;
     final path = Uri.parse(target).path;

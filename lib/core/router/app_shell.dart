@@ -3,10 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/l10n/app_localizations.dart';
+import 'package:kaku/shared/providers/calendar_provider.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
 import 'package:kaku/shared/services/last_route_service.dart';
+import 'package:kaku/shared/services/notification_navigation.dart';
 
 class AppShell extends ConsumerStatefulWidget {
   final Widget child;
@@ -26,10 +28,16 @@ class _AppShellState extends ConsumerState<AppShell>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    pendingNotificationRoute.addListener(_consumePendingRoute);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _consumePendingRoute();
+      ref.read(calendarControllerProvider).startupSync();
+    });
   }
 
   @override
   void dispose() {
+    pendingNotificationRoute.removeListener(_consumePendingRoute);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -42,7 +50,22 @@ class _AppShellState extends ConsumerState<AppShell>
     }
     if (state == AppLifecycleState.resumed) {
       _onResumed();
+      _consumePendingRoute();
     }
+  }
+
+  Future<void> _consumePendingRoute() async {
+    final route = pendingNotificationRoute.value;
+    if (route == null) return;
+
+    if (!ref.read(authenticationStateProvider)) {
+      final locked =
+          await AppPinService.isEnabled() || await BiometricService.isEnabled();
+      if (locked) return;
+    }
+    if (!mounted || pendingNotificationRoute.value == null) return;
+    pendingNotificationRoute.value = null;
+    context.go(route);
   }
 
   Future<void> _onResumed() async {
@@ -116,7 +139,7 @@ class _AppShellState extends ConsumerState<AppShell>
             // Grupo derecho: Metas + Cuentas
             _NavItem(
               icon: Icons.person_outline,
-              selectedIcon: Icons.flag,
+              selectedIcon: Icons.person_rounded,
               label: l10n.appShellTabPersonal,
               index: 2,
               current: currentIndex,

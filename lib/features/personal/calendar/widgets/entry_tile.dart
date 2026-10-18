@@ -11,7 +11,7 @@ import 'package:kaku/shared/providers/calendar_provider.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 
-enum _EntryAction { paid, skip, delete }
+enum _EntryAction { paid, skip, delete, deleteSeries }
 
 class EntryTile extends ConsumerWidget {
   final CalendarEntry entry;
@@ -27,6 +27,7 @@ class EntryTile extends ConsumerWidget {
     final pending = entry.status == EntryStatus.pending.name;
     final done = entry.status == EntryStatus.done.name;
     final currency = ref.read(currencyProvider);
+    final inSeries = entry.seriesId != null;
 
     return ListTile(
       contentPadding: EdgeInsets.zero,
@@ -91,6 +92,10 @@ class EntryTile extends ConsumerWidget {
             case _EntryAction.delete:
               await dao.deleteEntry(entry.id);
               await reminders.cancel(entry.id);
+            case _EntryAction.deleteSeries:
+              await ref
+                  .read(calendarControllerProvider)
+                  .deleteSeriesFrom(entry);
           }
         },
         itemBuilder: (_) => [
@@ -99,15 +104,21 @@ class EntryTile extends ConsumerWidget {
               value: _EntryAction.paid,
               child: Text(l10n.calendarMarkPaid),
             ),
-          if (pending && isPlanned)
+          if (pending && (isPlanned || inSeries))
             PopupMenuItem(
               value: _EntryAction.skip,
               child: Text(l10n.calendarSkip),
             ),
-          PopupMenuItem(
-            value: _EntryAction.delete,
-            child: Text(l10n.btnDelete),
-          ),
+          if (!inSeries)
+            PopupMenuItem(
+              value: _EntryAction.delete,
+              child: Text(l10n.btnDelete),
+            ),
+          if (inSeries && pending)
+            PopupMenuItem(
+              value: _EntryAction.deleteSeries,
+              child: Text(l10n.calendarDeleteSeries),
+            ),
         ],
       ),
     );

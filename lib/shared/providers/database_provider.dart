@@ -329,3 +329,10 @@ final calendarMonthProvider = StreamProvider.autoDispose
       (ref, params) =>
           ref.watch(calendarDaoProvider).watchMonth(params.year, params.month),
     );
+
+// MonthLimit
+final monthLimitProvider = StreamProvider.autoDispose
+    .family<MonthlyLimit?, ({int month, int year})>(
+      (ref, param) =>
+          ref.watch(calendarDaoProvider).watchLimitFor(param.year, param.month),
+    );

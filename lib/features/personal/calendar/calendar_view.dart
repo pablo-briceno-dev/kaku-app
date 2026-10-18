@@ -5,6 +5,7 @@ import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/entry_status.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/features/personal/calendar/month_limit_card.dart';
 import 'package:kaku/features/personal/calendar/widgets/entry_sheet.dart';
 import 'package:kaku/features/personal/calendar/widgets/entry_tile.dart';
 import 'package:kaku/features/personal/calendar/widgets/month_grid.dart';
@@ -13,15 +14,29 @@ import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/widgets/transaction_item.dart';
 
 class CalendarView extends ConsumerStatefulWidget {
-  const CalendarView({super.key});
+  final DateTime? initialDay;
+
+  const CalendarView({super.key, this.initialDay});
 
   @override
   ConsumerState<CalendarView> createState() => _CalendarViewState();
 }
 
 class _CalendarViewState extends ConsumerState<CalendarView> {
-  late DateTime _selected = DateUtils.dateOnly(DateTime.now());
+  late DateTime _selected = DateUtils.dateOnly(
+    widget.initialDay ?? DateTime.now(),
+  );
   late DateTime _month = DateTime(_selected.year, _selected.month);
+
+  @override
+  void didUpdateWidget(CalendarView old) {
+    super.didUpdateWidget(old);
+    final d = widget.initialDay;
+    if (d != null && d != old.initialDay) {
+      _selected = DateUtils.dateOnly(d);
+      _month = DateTime(d.year, d.month);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +86,15 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
         .where((t) => DateUtils.isSameDay(t.transaction.date, _selected))
         .toList();
 
+    final spent = txs
+        .where((t) => t.transaction.type == TransactionType.expense.name)
+        .fold<double>(0, (s, t) => s + t.transaction.amount);
+    final planned = entries
+        .where(
+          ((e) => e.amount != null && e.status == EntryStatus.pending.name),
+        )
+        .fold<double>(0, (s, e) => s + e.amount!);
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       children: [
@@ -84,6 +108,8 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
             _selected = m;
           }),
         ),
+        const SizedBox(height: 8),
+        MonthLimitCard(year: _month.year, month: _month.month, spent: spent, planned: planned),
         const Divider(height: 24),
         Row(
           children: [

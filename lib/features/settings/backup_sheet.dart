@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/l10n/app_localizations.dart';
+import 'package:kaku/shared/providers/calendar_provider.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/providers/locale_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/backup_service.dart';
 
@@ -119,6 +121,9 @@ class _BackupSheetState extends ConsumerState<BackupSheet> {
           final counter = ref.read(appRefreshCounterProvider.notifier);
           counter.state++;
           ref.invalidate(databaseProvider);
+          ref
+              .read(calendarControllerProvider)
+              .rescheduleAll(ref.read(localeProvider));
           _statusMessage = l10n.restoreSuccess;
           _isError = false;
         case RestoreResult.noBackupFound:

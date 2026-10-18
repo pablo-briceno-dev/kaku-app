@@ -3061,6 +3061,29 @@ class $CalendarEntriesTableTable extends CalendarEntriesTable
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _recurrenceMeta = const VerificationMeta(
+    'recurrence',
+  );
+  @override
+  late final GeneratedColumn<String> recurrence = GeneratedColumn<String>(
+    'recurrence',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant("none"),
+  );
+  static const VerificationMeta _seriesIdMeta = const VerificationMeta(
+    'seriesId',
+  );
+  @override
+  late final GeneratedColumn<int> seriesId = GeneratedColumn<int>(
+    'series_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3073,6 +3096,8 @@ class $CalendarEntriesTableTable extends CalendarEntriesTable
     remindAt,
     status,
     transactionId,
+    recurrence,
+    seriesId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3150,6 +3175,18 @@ class $CalendarEntriesTableTable extends CalendarEntriesTable
         ),
       );
     }
+    if (data.containsKey('recurrence')) {
+      context.handle(
+        _recurrenceMeta,
+        recurrence.isAcceptableOrUnknown(data['recurrence']!, _recurrenceMeta),
+      );
+    }
+    if (data.containsKey('series_id')) {
+      context.handle(
+        _seriesIdMeta,
+        seriesId.isAcceptableOrUnknown(data['series_id']!, _seriesIdMeta),
+      );
+    }
     return context;
   }
 
@@ -3199,6 +3236,14 @@ class $CalendarEntriesTableTable extends CalendarEntriesTable
         DriftSqlType.int,
         data['${effectivePrefix}transaction_id'],
       ),
+      recurrence: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recurrence'],
+      )!,
+      seriesId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}series_id'],
+      ),
     );
   }
 
@@ -3219,6 +3264,8 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
   final DateTime? remindAt;
   final String status;
   final int? transactionId;
+  final String recurrence;
+  final int? seriesId;
   const CalendarEntry({
     required this.id,
     required this.date,
@@ -3230,6 +3277,8 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
     this.remindAt,
     required this.status,
     this.transactionId,
+    required this.recurrence,
+    this.seriesId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3256,6 +3305,10 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
     if (!nullToAbsent || transactionId != null) {
       map['transaction_id'] = Variable<int>(transactionId);
     }
+    map['recurrence'] = Variable<String>(recurrence);
+    if (!nullToAbsent || seriesId != null) {
+      map['series_id'] = Variable<int>(seriesId);
+    }
     return map;
   }
 
@@ -3281,6 +3334,10 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
       transactionId: transactionId == null && nullToAbsent
           ? const Value.absent()
           : Value(transactionId),
+      recurrence: Value(recurrence),
+      seriesId: seriesId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(seriesId),
     );
   }
 
@@ -3300,6 +3357,8 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
       remindAt: serializer.fromJson<DateTime?>(json['remindAt']),
       status: serializer.fromJson<String>(json['status']),
       transactionId: serializer.fromJson<int?>(json['transactionId']),
+      recurrence: serializer.fromJson<String>(json['recurrence']),
+      seriesId: serializer.fromJson<int?>(json['seriesId']),
     );
   }
   @override
@@ -3316,6 +3375,8 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
       'remindAt': serializer.toJson<DateTime?>(remindAt),
       'status': serializer.toJson<String>(status),
       'transactionId': serializer.toJson<int?>(transactionId),
+      'recurrence': serializer.toJson<String>(recurrence),
+      'seriesId': serializer.toJson<int?>(seriesId),
     };
   }
 
@@ -3330,6 +3391,8 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
     Value<DateTime?> remindAt = const Value.absent(),
     String? status,
     Value<int?> transactionId = const Value.absent(),
+    String? recurrence,
+    Value<int?> seriesId = const Value.absent(),
   }) => CalendarEntry(
     id: id ?? this.id,
     date: date ?? this.date,
@@ -3343,6 +3406,8 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
     transactionId: transactionId.present
         ? transactionId.value
         : this.transactionId,
+    recurrence: recurrence ?? this.recurrence,
+    seriesId: seriesId.present ? seriesId.value : this.seriesId,
   );
   CalendarEntry copyWithCompanion(CalendarEntriesTableCompanion data) {
     return CalendarEntry(
@@ -3360,6 +3425,10 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
       transactionId: data.transactionId.present
           ? data.transactionId.value
           : this.transactionId,
+      recurrence: data.recurrence.present
+          ? data.recurrence.value
+          : this.recurrence,
+      seriesId: data.seriesId.present ? data.seriesId.value : this.seriesId,
     );
   }
 
@@ -3375,7 +3444,9 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
           ..write('accountId: $accountId, ')
           ..write('remindAt: $remindAt, ')
           ..write('status: $status, ')
-          ..write('transactionId: $transactionId')
+          ..write('transactionId: $transactionId, ')
+          ..write('recurrence: $recurrence, ')
+          ..write('seriesId: $seriesId')
           ..write(')'))
         .toString();
   }
@@ -3392,6 +3463,8 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
     remindAt,
     status,
     transactionId,
+    recurrence,
+    seriesId,
   );
   @override
   bool operator ==(Object other) =>
@@ -3406,7 +3479,9 @@ class CalendarEntry extends DataClass implements Insertable<CalendarEntry> {
           other.accountId == this.accountId &&
           other.remindAt == this.remindAt &&
           other.status == this.status &&
-          other.transactionId == this.transactionId);
+          other.transactionId == this.transactionId &&
+          other.recurrence == this.recurrence &&
+          other.seriesId == this.seriesId);
 }
 
 class CalendarEntriesTableCompanion extends UpdateCompanion<CalendarEntry> {
@@ -3420,6 +3495,8 @@ class CalendarEntriesTableCompanion extends UpdateCompanion<CalendarEntry> {
   final Value<DateTime?> remindAt;
   final Value<String> status;
   final Value<int?> transactionId;
+  final Value<String> recurrence;
+  final Value<int?> seriesId;
   const CalendarEntriesTableCompanion({
     this.id = const Value.absent(),
     this.date = const Value.absent(),
@@ -3431,6 +3508,8 @@ class CalendarEntriesTableCompanion extends UpdateCompanion<CalendarEntry> {
     this.remindAt = const Value.absent(),
     this.status = const Value.absent(),
     this.transactionId = const Value.absent(),
+    this.recurrence = const Value.absent(),
+    this.seriesId = const Value.absent(),
   });
   CalendarEntriesTableCompanion.insert({
     this.id = const Value.absent(),
@@ -3443,6 +3522,8 @@ class CalendarEntriesTableCompanion extends UpdateCompanion<CalendarEntry> {
     this.remindAt = const Value.absent(),
     this.status = const Value.absent(),
     this.transactionId = const Value.absent(),
+    this.recurrence = const Value.absent(),
+    this.seriesId = const Value.absent(),
   }) : date = Value(date),
        title = Value(title);
   static Insertable<CalendarEntry> custom({
@@ -3456,6 +3537,8 @@ class CalendarEntriesTableCompanion extends UpdateCompanion<CalendarEntry> {
     Expression<DateTime>? remindAt,
     Expression<String>? status,
     Expression<int>? transactionId,
+    Expression<String>? recurrence,
+    Expression<int>? seriesId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3468,6 +3551,8 @@ class CalendarEntriesTableCompanion extends UpdateCompanion<CalendarEntry> {
       if (remindAt != null) 'remind_at': remindAt,
       if (status != null) 'status': status,
       if (transactionId != null) 'transaction_id': transactionId,
+      if (recurrence != null) 'recurrence': recurrence,
+      if (seriesId != null) 'series_id': seriesId,
     });
   }
 
@@ -3482,6 +3567,8 @@ class CalendarEntriesTableCompanion extends UpdateCompanion<CalendarEntry> {
     Value<DateTime?>? remindAt,
     Value<String>? status,
     Value<int?>? transactionId,
+    Value<String>? recurrence,
+    Value<int?>? seriesId,
   }) {
     return CalendarEntriesTableCompanion(
       id: id ?? this.id,
@@ -3494,6 +3581,8 @@ class CalendarEntriesTableCompanion extends UpdateCompanion<CalendarEntry> {
       remindAt: remindAt ?? this.remindAt,
       status: status ?? this.status,
       transactionId: transactionId ?? this.transactionId,
+      recurrence: recurrence ?? this.recurrence,
+      seriesId: seriesId ?? this.seriesId,
     );
   }
 
@@ -3530,6 +3619,12 @@ class CalendarEntriesTableCompanion extends UpdateCompanion<CalendarEntry> {
     if (transactionId.present) {
       map['transaction_id'] = Variable<int>(transactionId.value);
     }
+    if (recurrence.present) {
+      map['recurrence'] = Variable<String>(recurrence.value);
+    }
+    if (seriesId.present) {
+      map['series_id'] = Variable<int>(seriesId.value);
+    }
     return map;
   }
 
@@ -3545,7 +3640,208 @@ class CalendarEntriesTableCompanion extends UpdateCompanion<CalendarEntry> {
           ..write('accountId: $accountId, ')
           ..write('remindAt: $remindAt, ')
           ..write('status: $status, ')
-          ..write('transactionId: $transactionId')
+          ..write('transactionId: $transactionId, ')
+          ..write('recurrence: $recurrence, ')
+          ..write('seriesId: $seriesId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MonthlyLimitsTableTable extends MonthlyLimitsTable
+    with TableInfo<$MonthlyLimitsTableTable, MonthlyLimit> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MonthlyLimitsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _periodMeta = const VerificationMeta('period');
+  @override
+  late final GeneratedColumn<int> period = GeneratedColumn<int>(
+    'period',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _amountMeta = const VerificationMeta('amount');
+  @override
+  late final GeneratedColumn<double> amount = GeneratedColumn<double>(
+    'amount',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [period, amount];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'monthly_limits_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MonthlyLimit> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('period')) {
+      context.handle(
+        _periodMeta,
+        period.isAcceptableOrUnknown(data['period']!, _periodMeta),
+      );
+    }
+    if (data.containsKey('amount')) {
+      context.handle(
+        _amountMeta,
+        amount.isAcceptableOrUnknown(data['amount']!, _amountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {period};
+  @override
+  MonthlyLimit map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MonthlyLimit(
+      period: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}period'],
+      )!,
+      amount: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}amount'],
+      )!,
+    );
+  }
+
+  @override
+  $MonthlyLimitsTableTable createAlias(String alias) {
+    return $MonthlyLimitsTableTable(attachedDatabase, alias);
+  }
+}
+
+class MonthlyLimit extends DataClass implements Insertable<MonthlyLimit> {
+  final int period;
+  final double amount;
+  const MonthlyLimit({required this.period, required this.amount});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['period'] = Variable<int>(period);
+    map['amount'] = Variable<double>(amount);
+    return map;
+  }
+
+  MonthlyLimitsTableCompanion toCompanion(bool nullToAbsent) {
+    return MonthlyLimitsTableCompanion(
+      period: Value(period),
+      amount: Value(amount),
+    );
+  }
+
+  factory MonthlyLimit.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MonthlyLimit(
+      period: serializer.fromJson<int>(json['period']),
+      amount: serializer.fromJson<double>(json['amount']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'period': serializer.toJson<int>(period),
+      'amount': serializer.toJson<double>(amount),
+    };
+  }
+
+  MonthlyLimit copyWith({int? period, double? amount}) => MonthlyLimit(
+    period: period ?? this.period,
+    amount: amount ?? this.amount,
+  );
+  MonthlyLimit copyWithCompanion(MonthlyLimitsTableCompanion data) {
+    return MonthlyLimit(
+      period: data.period.present ? data.period.value : this.period,
+      amount: data.amount.present ? data.amount.value : this.amount,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MonthlyLimit(')
+          ..write('period: $period, ')
+          ..write('amount: $amount')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(period, amount);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MonthlyLimit &&
+          other.period == this.period &&
+          other.amount == this.amount);
+}
+
+class MonthlyLimitsTableCompanion extends UpdateCompanion<MonthlyLimit> {
+  final Value<int> period;
+  final Value<double> amount;
+  const MonthlyLimitsTableCompanion({
+    this.period = const Value.absent(),
+    this.amount = const Value.absent(),
+  });
+  MonthlyLimitsTableCompanion.insert({
+    this.period = const Value.absent(),
+    required double amount,
+  }) : amount = Value(amount);
+  static Insertable<MonthlyLimit> custom({
+    Expression<int>? period,
+    Expression<double>? amount,
+  }) {
+    return RawValuesInsertable({
+      if (period != null) 'period': period,
+      if (amount != null) 'amount': amount,
+    });
+  }
+
+  MonthlyLimitsTableCompanion copyWith({
+    Value<int>? period,
+    Value<double>? amount,
+  }) {
+    return MonthlyLimitsTableCompanion(
+      period: period ?? this.period,
+      amount: amount ?? this.amount,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (period.present) {
+      map['period'] = Variable<int>(period.value);
+    }
+    if (amount.present) {
+      map['amount'] = Variable<double>(amount.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MonthlyLimitsTableCompanion(')
+          ..write('period: $period, ')
+          ..write('amount: $amount')
           ..write(')'))
         .toString();
   }
@@ -3564,6 +3860,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $TransactionsTableTable(this);
   late final $CalendarEntriesTableTable calendarEntriesTable =
       $CalendarEntriesTableTable(this);
+  late final $MonthlyLimitsTableTable monthlyLimitsTable =
+      $MonthlyLimitsTableTable(this);
   late final AccountsDao accountsDao = AccountsDao(this as AppDatabase);
   late final TransactionsDao transactionsDao = TransactionsDao(
     this as AppDatabase,
@@ -3583,6 +3881,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     goalsTable,
     transactionsTable,
     calendarEntriesTable,
+    monthlyLimitsTable,
   ];
 }
 
@@ -5896,6 +6195,8 @@ typedef $$CalendarEntriesTableTableCreateCompanionBuilder =
       Value<DateTime?> remindAt,
       Value<String> status,
       Value<int?> transactionId,
+      Value<String> recurrence,
+      Value<int?> seriesId,
     });
 typedef $$CalendarEntriesTableTableUpdateCompanionBuilder =
     CalendarEntriesTableCompanion Function({
@@ -5909,6 +6210,8 @@ typedef $$CalendarEntriesTableTableUpdateCompanionBuilder =
       Value<DateTime?> remindAt,
       Value<String> status,
       Value<int?> transactionId,
+      Value<String> recurrence,
+      Value<int?> seriesId,
     });
 
 class $$CalendarEntriesTableTableFilterComposer
@@ -5967,6 +6270,16 @@ class $$CalendarEntriesTableTableFilterComposer
 
   ColumnFilters<int> get transactionId => $composableBuilder(
     column: $table.transactionId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recurrence => $composableBuilder(
+    column: $table.recurrence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get seriesId => $composableBuilder(
+    column: $table.seriesId,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -6029,6 +6342,16 @@ class $$CalendarEntriesTableTableOrderingComposer
     column: $table.transactionId,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get recurrence => $composableBuilder(
+    column: $table.recurrence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get seriesId => $composableBuilder(
+    column: $table.seriesId,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CalendarEntriesTableTableAnnotationComposer
@@ -6073,6 +6396,14 @@ class $$CalendarEntriesTableTableAnnotationComposer
     column: $table.transactionId,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get recurrence => $composableBuilder(
+    column: $table.recurrence,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get seriesId =>
+      $composableBuilder(column: $table.seriesId, builder: (column) => column);
 }
 
 class $$CalendarEntriesTableTableTableManager
@@ -6128,6 +6459,8 @@ class $$CalendarEntriesTableTableTableManager
                 Value<DateTime?> remindAt = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<int?> transactionId = const Value.absent(),
+                Value<String> recurrence = const Value.absent(),
+                Value<int?> seriesId = const Value.absent(),
               }) => CalendarEntriesTableCompanion(
                 id: id,
                 date: date,
@@ -6139,6 +6472,8 @@ class $$CalendarEntriesTableTableTableManager
                 remindAt: remindAt,
                 status: status,
                 transactionId: transactionId,
+                recurrence: recurrence,
+                seriesId: seriesId,
               ),
           createCompanionCallback:
               ({
@@ -6152,6 +6487,8 @@ class $$CalendarEntriesTableTableTableManager
                 Value<DateTime?> remindAt = const Value.absent(),
                 Value<String> status = const Value.absent(),
                 Value<int?> transactionId = const Value.absent(),
+                Value<String> recurrence = const Value.absent(),
+                Value<int?> seriesId = const Value.absent(),
               }) => CalendarEntriesTableCompanion.insert(
                 id: id,
                 date: date,
@@ -6163,6 +6500,8 @@ class $$CalendarEntriesTableTableTableManager
                 remindAt: remindAt,
                 status: status,
                 transactionId: transactionId,
+                recurrence: recurrence,
+                seriesId: seriesId,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -6202,6 +6541,158 @@ typedef $$CalendarEntriesTableTableProcessedTableManager =
       CalendarEntry,
       PrefetchHooks Function()
     >;
+typedef $$MonthlyLimitsTableTableCreateCompanionBuilder =
+    MonthlyLimitsTableCompanion Function({
+      Value<int> period,
+      required double amount,
+    });
+typedef $$MonthlyLimitsTableTableUpdateCompanionBuilder =
+    MonthlyLimitsTableCompanion Function({
+      Value<int> period,
+      Value<double> amount,
+    });
+
+class $$MonthlyLimitsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $MonthlyLimitsTableTable> {
+  $$MonthlyLimitsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get period => $composableBuilder(
+    column: $table.period,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$MonthlyLimitsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $MonthlyLimitsTableTable> {
+  $$MonthlyLimitsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get period => $composableBuilder(
+    column: $table.period,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get amount => $composableBuilder(
+    column: $table.amount,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$MonthlyLimitsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MonthlyLimitsTableTable> {
+  $$MonthlyLimitsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get period =>
+      $composableBuilder(column: $table.period, builder: (column) => column);
+
+  GeneratedColumn<double> get amount =>
+      $composableBuilder(column: $table.amount, builder: (column) => column);
+}
+
+class $$MonthlyLimitsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MonthlyLimitsTableTable,
+          MonthlyLimit,
+          $$MonthlyLimitsTableTableFilterComposer,
+          $$MonthlyLimitsTableTableOrderingComposer,
+          $$MonthlyLimitsTableTableAnnotationComposer,
+          $$MonthlyLimitsTableTableCreateCompanionBuilder,
+          $$MonthlyLimitsTableTableUpdateCompanionBuilder,
+          (
+            MonthlyLimit,
+            BaseReferences<
+              _$AppDatabase,
+              $MonthlyLimitsTableTable,
+              MonthlyLimit
+            >,
+          ),
+          MonthlyLimit,
+          PrefetchHooks Function()
+        > {
+  $$MonthlyLimitsTableTableTableManager(
+    _$AppDatabase db,
+    $MonthlyLimitsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MonthlyLimitsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MonthlyLimitsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MonthlyLimitsTableTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> period = const Value.absent(),
+                Value<double> amount = const Value.absent(),
+              }) => MonthlyLimitsTableCompanion(period: period, amount: amount),
+          createCompanionCallback:
+              ({
+                Value<int> period = const Value.absent(),
+                required double amount,
+              }) => MonthlyLimitsTableCompanion.insert(
+                period: period,
+                amount: amount,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$MonthlyLimitsTableTable, MonthlyLimit>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $MonthlyLimitsTableTable,
+                    MonthlyLimit
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$MonthlyLimitsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MonthlyLimitsTableTable,
+      MonthlyLimit,
+      $$MonthlyLimitsTableTableFilterComposer,
+      $$MonthlyLimitsTableTableOrderingComposer,
+      $$MonthlyLimitsTableTableAnnotationComposer,
+      $$MonthlyLimitsTableTableCreateCompanionBuilder,
+      $$MonthlyLimitsTableTableUpdateCompanionBuilder,
+      (
+        MonthlyLimit,
+        BaseReferences<_$AppDatabase, $MonthlyLimitsTableTable, MonthlyLimit>,
+      ),
+      MonthlyLimit,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6218,4 +6709,6 @@ class $AppDatabaseManager {
       $$TransactionsTableTableTableManager(_db, _db.transactionsTable);
   $$CalendarEntriesTableTableTableManager get calendarEntriesTable =>
       $$CalendarEntriesTableTableTableManager(_db, _db.calendarEntriesTable);
+  $$MonthlyLimitsTableTableTableManager get monthlyLimitsTable =>
+      $$MonthlyLimitsTableTableTableManager(_db, _db.monthlyLimitsTable);
 }

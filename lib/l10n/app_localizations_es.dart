@@ -137,6 +137,79 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get calendarLimitTitle => 'Límite del mes';
+
+  @override
+  String get calendarLimitLocked => 'Límite mensual y gasto sugerido por día';
+
+  @override
+  String get calendarLimitEmpty => 'Define cuánto quieres gastar este mes';
+
+  @override
+  String get calendarLimitSet => 'Definir límite';
+
+  @override
+  String calendarLimitAmountLabel(String currency) {
+    return 'Límite mensual · $currency';
+  }
+
+  @override
+  String get calendarLimitCarryNote =>
+      'Se mantiene en los meses siguientes hasta que lo cambies. Escribe 0 para quitarlo.';
+
+  @override
+  String get calendarLimitSpent => 'Gastado';
+
+  @override
+  String get calendarLimitPlanned => 'Programado';
+
+  @override
+  String get calendarLimitAvailable => 'Disponible';
+
+  @override
+  String calendarLimitDaily(String amount) {
+    return 'Puedes gastar ≈ $amount por día';
+  }
+
+  @override
+  String calendarLimitExceeded(String amount) {
+    return 'Superaste el límite por $amount';
+  }
+
+  @override
+  String get calendarRepeatLabel => 'Repetir';
+
+  @override
+  String get calendarRepeatNone => 'Una vez';
+
+  @override
+  String get calendarRepeatWeekly => 'Cada semana';
+
+  @override
+  String get calendarRepeatMonthly => 'Cada mes';
+
+  @override
+  String get calendarDeleteSeries => 'Eliminar esta y las siguientes';
+
+  @override
+  String get premiumFeatureLockedTitle => 'Función premium';
+
+  @override
+  String get premiumBlockedCalendarLimit =>
+      'El límite mensual con gasto sugerido por día es una función premium.';
+
+  @override
+  String get premiumBlockedCalendarRecurring =>
+      'Los gastos recurrentes son una función premium.';
+
+  @override
+  String get premiumFeatureCalendarPlus => 'Calendario Plus';
+
+  @override
+  String get premiumFeatureCalendarPlusSubtitle =>
+      'Recordatorios ilimitados, gastos recurrentes y límite mensual con gasto sugerido por día';
+
+  @override
   String get budgetCalculatorSavingsRateMenorCero =>
       'Gastaste más de lo que ganaste';
 
@@ -523,7 +596,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get notifTitle => 'Notificaciones';
+  String get notifTitle => 'Alertas de presupuesto';
 
   @override
   String get notifActivatingBudget => 'Activo · Alertas de presupuesto';

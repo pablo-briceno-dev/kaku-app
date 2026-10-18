@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/router/app_router.dart';
 import 'package:kaku/core/theme/app_theme.dart';
 import 'package:kaku/l10n/app_localizations.dart';
+import 'package:kaku/shared/providers/calendar_provider.dart';
 import 'package:kaku/shared/providers/locale_provider.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
 
@@ -15,6 +16,11 @@ class KakuApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     final themePref = ref.watch(themeProvider);
     final locale = ref.watch(localeProvider);
+    ref.listen<Locale?>(localeProvider, (prev, next) {
+      if (prev != next) {
+        ref.read(calendarControllerProvider).rescheduleAll(next);
+      }
+    });
 
     return MaterialApp.router(
       title: 'Kaku',

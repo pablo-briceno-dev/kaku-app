@@ -4,11 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kaku/core/currency_formatter.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/l10n/category_l10n.dart';
-import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/currency_type.dart';
+import 'package:kaku/core/recurrence.dart';
 import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/calendar_provider.dart';
 import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/providers/locale_provider.dart';
 import 'package:kaku/shared/providers/premium_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/premium_service.dart';
@@ -42,6 +43,7 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
   bool _remind = false;
   int _daysBefore = 0;
   TimeOfDay _time = const TimeOfDay(hour: 9, minute: 0);
+  Recurrence _recurrence = Recurrence.none;
 
   @override
   void initState() {
@@ -114,22 +116,13 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
   }
 
   Future<void> _syncReminder(CalendarEntry e) async {
-    final l10n = AppLocalizations.of(context)!;
-    final date = context.dates.dayMonthYear(e.date);
-    final amount = e.amount;
-    final currency = ref.read(currencyProvider);
     await ref
         .read(reminderServiceProvider)
         .schedule(
           entry: e,
-          title: e.title,
-          body: amount != null
-              ? l10n.calendarReminderBody(
-                  CurrencyFormatter.format(amount, currency),
-                  date,
-                )
-              : l10n.calendarReminderBodyNote(date),
-          channelName: l10n.calendarReminderChannel,
+          l10n: AppLocalizations.of(context)!,
+          locale: Localizations.localeOf(context).languageCode,
+          currency: ref.read(currencyProvider),
         );
   }
 
@@ -163,6 +156,28 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
       }
     }
     final amount = _parseAmount(ref.read(currencyProvider));
+    if (old == null && _recurrence != Recurrence.none) {
+      final until = DateTime(_day.year, _day.month + 12, _day.day);
+      await dao.insertSeries([
+        for (final d in recurrenceDates(_day, _recurrence, until))
+          CalendarEntriesTableCompanion.insert(
+            date: d,
+            title: _titleController.text.trim(),
+            amount: drift.Value(amount),
+            categoryId: drift.Value(_categoryId),
+            accountId: drift.Value(_accountId),
+            remindAt: drift.Value(shiftReminder(d, remindAt, d)),
+            recurrence: drift.Value(_recurrence.name),
+          ),
+      ]);
+      if (mounted) {
+        await ref
+            .read(calendarControllerProvider)
+            .rescheduleAll(ref.read(localeProvider));
+      }
+      if(mounted) nav.pop();
+      return;
+    }
     final int id;
     if (old == null) {
       id = await dao.insertEntry(
@@ -279,6 +294,46 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
               ],
               onChanged: (v) => setState(() => _accountId = v),
             ),
+            if (widget.entry == null) ...[
+              const SizedBox(height: 12),
+              Text(
+                l10n.calendarRepeatLabel,
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(height: 4),
+              SegmentedButton<Recurrence>(
+                showSelectedIcon: false,
+                segments: [
+                  ButtonSegment(
+                    value: Recurrence.none,
+                    label: Text(l10n.calendarRepeatNone),
+                  ),
+                  ButtonSegment(
+                    value: Recurrence.weekly,
+                    label: Text(l10n.calendarRepeatWeekly),
+                  ),
+                  ButtonSegment(
+                    value: Recurrence.monthly,
+                    label: Text(l10n.calendarRepeatMonthly),
+                  ),
+                ],
+                selected: {_recurrence},
+                onSelectionChanged: (s) async {
+                  final v = s.first;
+                  if (v != Recurrence.none &&
+                      !ref.read(isPremiumProvider).value!) {
+                    await PremiumLimitChecker.check(
+                      context: context,
+                      feature: PremiumFeature.blockedCalendarRecurring,
+                      currentCount: 0,
+                      limit: 0,
+                    );
+                    return;
+                  }
+                  setState(() => _recurrence = v);
+                },
+              ),
+            ],
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(l10n.calendarReminderToggle),

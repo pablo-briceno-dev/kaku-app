@@ -6,6 +6,8 @@ part of 'calendar_dao.dart';
 mixin _$CalendarDaoMixin on DatabaseAccessor<AppDatabase> {
   $CalendarEntriesTableTable get calendarEntriesTable =>
       attachedDatabase.calendarEntriesTable;
+  $MonthlyLimitsTableTable get monthlyLimitsTable =>
+      attachedDatabase.monthlyLimitsTable;
   CalendarDaoManager get managers => CalendarDaoManager(this);
 }
 
@@ -16,5 +18,10 @@ class CalendarDaoManager {
       $$CalendarEntriesTableTableTableManager(
         _db.attachedDatabase,
         _db.calendarEntriesTable,
+      );
+  $$MonthlyLimitsTableTableTableManager get monthlyLimitsTable =>
+      $$MonthlyLimitsTableTableTableManager(
+        _db.attachedDatabase,
+        _db.monthlyLimitsTable,
       );
 }

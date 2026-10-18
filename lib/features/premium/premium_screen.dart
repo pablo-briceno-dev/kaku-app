@@ -309,5 +309,10 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
       l10n.premiumFeatureViewHistory,
       l10n.premiumFeatureViewHistorySubtitle,
     ),
+    Feature(
+      '📅',
+      l10n.premiumFeatureCalendarPlus,
+      l10n.premiumFeatureCalendarPlusSubtitle,
+    ),
   ];
 }

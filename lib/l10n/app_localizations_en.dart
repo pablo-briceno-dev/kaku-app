@@ -137,6 +137,80 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get calendarLimitTitle => 'Monthly limit';
+
+  @override
+  String get calendarLimitLocked =>
+      'Monthly limit and suggested daily spending';
+
+  @override
+  String get calendarLimitEmpty => 'Set how much you want to spend this month';
+
+  @override
+  String get calendarLimitSet => 'Set limit';
+
+  @override
+  String calendarLimitAmountLabel(String currency) {
+    return 'Monthly limit · $currency';
+  }
+
+  @override
+  String get calendarLimitCarryNote =>
+      'It carries over to the following months until you change it. Enter 0 to remove it.';
+
+  @override
+  String get calendarLimitSpent => 'Spent';
+
+  @override
+  String get calendarLimitPlanned => 'Planned';
+
+  @override
+  String get calendarLimitAvailable => 'Available';
+
+  @override
+  String calendarLimitDaily(String amount) {
+    return 'You can spend ≈ $amount per day';
+  }
+
+  @override
+  String calendarLimitExceeded(String amount) {
+    return 'You are over the limit by $amount';
+  }
+
+  @override
+  String get calendarRepeatLabel => 'Repeat';
+
+  @override
+  String get calendarRepeatNone => 'Once';
+
+  @override
+  String get calendarRepeatWeekly => 'Weekly';
+
+  @override
+  String get calendarRepeatMonthly => 'Monthly';
+
+  @override
+  String get calendarDeleteSeries => 'Delete this and the following';
+
+  @override
+  String get premiumFeatureLockedTitle => 'Premium feature';
+
+  @override
+  String get premiumBlockedCalendarLimit =>
+      'The monthly limit with suggested daily spending is a premium feature.';
+
+  @override
+  String get premiumBlockedCalendarRecurring =>
+      'Recurring expenses are a premium feature.';
+
+  @override
+  String get premiumFeatureCalendarPlus => 'Calendar Plus';
+
+  @override
+  String get premiumFeatureCalendarPlusSubtitle =>
+      'Unlimited reminders, recurring expenses and a monthly limit with suggested daily spending';
+
+  @override
   String get budgetCalculatorSavingsRateMenorCero =>
       'You spent more than you earned';
 
@@ -518,7 +592,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get notifTitle => 'Notifications';
+  String get notifTitle => 'Budget Alerts';
 
   @override
   String get notifActivatingBudget => 'On · Budget alerts';

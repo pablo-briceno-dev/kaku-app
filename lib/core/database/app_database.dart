@@ -13,6 +13,7 @@ import 'package:kaku/core/database/tables/budgets_table.dart';
 import 'package:kaku/core/database/tables/calendar_entries_table.dart';
 import 'package:kaku/core/database/tables/categories_table.dart';
 import 'package:kaku/core/database/tables/goals_table.dart';
+import 'package:kaku/core/database/tables/monthly_limits_table.dart';
 import 'package:kaku/core/database/tables/transactions_table.dart';
 import 'package:kaku/core/l10n/default_category.dart';
 import 'package:path/path.dart' as p;
@@ -28,6 +29,7 @@ part 'app_database.g.dart';
     GoalsTable,
     TransactionsTable,
     CalendarEntriesTable,
+    MonthlyLimitsTable,
   ],
   daos: [
     AccountsDao, // CRUD de cuentas + balance
@@ -42,7 +44,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 7; //! La versión que esta en producción es la 4 hasta el momento
 
   // Aquí irán las migraciones cuando actualice el schema
   @override
@@ -92,8 +94,16 @@ class AppDatabase extends _$AppDatabase {
           count++;
         }
       }
-      if (from == 4 && to == 5) {
+      if (from < to - 2) {
         await m.createTable(calendarEntriesTable);
+      }
+      if (from < to) {
+        await m.addColumn(
+          calendarEntriesTable,
+          calendarEntriesTable.recurrence,
+        );
+        await m.addColumn(calendarEntriesTable, calendarEntriesTable.seriesId);
+        await m.createTable(monthlyLimitsTable);
       }
     },
   );

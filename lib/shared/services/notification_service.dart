@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:kaku/shared/services/notification_navigation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,7 +22,15 @@ class NotificationService {
 
     await _plugin.initialize(
       settings: const InitializationSettings(android: android, iOS: iOS),
+      onDidReceiveBackgroundNotificationResponse: (r) =>
+          handleNotificationPayload(r.payload),
     );
+
+    // La app se abrió tocando una notificación (estaba cerrada)
+    final launch = await _plugin.getNotificationAppLaunchDetails();
+    if (launch?.didNotificationLaunchApp ?? false) {
+      handleNotificationPayload(launch!.notificationResponse?.payload);
+    }
 
     _initialized = true;
   }

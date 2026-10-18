@@ -24,6 +24,10 @@ extension PremiumBlockReasonX on PremiumBlockReason {
         l10n.premiumBlockedUnlimitedReminders(
           PremiumLimits.maxCalendarReminders,
         ),
+      PremiumBlockReason.blockedCalendarLimit =>
+        l10n.premiumBlockedCalendarLimit,
+      PremiumBlockReason.blockedCalendarRecurring =>
+        l10n.premiumBlockedCalendarRecurring,
     };
   }
 }

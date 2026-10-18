@@ -338,6 +338,132 @@ abstract class AppLocalizations {
   /// **'Llegaste al límite de {max} recordatorios del plan gratis.'**
   String premiumBlockedUnlimitedReminders(int max);
 
+  /// No description provided for @calendarLimitTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Límite del mes'**
+  String get calendarLimitTitle;
+
+  /// No description provided for @calendarLimitLocked.
+  ///
+  /// In es, this message translates to:
+  /// **'Límite mensual y gasto sugerido por día'**
+  String get calendarLimitLocked;
+
+  /// No description provided for @calendarLimitEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Define cuánto quieres gastar este mes'**
+  String get calendarLimitEmpty;
+
+  /// No description provided for @calendarLimitSet.
+  ///
+  /// In es, this message translates to:
+  /// **'Definir límite'**
+  String get calendarLimitSet;
+
+  /// No description provided for @calendarLimitAmountLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Límite mensual · {currency}'**
+  String calendarLimitAmountLabel(String currency);
+
+  /// No description provided for @calendarLimitCarryNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Se mantiene en los meses siguientes hasta que lo cambies. Escribe 0 para quitarlo.'**
+  String get calendarLimitCarryNote;
+
+  /// No description provided for @calendarLimitSpent.
+  ///
+  /// In es, this message translates to:
+  /// **'Gastado'**
+  String get calendarLimitSpent;
+
+  /// No description provided for @calendarLimitPlanned.
+  ///
+  /// In es, this message translates to:
+  /// **'Programado'**
+  String get calendarLimitPlanned;
+
+  /// No description provided for @calendarLimitAvailable.
+  ///
+  /// In es, this message translates to:
+  /// **'Disponible'**
+  String get calendarLimitAvailable;
+
+  /// No description provided for @calendarLimitDaily.
+  ///
+  /// In es, this message translates to:
+  /// **'Puedes gastar ≈ {amount} por día'**
+  String calendarLimitDaily(String amount);
+
+  /// No description provided for @calendarLimitExceeded.
+  ///
+  /// In es, this message translates to:
+  /// **'Superaste el límite por {amount}'**
+  String calendarLimitExceeded(String amount);
+
+  /// No description provided for @calendarRepeatLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Repetir'**
+  String get calendarRepeatLabel;
+
+  /// No description provided for @calendarRepeatNone.
+  ///
+  /// In es, this message translates to:
+  /// **'Una vez'**
+  String get calendarRepeatNone;
+
+  /// No description provided for @calendarRepeatWeekly.
+  ///
+  /// In es, this message translates to:
+  /// **'Cada semana'**
+  String get calendarRepeatWeekly;
+
+  /// No description provided for @calendarRepeatMonthly.
+  ///
+  /// In es, this message translates to:
+  /// **'Cada mes'**
+  String get calendarRepeatMonthly;
+
+  /// No description provided for @calendarDeleteSeries.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar esta y las siguientes'**
+  String get calendarDeleteSeries;
+
+  /// No description provided for @premiumFeatureLockedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Función premium'**
+  String get premiumFeatureLockedTitle;
+
+  /// No description provided for @premiumBlockedCalendarLimit.
+  ///
+  /// In es, this message translates to:
+  /// **'El límite mensual con gasto sugerido por día es una función premium.'**
+  String get premiumBlockedCalendarLimit;
+
+  /// No description provided for @premiumBlockedCalendarRecurring.
+  ///
+  /// In es, this message translates to:
+  /// **'Los gastos recurrentes son una función premium.'**
+  String get premiumBlockedCalendarRecurring;
+
+  /// No description provided for @premiumFeatureCalendarPlus.
+  ///
+  /// In es, this message translates to:
+  /// **'Calendario Plus'**
+  String get premiumFeatureCalendarPlus;
+
+  /// No description provided for @premiumFeatureCalendarPlusSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Recordatorios ilimitados, gastos recurrentes y límite mensual con gasto sugerido por día'**
+  String get premiumFeatureCalendarPlusSubtitle;
+
   /// No description provided for @budgetCalculatorSavingsRateMenorCero.
   ///
   /// In es, this message translates to:
@@ -995,7 +1121,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifTitle.
   ///
   /// In es, this message translates to:
-  /// **'Notificaciones'**
+  /// **'Alertas de presupuesto'**
   String get notifTitle;
 
   /// No description provided for @notifActivatingBudget.
