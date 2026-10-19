@@ -32,15 +32,13 @@ class MonthLimitCard extends ConsumerWidget {
     String money(double v) => CurrencyFormatter.format(v, currency);
 
     if (!ref.watch(isPremiumProvider)) {
-      return Card(
-        child: ListTile(
-          leading: Icon(Icons.lock_outline_rounded, color: cs.primary),
-          title: Text(l10n.calendarLimitLocked),
-          onTap: () => PremiumLimitChecker.check(
-            context: context,
-            feature: PremiumFeature.blockedCalendarLimit,
-            currentCount: 0,
-            limit: PremiumLimits.maxGoals,
+      return PremiumGate(
+        feature: PremiumFeature.blockedCalendarLimit,
+        showLockBadge: true,
+        child: Card(
+          child: ListTile(
+            leading: Icon(Icons.lock_outline_rounded, color: cs.primary),
+            title: Text(l10n.calendarLimitLocked),
           ),
         ),
       );

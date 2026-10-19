@@ -32,7 +32,12 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
     text: widget.entry?.title,
   );
   late final _amountController = TextEditingController(
-    text: widget.entry?.amount.toString(),
+    text: widget.entry != null
+        ? CurrencyFormatter.format(
+            widget.entry?.amount ?? 0,
+            ref.read(currencyProvider),
+          )
+        : '',
   );
   late final DateTime _day = DateUtils.dateOnly(
     widget.entry?.date ?? widget.date,
@@ -147,9 +152,9 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
         if (mounted) {
           await PremiumLimitChecker.check(
             context: context,
-            feature: PremiumFeature.unlimitedGoals,
-            currentCount: 3,
-            limit: PremiumLimits.maxGoals,
+            feature: PremiumFeature.unlimitedCalendarReminders,
+            currentCount: PremiumLimits.maxCalendarReminders,
+            limit: PremiumLimits.maxCalendarReminders,
           );
         }
         return;
