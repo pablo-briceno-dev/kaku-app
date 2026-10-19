@@ -78,9 +78,12 @@ class PremiumService {
       PremiumFeature.unlimitedBudgets => PremiumBlockReason.unlimitedBudgets,
       PremiumFeature.unlimitedCategories =>
         PremiumBlockReason.unlimitedCategories,
-      PremiumFeature.unlimitedCalendarReminders => PremiumBlockReason.unlimitedCalendarReminders,
-      PremiumFeature.blockedCalendarLimit => PremiumBlockReason.blockedCalendarLimit,
-      PremiumFeature.blockedCalendarRecurring => PremiumBlockReason.blockedCalendarRecurring,
+      PremiumFeature.unlimitedCalendarReminders =>
+        PremiumBlockReason.unlimitedCalendarReminders,
+      PremiumFeature.blockedCalendarLimit =>
+        PremiumBlockReason.blockedCalendarLimit,
+      PremiumFeature.blockedCalendarRecurring =>
+        PremiumBlockReason.blockedCalendarRecurring,
     };
   }
 }

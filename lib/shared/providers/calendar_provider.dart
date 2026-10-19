@@ -1,4 +1,5 @@
 import 'dart:ui' show Locale, PlatformDispatcher;
+import 'dart:developer' as developer;
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,10 +10,7 @@ import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/locale_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/services/notification_service.dart';
-import 'package:kaku/shared/services/premium_service.dart';
 import 'package:kaku/shared/services/reminder_service.dart';
-
-const kFreeMaxReminders = PremiumLimits.maxCalendarReminders;
 
 final reminderServiceProvider = Provider<ReminderService>(
   (ref) => ReminderService(FlutterLocalNotificationsPlugin()),
@@ -21,15 +19,6 @@ final reminderServiceProvider = Provider<ReminderService>(
 final calendarControllerProvider = Provider<CalendarController>(
   CalendarController.new,
 );
-
-Future<bool> canUseReminder(WidgetRef ref, {int? excludeId}) async {
-  final premium = await PremiumService.isPremium();
-  if (premium) return true;
-  final active = await ref
-      .read(calendarDaoProvider)
-      .countActiveReminders(excludeId: excludeId);
-  return active < kFreeMaxReminders;
-}
 
 /// Lo llama AddTransactionScreen al guardar el gasto que viene de una entrada
 Future<void> completeEntry(
@@ -89,7 +78,11 @@ class CalendarController {
 
   /// Al abrir la app: completa las series recurrentes y reprograma
   Future<void> startupSync() async {
-    await _ref.read(calendarDaoProvider).extendSeries();
-    await rescheduleAll(_ref.read(localeProvider));
+    try {
+      await _ref.read(calendarDaoProvider).extendSeries();
+      await rescheduleAll(_ref.read(localeProvider));
+    } catch (e, s) {
+      developer.log('startupSync falló: $e\n$s');
+    }
   }
 }

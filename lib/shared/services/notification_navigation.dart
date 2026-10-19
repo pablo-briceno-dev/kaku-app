@@ -9,3 +9,16 @@ void handleNotificationPayload(String? payload) {
     pendingNotificationRoute.value = payload;
   }
 }
+
+/// Hace única la ruta, para que go_router la trate como una navegación nueva.
+String withFreshToken(String route) {
+  final uri = Uri.parse(route);
+  return uri
+      .replace(
+        queryParameters: {
+          ...uri.queryParameters,
+          'n': DateTime.now().microsecondsSinceEpoch.toString(),
+        },
+      )
+      .toString();
+}

@@ -142,6 +142,11 @@ class MonthLimitCard extends ConsumerWidget {
     WidgetRef ref,
     double current,
   ) async {
+    final blocked = await PremiumLimitChecker.blockIfFree(
+      context: context,
+      feature: PremiumFeature.blockedCalendarLimit,
+    );
+    if (blocked || !context.mounted) return;
     final dao = ref.read(calendarDaoProvider);
     final amount = await showDialog<double>(
       context: context,

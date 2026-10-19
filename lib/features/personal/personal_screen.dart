@@ -9,8 +9,14 @@ import 'package:kaku/shared/widgets/custom_app_bar.dart';
 class PersonalScreen extends ConsumerStatefulWidget {
   final int initialTab;
   final DateTime? initialDay;
+  final String? focusToken;
 
-  const PersonalScreen({super.key, this.initialTab = 0, this.initialDay});
+  const PersonalScreen({
+    super.key,
+    this.initialTab = 0,
+    this.initialDay,
+    this.focusToken,
+  });
 
   @override
   ConsumerState<PersonalScreen> createState() => _PersonalScreenState();
@@ -27,9 +33,12 @@ class _PersonalScreenState extends ConsumerState<PersonalScreen>
   @override
   void didUpdateWidget(PersonalScreen old) {
     super.didUpdateWidget(old);
-    if (widget.initialTab != old.initialTab &&
-        widget.initialTab != _tabs.index) {
-      _tabs.animateTo(widget.initialTab);
+    if (widget.focusToken != old.focusToken) {
+      final target = widget.initialTab;
+      // fuera del build: animar la pestaña durante la actualización da error
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _tabs.index != target) _tabs.animateTo(target);
+      });
     }
   }
 
@@ -140,7 +149,10 @@ class _PersonalScreenState extends ConsumerState<PersonalScreen>
         controller: _tabs,
         children: [
           const GoalsView(),
-          CalendarView(initialDay: widget.initialDay),
+          CalendarView(
+            initialDay: widget.initialDay,
+            focusToken: widget.focusToken,
+          ),
         ],
       ),
     );

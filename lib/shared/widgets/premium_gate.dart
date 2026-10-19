@@ -122,19 +122,48 @@ class PremiumLimitChecker {
     }
     return true; // bloqueado
   }
+
+  /// Para funciones solo premium, sin versión gratis limitada
+  /// Devuelve true si quedó bloqueado (y ya mostró el diálogo)
+  static Future<bool> blockIfFree({
+    required BuildContext context,
+    required PremiumFeature feature,
+  }) async {
+    final l10n = AppLocalizations.of(context)!;
+    if (await PremiumService.isPremium()) return false;
+
+    final reason = await PremiumService.canDo(feature);
+    if (context.mounted) {
+      showDialog(
+        context: context,
+        builder: (_) => _LimitReachedDialog(
+          reason: reason == null ? '' : reason.label(l10n),
+          title: l10n.premiumFeatureLockedTitle,
+        ),
+      );
+    }
+    return true;
+  }
 }
 
 class _LimitReachedDialog extends StatelessWidget {
   final String reason;
-  const _LimitReachedDialog({required this.reason});
+  final String? title;
+
+  const _LimitReachedDialog({required this.reason, this.title});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return AlertDialog(
-      icon: const Text('👑', style: TextStyle(fontSize: 32)),
-      title: Text(l10n.premiumLimitReached),
+      title: Row(
+        children: [
+          const Text('👑', style: TextStyle(fontSize: 32)),
+          const SizedBox(width: 8),
+          Text(title ?? l10n.premiumLimitReached),
+        ],
+      ),
       content: Text(reason),
       actions: [
         TextButton(

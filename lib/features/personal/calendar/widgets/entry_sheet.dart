@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:drift/drift.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -148,21 +149,25 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
         return;
       }
       if (!await _ensureNotificationPermission()) return;
-      if (!await canUseReminder(ref, excludeId: old?.id)) {
-        if (mounted) {
-          await PremiumLimitChecker.check(
-            context: context,
-            feature: PremiumFeature.unlimitedCalendarReminders,
-            currentCount: PremiumLimits.maxCalendarReminders,
-            limit: PremiumLimits.maxCalendarReminders,
-          );
-        }
-        return;
-      }
+      if (!mounted) return;
+
+      final active = await ref
+          .read(calendarDaoProvider)
+          .countActiveReminders(excludeId: old?.id);
+      if (!mounted) return;
+
+      final blocked = await PremiumLimitChecker.check(
+        context: context,
+        feature: PremiumFeature.unlimitedCalendarReminders,
+        currentCount: active,
+        limit: PremiumLimits.maxCalendarReminders,
+      );
+      if (blocked) return;
     }
     final amount = _parseAmount(ref.read(currencyProvider));
     if (old == null && _recurrence != Recurrence.none) {
       final until = DateTime(_day.year, _day.month + 12, _day.day);
+      developer.log('start=$_day recurrence=$_recurrence until=$until');
       await dao.insertSeries([
         for (final d in recurrenceDates(_day, _recurrence, until))
           CalendarEntriesTableCompanion.insert(
@@ -221,7 +226,7 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
         ref.watch(expenseCategoriesProvider).value ?? const <Category>[];
     final accounts =
         ref.watch(activeAccountsProvider).value ?? const <Account>[];
-    final isPremium = ref.watch(isPremiumProvider);
+    final showFreeHint = ref.watch(premiumNotifierProvider).value == false;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(
@@ -325,14 +330,12 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
                 selected: {_recurrence},
                 onSelectionChanged: (s) async {
                   final v = s.first;
-                  if (v != Recurrence.none && !ref.read(isPremiumProvider)) {
-                    await PremiumLimitChecker.check(
+                  if (v != Recurrence.none) {
+                    final blocked = await PremiumLimitChecker.blockIfFree(
                       context: context,
                       feature: PremiumFeature.blockedCalendarRecurring,
-                      currentCount: 0,
-                      limit: 0,
                     );
-                    return;
+                    if (blocked || !mounted) return;
                   }
                   setState(() => _recurrence = v);
                 },
@@ -341,9 +344,13 @@ class _EntrySheetState extends ConsumerState<EntrySheet> {
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(l10n.calendarReminderToggle),
-              subtitle: isPremium
-                  ? null
-                  : Text(l10n.calendarReminderFreeHint(kFreeMaxReminders)),
+              subtitle: showFreeHint
+                  ? Text(
+                      l10n.calendarReminderFreeHint(
+                        PremiumLimits.maxCalendarReminders,
+                      ),
+                    )
+                  : null,
               value: _remind,
               onChanged: (v) => setState(() => _remind = v),
             ),

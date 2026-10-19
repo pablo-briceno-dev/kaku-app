@@ -57,7 +57,7 @@ class LastRouteService {
     final pending = pendingNotificationRoute.value;
     if (pending != null) {
       pendingNotificationRoute.value = null;
-      if (context.mounted) context.go(pending);
+      if (context.mounted) context.go(withFreshToken(pending));
       return;
     }
 

@@ -22,7 +22,6 @@ class BillingService {
   static Future<void> initialize() async {
     if (!Platform.isAndroid && !Platform.isIOS) return;
 
-    // await Purchases.setLogLevel(LogLevel.debug); // TODO: quitar en producción
     await Purchases.configure(PurchasesConfiguration(_kRevenueCatAndroidKey));
 
     // Si el usuario ya era premium (compra previa), sincronizar

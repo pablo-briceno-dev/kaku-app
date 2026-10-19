@@ -51,6 +51,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               initialDay: DateTime.tryParse(
                 state.uri.queryParameters['date'] ?? '',
               ),
+              focusToken: state.uri.queryParameters['n'],
             ),
           ),
           GoRoute(

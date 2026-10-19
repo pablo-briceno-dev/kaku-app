@@ -65,7 +65,7 @@ class _AppShellState extends ConsumerState<AppShell>
     }
     if (!mounted || pendingNotificationRoute.value == null) return;
     pendingNotificationRoute.value = null;
-    context.go(route);
+    context.go(withFreshToken(route));
   }
 
   Future<void> _onResumed() async {

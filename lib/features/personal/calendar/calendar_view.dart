@@ -15,8 +15,9 @@ import 'package:kaku/shared/widgets/transaction_item.dart';
 
 class CalendarView extends ConsumerStatefulWidget {
   final DateTime? initialDay;
+  final String? focusToken;
 
-  const CalendarView({super.key, this.initialDay});
+  const CalendarView({super.key, this.initialDay, this.focusToken});
 
   @override
   ConsumerState<CalendarView> createState() => _CalendarViewState();
@@ -32,7 +33,8 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
   void didUpdateWidget(CalendarView old) {
     super.didUpdateWidget(old);
     final d = widget.initialDay;
-    if (d != null && d != old.initialDay) {
+    if (d != null &&
+        (d != old.initialDay || widget.focusToken != old.focusToken)) {
       _selected = DateUtils.dateOnly(d);
       _month = DateTime(d.year, d.month);
     }
@@ -109,7 +111,12 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
           }),
         ),
         const SizedBox(height: 8),
-        MonthLimitCard(year: _month.year, month: _month.month, spent: spent, planned: planned),
+        MonthLimitCard(
+          year: _month.year,
+          month: _month.month,
+          spent: spent,
+          planned: planned,
+        ),
         const Divider(height: 24),
         Row(
           children: [
