@@ -24,6 +24,10 @@ class _AppShellState extends ConsumerState<AppShell>
   // Mismo orden que los BottomNavigationBarItem de abajo
   static const _tabs = AppRoutes.shellTabs;
 
+  bool _consumingPending = false;
+  bool _resumeProcessing = false;
+  DateTime? _lastNotificationNavigation;
+
   @override
   void initState() {
     super.initState();
@@ -47,14 +51,15 @@ class _AppShellState extends ConsumerState<AppShell>
     if (state == AppLifecycleState.paused) {
       ref.read(authenticationStateProvider.notifier).state = false;
       LastRouteService.markInactive();
+      _resumeProcessing = false;
     }
     if (state == AppLifecycleState.resumed) {
       _onResumed();
-      _consumePendingRoute();
     }
   }
 
   Future<void> _consumePendingRoute() async {
+    if (_consumingPending) return;
     final route = pendingNotificationRoute.value;
     if (route == null) return;
 
@@ -64,26 +69,62 @@ class _AppShellState extends ConsumerState<AppShell>
       if (locked) return;
     }
     if (!mounted || pendingNotificationRoute.value == null) return;
-    pendingNotificationRoute.value = null;
-    context.go(withFreshToken(route));
+
+    _consumingPending = true;
+    try {
+      pendingNotificationRoute.value = null;
+      _lastNotificationNavigation = DateTime.now();
+      await LastRouteService.markActive();
+      if (!mounted) return;
+      context.go(withFreshToken(route));
+    } finally {
+      _consumingPending = false;
+    }
   }
 
   Future<void> _onResumed() async {
-    final pinEnabled = await AppPinService.isEnabled();
-    final biometricEnabled = await BiometricService.isEnabled();
-    if (!mounted) return;
+    if (_resumeProcessing) return;
+    _resumeProcessing = true;
+    try {
+      debugPrint(
+        '🔵 resumed — processing=${_resumeProcessing} '
+        'auth=${ref.read(authenticationStateProvider)} '
+        'pending=${pendingNotificationRoute.value}',
+      );
+      final wasExpired = await LastRouteService.isExpired();
+      await LastRouteService.markActive();
 
-    final locked = pinEnabled || biometricEnabled;
-    if (locked && !ref.read(authenticationStateProvider)) {
-      // LockScreen decide el destino con goToStartRoute (respeta la expiración)
-      context.go(AppRoutes.root);
-      return;
-    }
-
-    // Sin bloqueo: si pasó mucho tiempo, vuelve al dashboard
-    if (await LastRouteService.isExpired()) {
+      final pinEnabled = await AppPinService.isEnabled();
+      final biometricEnabled = await BiometricService.isEnabled();
       if (!mounted) return;
-      context.go(AppRoutes.dashboard);
+
+      final locked = pinEnabled || biometricEnabled;
+
+      if (locked && !ref.read(authenticationStateProvider)) {
+        // LockScreen decide el destino con goToStartRoute (respeta la expiración)
+        context.go(AppRoutes.root);
+        return;
+      }
+
+      if (pendingNotificationRoute.value != null) {
+        await _consumePendingRoute();
+        return;
+      }
+
+      final lastNav = _lastNotificationNavigation;
+      if (lastNav != null &&
+          DateTime.now().difference(lastNav) < const Duration(seconds: 2)) {
+        debugPrint('🔵 skip dashboard: navegación por notificación reciente');
+        return;
+      }
+
+      // Sin bloqueo: si pasó mucho tiempo, vuelve al dashboard
+      if (wasExpired) {
+        if (!mounted) return;
+        context.go(AppRoutes.dashboard);
+      }
+    } finally {
+      _resumeProcessing = false;
     }
   }
 

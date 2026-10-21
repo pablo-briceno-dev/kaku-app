@@ -254,13 +254,15 @@ Los cambios importantes pueden registrarse en un `CHANGELOG.md`.
 
 # 📝 Registro de cambios
 
-## [Unreleased]
+## 2.1.0+21
 
 ### Added
--
+- Calendario para programación de próximos pagos o notas.
+- Notificaciones para la funcionalidad de calendario
+- Al presionar la notificación se abre la pantalla de calendario con el día seleccionado
 
 ### Changed
--
+- Cambio en la UI de la pantalla de Transacciones
 
 ### Fixed
 -

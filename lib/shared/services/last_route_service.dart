@@ -74,4 +74,12 @@ class LastRouteService {
       context.push(target);
     }
   }
+
+  /// Marca la app como "activa" — limpia el timestamp de inactividad.
+  /// Llámalo en cuanto se maneja el `resumed`, para que eventos duplicados
+  /// no vuelvan a disparar la navegación a dashboard.
+  static Future<void> markActive() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_kInactiveAt);
+  }
 }

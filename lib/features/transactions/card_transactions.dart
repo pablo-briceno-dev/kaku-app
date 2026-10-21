@@ -45,10 +45,10 @@ class CardTransactions extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 expenses,
-                style: ts.titleLarge?.copyWith(
+                style: ts.titleMedium?.copyWith(
                   color: TransactionType.expense.color,
                   fontWeight: FontWeight.w800,
-                  fontSize: 24,
+                  // fontSize: 24,
                 ),
               ),
             ],
@@ -65,10 +65,10 @@ class CardTransactions extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 incomes,
-                style: ts.titleLarge?.copyWith(
+                style: ts.titleMedium?.copyWith(
                   color: TransactionType.income.color,
                   fontWeight: FontWeight.w800,
-                  fontSize: 24,
+                  // fontSize: 24,
                 ),
               ),
             ],
@@ -85,10 +85,9 @@ class CardTransactions extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 '$total txns',
-                style: ts.titleLarge?.copyWith(
+                style: ts.titleMedium?.copyWith(
                   color: cs.onSurface,
                   fontWeight: FontWeight.w800,
-                  fontSize: 24,
                 ),
               ),
             ],
