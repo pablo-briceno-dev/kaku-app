@@ -45,6 +45,21 @@ abstract class AppRoutes {
         : Uri(path: addTransaction, queryParameters: params).toString();
   }
 
+  static String toPersonal({
+    String? initialTab,
+    DateTime? date,
+    String? focusToken,
+  }) {
+    final params = <String, String>{
+      'tab': ?initialTab,
+      if (date != null) 'date': date.toIso8601String(),
+      'n': ?focusToken,
+    };
+    return params.isEmpty
+        ? personal
+        : Uri(path: personal, queryParameters: params).toString();
+  }
+
   // Lista de tabs del bottom nav (mismo orden que los BottomNavigationBarItems)
   static const List<String> shellTabs = [dashboard, stats, goals, accounts];
 }

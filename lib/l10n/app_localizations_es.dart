@@ -210,6 +210,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Recordatorios ilimitados, gastos recurrentes y límite mensual con gasto sugerido por día';
 
   @override
+  String get upcomingEventsTitle => 'Próximos eventos';
+
+  @override
   String get budgetCalculatorSavingsRateMenorCero =>
       'Gastaste más de lo que ganaste';
 

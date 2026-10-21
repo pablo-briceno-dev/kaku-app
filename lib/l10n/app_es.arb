@@ -74,6 +74,8 @@
   "premiumFeatureCalendarPlus": "Calendario Plus",
   "premiumFeatureCalendarPlusSubtitle": "Recordatorios ilimitados, gastos recurrentes y límite mensual con gasto sugerido por día",
 
+  "upcomingEventsTitle": "Próximos eventos",
+
   "budgetCalculatorSavingsRateMenorCero": "Gastaste más de lo que ganaste",
   "budgetCalculatorSavingsRateMenor20": "Puedes mejorar",
   "budgetCalculatorSavingsRateMenor50": "Vas bien 👍",

@@ -6,7 +6,9 @@ import 'package:kaku/features/dashboard/horizontal_progress_bars.dart';
 // import 'package:kaku/features/dashboard/month_navigator.dart';
 import 'package:kaku/features/dashboard/projection_banner.dart';
 import 'package:kaku/features/dashboard/transactions_list.dart';
+import 'package:kaku/features/dashboard/upcoming_events.dart';
 import 'package:kaku/l10n/app_localizations.dart';
+import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/profile_provider.dart';
 import 'package:kaku/shared/providers/ui_provider.dart';
 import 'package:kaku/shared/widgets/custom_app_bar.dart';
@@ -27,6 +29,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final profile = ref.watch(profileProvider);
     final cs = Theme.of(context).colorScheme;
     final selectedMonth = ref.watch(selectedMonthProvider);
+    final budgetAsync = ref.watch(budgetProgressProvider(selectedMonth)).value;
+    final entriesAsync = ref.watch(calendarMonthProvider(selectedMonth)).value;
 
     final isCurrentMonth = ref.watch(
       selectedMonthProvider.select(
@@ -91,11 +95,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // MonthNavigator(),
               const SizedBox(height: 16),
               CardBalanceDashboard(), // Tarjeta de balance
-              const SizedBox(height: 16),
-              HorizontalProgressBars(), // Barras de progreso horizontales
+              if (entriesAsync != null &&
+                  BudgetCalculator.isCurrentMonth(
+                    selectedMonth.year,
+                    selectedMonth.month,
+                  )) ...[
+                const SizedBox(height: 16),
+                UpcomingEvents(), // Próximos eventos
+              ],
+              if (budgetAsync != null) ...[
+                const SizedBox(height: 16),
+                HorizontalProgressBars(), // Barras de progreso horizontales
+              ],
               const SizedBox(height: 16),
               ProjectionBanner(),
               const SizedBox(height: 16),

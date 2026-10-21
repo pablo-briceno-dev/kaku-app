@@ -5,6 +5,7 @@ import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/core/models/currency_type.dart';
 import 'package:kaku/core/models/entry_status.dart';
+import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/l10n/app_localizations.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
@@ -72,8 +73,8 @@ class ReminderService {
         iOS: const DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      payload:
-          '/personal?tab=calendar&date=${entry.date.toIso8601String().substring(0, 10)}',
+      payload: AppRoutes.toPersonal(initialTab: 'calendar', date: entry.date),
+      // '/personal?tab=calendar&date=${entry.date.toIso8601String().substring(0, 10)}',
     );
   }
 

@@ -211,6 +211,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unlimited reminders, recurring expenses and a monthly limit with suggested daily spending';
 
   @override
+  String get upcomingEventsTitle => 'Upcoming events';
+
+  @override
   String get budgetCalculatorSavingsRateMenorCero =>
       'You spent more than you earned';
 

@@ -67,6 +67,8 @@
   "premiumFeatureCalendarPlus": "Calendar Plus",
   "premiumFeatureCalendarPlusSubtitle": "Unlimited reminders, recurring expenses and a monthly limit with suggested daily spending",
 
+  "upcomingEventsTitle": "Upcoming events",
+
   "budgetCalculatorSavingsRateMenorCero": "You spent more than you earned",
   "budgetCalculatorSavingsRateMenor20": "You can do better",
   "budgetCalculatorSavingsRateMenor50": "You're doing well 👍",

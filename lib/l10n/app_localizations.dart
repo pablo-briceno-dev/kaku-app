@@ -464,6 +464,12 @@ abstract class AppLocalizations {
   /// **'Recordatorios ilimitados, gastos recurrentes y límite mensual con gasto sugerido por día'**
   String get premiumFeatureCalendarPlusSubtitle;
 
+  /// No description provided for @upcomingEventsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Próximos eventos'**
+  String get upcomingEventsTitle;
+
   /// No description provided for @budgetCalculatorSavingsRateMenorCero.
   ///
   /// In es, this message translates to:
