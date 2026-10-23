@@ -177,4 +177,48 @@ class CalendarDao extends DatabaseAccessor<AppDatabase>
       }
     });
   }
+
+  // Pagos pendientes: vencidos de los últimos 30 días y los próximos [days]
+  Selectable<CalendarEntry> _pendingPayments(int limit, int days) {
+    final t = DateTime.now();
+    final from = DateTime(t.year, t.month, t.day - 30);
+    final to = DateTime(t.year, t.month, t.day + days + 1);
+
+    return (select(calendarEntriesTable)
+      ..where(
+        (e) =>
+            e.amount.isNotNull() &
+            e.status.equals(EntryStatus.pending.name) &
+            e.date.isBiggerOrEqualValue(from) &
+            e.date.isSmallerThanValue(to),
+      )
+      ..orderBy([
+        (e) => OrderingTerm.asc(e.date),
+        (e) => OrderingTerm.asc(e.id),
+      ])
+      ..limit(limit));
+  }
+
+  Stream<List<CalendarEntry>> watchPendingPayments({
+    int limit = 10,
+    int days = 14,
+  }) => _pendingPayments(limit, days).watch();
+
+  Future<List<CalendarEntry>> getPendingPayments({
+    int limit = 10,
+    int days = 14,
+  }) => _pendingPayments(limit, days).get();
+
+  Future<List<CalendarEntry>> getEntriesInRange(DateTime start, DateTime end) =>
+      (select(calendarEntriesTable)
+            ..where(
+              (e) =>
+                  e.date.isBiggerOrEqualValue(start) &
+                  e.date.isSmallerThanValue(end),
+            )
+            ..orderBy([
+              (e) => OrderingTerm.asc(e.date),
+              (e) => OrderingTerm.asc(e.id),
+            ]))
+          .get();
 }

@@ -18,7 +18,6 @@ class UpcomingEventItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ts = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
     final currency = ref.watch(currencyProvider);
 

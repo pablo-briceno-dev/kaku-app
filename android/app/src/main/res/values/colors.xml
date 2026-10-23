@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="ic_launcher_background">#0d1117</color>
+    <color name="cal_bg">#F4F4F8</color>
+    <color name="cal_text">#1C1B1F</color>
+    <color name="cal_muted">#6B6B72</color>
+    <color name="cal_accent">#6C5CE7</color>
 </resources>

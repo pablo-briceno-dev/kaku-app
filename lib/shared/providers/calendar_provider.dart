@@ -32,7 +32,7 @@ Future<void> completeEntry(
   await ref.read(reminderServiceProvider).cancel(entryId);
 }
 
-Locale _effectiveLocale(Locale? chosen) {
+Locale effectiveLocale(Locale? chosen) {
   if (chosen != null) return chosen;
   final system = PlatformDispatcher.instance.locale;
   final supported = AppLocalizations.supportedLocales;
@@ -62,7 +62,7 @@ class CalendarController {
     final currency = _ref.read(currencyProvider);
     if (!await NotificationService.hasPermission()) return;
 
-    final locale = _effectiveLocale(chosen);
+    final locale = effectiveLocale(chosen);
     await service.rescheduleAll(
       upcoming: await dao.getUpcomingReminders(),
       l10n: lookupAppLocalizations(locale),

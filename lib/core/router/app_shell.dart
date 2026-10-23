@@ -9,6 +9,7 @@ import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
 import 'package:kaku/shared/services/last_route_service.dart';
 import 'package:kaku/shared/services/notification_navigation.dart';
+import 'package:kaku/shared/services/calendar_widget_sync.dart';
 
 class AppShell extends ConsumerStatefulWidget {
   final Widget child;
@@ -36,6 +37,7 @@ class _AppShellState extends ConsumerState<AppShell>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _consumePendingRoute();
       ref.read(calendarControllerProvider).startupSync();
+      ref.read(calendarWidgetSyncProvider).push();
     });
   }
 
@@ -86,11 +88,7 @@ class _AppShellState extends ConsumerState<AppShell>
     if (_resumeProcessing) return;
     _resumeProcessing = true;
     try {
-      debugPrint(
-        '🔵 resumed — processing=${_resumeProcessing} '
-        'auth=${ref.read(authenticationStateProvider)} '
-        'pending=${pendingNotificationRoute.value}',
-      );
+      ref.read(calendarWidgetSyncProvider).push();
       final wasExpired = await LastRouteService.isExpired();
       await LastRouteService.markActive();
 

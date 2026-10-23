@@ -421,6 +421,23 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
       return result;
     });
   }
+
+  Future<Set<DateTime>> getExpenseDaysInRange(
+    DateTime start,
+    DateTime end,
+  ) async {
+    final rows =
+        await (select(transactionsTable)..where(
+              (t) =>
+                  t.type.equals('expense') &
+                  t.date.isBiggerOrEqualValue(start) &
+                  t.date.isSmallerThanValue(end),
+            ))
+            .get();
+    return rows
+        .map((t) => DateTime(t.date.year, t.date.month, t.date.day))
+        .toSet();
+  }
 }
 
 // Clase de resultado typesafe para JOIN ──

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kaku_calendar_widget_label">Kaku · Calendario</string>
+    <string name="kaku_calendar_widget_desc">Calendario mensual con tus pagos programados y notas</string>
+</resources>

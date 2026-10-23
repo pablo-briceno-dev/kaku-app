@@ -7,6 +7,7 @@ import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/calendar_provider.dart';
 import 'package:kaku/shared/providers/locale_provider.dart';
 import 'package:kaku/shared/providers/theme_provider.dart';
+import 'package:kaku/shared/services/calendar_widget_sync.dart';
 
 class KakuApp extends ConsumerWidget {
   const KakuApp({super.key});
@@ -21,6 +22,7 @@ class KakuApp extends ConsumerWidget {
         ref.read(calendarControllerProvider).rescheduleAll(next);
       }
     });
+    ref.watch(calendarWidgetAutoSyncProvider);
 
     return MaterialApp.router(
       title: 'Kaku',

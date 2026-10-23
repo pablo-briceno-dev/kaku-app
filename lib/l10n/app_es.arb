@@ -1001,5 +1001,9 @@
   "generatingLabel": "Generando...",
   "localeEn": "Inglés",
   "localeEs": "Español",
-  "selectMonthYear": "Selecciona mes y año"
+  "selectMonthYear": "Selecciona mes y año",
+
+  "widgetCalendarNoEvents": "Sin eventos este día",
+  "widgetShowAmountsTitle": "Mostrar montos en el widget",
+  "widgetShowAmountsSubtitle": "El widget se ve en la pantalla de inicio sin desbloquear Kaku."
 }

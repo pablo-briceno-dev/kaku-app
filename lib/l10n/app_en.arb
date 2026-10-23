@@ -568,5 +568,9 @@
   "generatingLabel": "Generating...",
   "localeEn": "English",
   "localeEs": "Spanish",
-  "selectMonthYear": "Select month and year"
+  "selectMonthYear": "Select month and year",
+
+  "widgetCalendarNoEvents": "No events this day",
+  "widgetShowAmountsTitle": "Show amounts in the widget",
+  "widgetShowAmountsSubtitle": "The widget is visible on the home screen without unlocking Kaku."
 }

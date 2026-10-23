@@ -20,6 +20,7 @@ import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
 import 'package:kaku/shared/services/last_route_service.dart';
+import 'package:kaku/shared/services/notification_navigation.dart';
 
 // Provider que expone el router a toda la app
 // Se consume en main.dart con: router: ref.watch(routerProvider)
@@ -142,6 +143,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
+      // Un enlace (widget o notificación) llegó con la app bloqueada:
+      // se recuerda y se abre al desbloquear
+      handleNotificationPayload(routerState.uri.toString());
       // Tiene bloqueo y no ha autenticado → ir a /lock
       return AppRoutes.root;
     },

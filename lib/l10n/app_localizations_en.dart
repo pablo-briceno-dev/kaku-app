@@ -1999,4 +1999,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectMonthYear => 'Select month and year';
+
+  @override
+  String get widgetCalendarNoEvents => 'No events this day';
+
+  @override
+  String get widgetShowAmountsTitle => 'Show amounts in the widget';
+
+  @override
+  String get widgetShowAmountsSubtitle =>
+      'The widget is visible on the home screen without unlocking Kaku.';
 }

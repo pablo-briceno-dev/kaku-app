@@ -2008,4 +2008,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get selectMonthYear => 'Selecciona mes y año';
+
+  @override
+  String get widgetCalendarNoEvents => 'Sin eventos este día';
+
+  @override
+  String get widgetShowAmountsTitle => 'Mostrar montos en el widget';
+
+  @override
+  String get widgetShowAmountsSubtitle =>
+      'El widget se ve en la pantalla de inicio sin desbloquear Kaku.';
 }

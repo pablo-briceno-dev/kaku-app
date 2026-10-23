@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cell_l"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:gravity="center"
+    android:orientation="vertical">
+    <TextView 
+        android:id="@+id/cell_day" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:gravity="center" 
+        android:includeFontPadding="false"
+        android:paddingLeft="2dp" 
+        android:paddingRight="2dp" 
+        android:paddingTop="3dp" 
+        android:paddingBottom="3dp"
+        android:singleLine="true"
+        android:textColor="@color/cal_text" 
+        android:textSize="10sp"/>
+
+    <LinearLayout android:id="@+id/cell_dots" android:layout_width="wrap_content" android:layout_height="6dp"
+        android:layout_marginTop="1dp" android:orientation="horizontal">
+        <ImageView android:id="@+id/dot_spent" android:layout_width="3dp" android:layout_height="5dp"
+            android:layout_margin="1dp" android:src="@drawable/dot_spent" android:visibility="gone"/>
+        <ImageView android:id="@+id/dot_planned" android:layout_width="3dp" android:layout_height="5dp"
+            android:layout_margin="1dp" android:src="@drawable/dot_planned" android:visibility="gone"/>
+        <ImageView android:id="@+id/dot_note" android:layout_width="3dp" android:layout_height="5dp"
+            android:layout_margin="1dp" android:src="@drawable/dot_note" android:visibility="gone"/>
+  </LinearLayout>
+</LinearLayout>

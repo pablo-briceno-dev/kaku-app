@@ -3334,6 +3334,24 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Selecciona mes y año'**
   String get selectMonthYear;
+
+  /// No description provided for @widgetCalendarNoEvents.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin eventos este día'**
+  String get widgetCalendarNoEvents;
+
+  /// No description provided for @widgetShowAmountsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Mostrar montos en el widget'**
+  String get widgetShowAmountsTitle;
+
+  /// No description provided for @widgetShowAmountsSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'El widget se ve en la pantalla de inicio sin desbloquear Kaku.'**
+  String get widgetShowAmountsSubtitle;
 }
 
 class _AppLocalizationsDelegate

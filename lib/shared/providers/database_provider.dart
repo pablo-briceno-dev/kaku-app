@@ -336,3 +336,7 @@ final monthLimitProvider = StreamProvider.autoDispose
       (ref, param) =>
           ref.watch(calendarDaoProvider).watchLimitFor(param.year, param.month),
     );
+
+final pendingPaymentsProvider = StreamProvider.autoDispose<List<CalendarEntry>>(
+  (ref) => ref.watch(calendarDaoProvider).watchPendingPayments(),
+);

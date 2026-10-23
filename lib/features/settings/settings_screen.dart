@@ -13,6 +13,7 @@ import 'package:kaku/features/settings/local_backup_sheet.dart';
 import 'package:kaku/features/settings/notifications_toggle.dart';
 import 'package:kaku/features/settings/profile_card.dart';
 import 'package:kaku/features/settings/security/biometric_toggle.dart';
+import 'package:kaku/features/settings/security/widget_amounts_tile.dart';
 import 'package:kaku/features/settings/storage_sheet.dart';
 import 'package:kaku/features/settings/theme_color_sheet.dart';
 import 'package:kaku/features/settings/widgets/list_tile_child.dart';
@@ -251,6 +252,8 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const Divider(height: 1),
               NotificationsToggle(),
+              const Divider(height: 1),
+              WidgetAmountsTile(),
             ],
           ),
           SectionHeader(l10n.dangerZoneTitle),
