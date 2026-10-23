@@ -23,3 +23,25 @@ String withFreshToken(String route) {
       )
       .toString();
 }
+
+// Enlaces que llegan de fuera de la app (widget) ==============
+DateTime? _lastDeepLinkAt;
+
+/// Se llama cuando el sistema entrega un enlace del widget
+void markDeepLink() => _lastDeepLinkAt = DateTime.now();
+
+/// ¿Llegó hace poco un enlace externo? Evita que otra lógica lo pise
+bool deepLinkWasRecent([Duration within = const Duration(seconds: 3)]) {
+  final t = _lastDeepLinkAt;
+  return t != null && DateTime.now().difference(t) < within;
+}
+
+/// Enlace del widget: abre una pestaña de Personal y no trae token propio
+bool isExternalPersonalLink(Uri uri) =>
+    uri.path == AppRoutes.personal &&
+    uri.queryParameters.containsKey('tab') &&
+    !uri.queryParameters.containsKey('n');
+
+/// Solo ruta y query, sin esquema ni host (kaku://app/...)
+String routeLocation(Uri uri) =>
+    uri.hasQuery ? '${uri.path}?${uri.query}' : uri.path;

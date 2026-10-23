@@ -61,5 +61,5 @@ abstract class AppRoutes {
   }
 
   // Lista de tabs del bottom nav (mismo orden que los BottomNavigationBarItems)
-  static const List<String> shellTabs = [dashboard, stats, goals, accounts];
+  static const List<String> shellTabs = [dashboard, stats, personal, accounts];
 }

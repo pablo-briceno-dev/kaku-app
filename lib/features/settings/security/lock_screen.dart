@@ -14,72 +14,127 @@ class LockScreen extends ConsumerStatefulWidget {
   ConsumerState<LockScreen> createState() => _LockScreenState();
 }
 
-class _LockScreenState extends ConsumerState<LockScreen> {
+class _LockScreenState extends ConsumerState<LockScreen>
+    with WidgetsBindingObserver {
   bool _isAuthenticating = false;
+  bool _biometricInFlight = false; // el prompt del sistema está abierto
+  bool _needsAuth = false; // reintentar cuando la app vuelva al frente
+  int _attempt = 0; // invalida intentos viejos que quedaron colgados
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _authenticate());
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startWhenResumed());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  void _startWhenResumed() {
+    final s = WidgetsBinding.instance.lifecycleState;
+    if (s == null || s == AppLifecycleState.resumed) {
+      _authenticate();
+    } else {
+      // El prompt biométrico no puede mostrarse hasta que la app esté activa
+      _needsAuth = true;
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      if (_biometricInFlight) {
+        // El prompt del sistema se cancela al ir a segundo plano
+        _attempt++;
+        _biometricInFlight = false;
+        _needsAuth = true;
+        if (mounted) setState(() => _isAuthenticating = false);
+      } else if (!_isAuthenticating) {
+        _needsAuth = true;
+      }
+    } else if (state == AppLifecycleState.resumed && _needsAuth) {
+      _needsAuth = false;
+      // Al volver desde el widget la actividad aún se está acomodando
+      Future.delayed(const Duration(milliseconds: 350), () {
+        if (mounted) _authenticate();
+      });
+    }
   }
 
   Future<void> _authenticate() async {
-    if (_isAuthenticating) return;
+    if (_isAuthenticating || !mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    final attempt = ++_attempt;
+    bool stale() => !mounted || attempt != _attempt;
     setState(() => _isAuthenticating = true);
 
     try {
       final pinEnabled = await AppPinService.isEnabled();
-      final biometricEnabled = ref.read(biometricsEnabledProvider);
+      final biometricEnabled =
+          await BiometricService.isEnabled(); // misma fuente que el router
+      if (stale()) return;
+      if(!mounted) return;
 
       if (!pinEnabled && !biometricEnabled) {
-        // Sin bloqueo → ir directo al dashboard
         ref.read(authenticationStateProvider.notifier).state = true;
-        if (mounted) {
-          await LastRouteService.goToStart(context);
-        }
+        await LastRouteService.goToStart(context);
         return;
       }
 
-      bool authenticated = false;
+      var authenticated = false;
 
-      if (pinEnabled && mounted) {
+      if (pinEnabled) {
         authenticated = await PinScreen.verifyPin(context);
-      } else if (biometricEnabled) {
-        if (!mounted) return;
-        final result = await BiometricService.authenticate(
-          reason: AppLocalizations.of(context)!.biometricAuthReason,
-        );
+      } else {
+        _biometricInFlight = true;
+        final result =
+            await BiometricService.authenticate(
+              reason: l10n.biometricAuthReason,
+            ).timeout(
+              const Duration(seconds: 90),
+              onTimeout: () => BiometricResult.failed,
+            );
+        _biometricInFlight = false;
+        if (stale()) return;
+
         authenticated = result == BiometricResult.success;
         if (!authenticated && result == BiometricResult.failed) {
-          // Mostrar mensaje de error
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  AppLocalizations.of(context)!.biometricAuthFailed,
-                ),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          }
+          messenger.showSnackBar(
+            SnackBar(
+              content: Text(l10n.biometricAuthFailed),
+              duration: const Duration(seconds: 2),
+            ),
+          );
         }
       }
 
-      if (authenticated && mounted) {
+      if (!mounted) return;
+      if (authenticated) {
         ref.read(authenticationStateProvider.notifier).state = true;
         await LastRouteService.goToStart(context);
-      } else {
-        // Si falla, no se navega y se queda en la pantalla de bloqueo
-        setState(() => _isAuthenticating = false);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      if (!stale()) {
+        messenger.showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
+    } finally {
+      if (mounted && attempt == _attempt) {
         setState(() => _isAuthenticating = false);
       }
     }
+  }
+
+  // Salida de emergencia: descarta cualquier intento que haya quedado colgado
+  void _retry() {
+    _attempt++;
+    _biometricInFlight = false;
+    setState(() => _isAuthenticating = false);
+    _authenticate();
   }
 
   @override
@@ -112,12 +167,12 @@ class _LockScreenState extends ConsumerState<LockScreen> {
               style: TextStyle(color: cs.onSurfaceVariant),
             ),
             const SizedBox(height: 28),
-            if (!_isAuthenticating)
-              FilledButton.icon(
-                onPressed: _authenticate,
-                icon: const Icon(Icons.fingerprint),
-                label: Text(l10n.btnRetry),
-              ),
+            // Siempre visible: nunca más queda una pantalla sin salida
+            FilledButton.icon(
+              onPressed: _retry,
+              icon: const Icon(Icons.fingerprint),
+              label: Text(l10n.btnRetry),
+            ),
           ],
         ),
       ),

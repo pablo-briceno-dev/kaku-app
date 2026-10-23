@@ -10,7 +10,7 @@
     android:widgetCategory="home_screen"
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/widget_calendar"
-    android:previewLayout="@layout/widget_calendar"
+    
+    android:previewImage="@drawable/kaku_widget_preview"
     android:description="@string/kaku_calendar_widget_desc" />
-    <!-- Para añadir una imagen de vista previa: -->
-    <!-- android:previewImage="@drawable/kaku_widget_preview" -->
+    <!-- android:previewLayout="@layout/widget_calendar" -->

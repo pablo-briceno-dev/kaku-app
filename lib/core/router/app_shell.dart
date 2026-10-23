@@ -112,13 +112,13 @@ class _AppShellState extends ConsumerState<AppShell>
       final lastNav = _lastNotificationNavigation;
       if (lastNav != null &&
           DateTime.now().difference(lastNav) < const Duration(seconds: 2)) {
-        debugPrint('🔵 skip dashboard: navegación por notificación reciente');
         return;
       }
 
       // Sin bloqueo: si pasó mucho tiempo, vuelve al dashboard
       if (wasExpired) {
-        if (!mounted) return;
+        await Future.delayed(const Duration(milliseconds: 400));
+        if (!mounted || deepLinkWasRecent()) return;
         context.go(AppRoutes.dashboard);
       }
     } finally {
@@ -128,9 +128,7 @@ class _AppShellState extends ConsumerState<AppShell>
 
   @override
   Widget build(BuildContext context) {
-    final location = GoRouterState.of(context).uri.path;
-    int currentIndex = _tabs.lastIndexWhere((t) => location.startsWith(t));
-    if (currentIndex < 0) currentIndex = 0;
+    final router = GoRouter.of(context);
     final cs = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context)!;
 
@@ -139,61 +137,72 @@ class _AppShellState extends ConsumerState<AppShell>
 
     return Scaffold(
       body: widget.child,
-      bottomNavigationBar: BottomAppBar(
-        color: cs.surface,
-        elevation: 8,
-        notchMargin: 8,
-        shape: const CircularNotchedRectangle(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Grupo izquierdo: Inicio + Estadísticas
-            _NavItem(
-              icon: Icons.home_outlined,
-              selectedIcon: Icons.home,
-              label: l10n.appShellTabDashboard,
-              index: 0,
-              current: currentIndex,
-              onTap: () => context.go(_tabs[0]),
-            ),
-            _NavItem(
-              icon: Icons.bar_chart_outlined,
-              selectedIcon: Icons.bar_chart,
-              label: l10n.appShellTabStats,
-              index: 1,
-              current: currentIndex,
-              onTap: () => context.go(_tabs[1]),
-            ),
+      bottomNavigationBar: ListenableBuilder(
+        listenable: router.routerDelegate,
+        builder: (context, _) {
+          final location = router.routerDelegate.currentConfiguration.uri.path;
+          var currentIndex = _tabs.lastIndexWhere(
+            (t) => location.startsWith(t),
+          );
+          if (currentIndex < 0) currentIndex = 0;
 
-            // Centro (ocupa un espacio fijo)
-            SizedBox(
-              width: centerSize,
-              height: centerSize,
-              child: _NavCenterItem(
-                icon: Icons.add,
-                onTap: () => context.push(AppRoutes.addTransaction),
-              ),
-            ),
+          return BottomAppBar(
+            color: cs.surface,
+            elevation: 8,
+            notchMargin: 8,
+            shape: const CircularNotchedRectangle(),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Grupo izquierdo: Inicio + Estadísticas
+                _NavItem(
+                  icon: Icons.home_outlined,
+                  selectedIcon: Icons.home,
+                  label: l10n.appShellTabDashboard,
+                  index: 0,
+                  current: currentIndex,
+                  onTap: () => context.go(_tabs[0]),
+                ),
+                _NavItem(
+                  icon: Icons.bar_chart_outlined,
+                  selectedIcon: Icons.bar_chart,
+                  label: l10n.appShellTabStats,
+                  index: 1,
+                  current: currentIndex,
+                  onTap: () => context.go(_tabs[1]),
+                ),
 
-            // Grupo derecho: Metas + Cuentas
-            _NavItem(
-              icon: Icons.person_outline,
-              selectedIcon: Icons.person_rounded,
-              label: l10n.appShellTabPersonal,
-              index: 2,
-              current: currentIndex,
-              onTap: () => context.go(_tabs[2]),
+                // Centro (ocupa un espacio fijo)
+                SizedBox(
+                  width: centerSize,
+                  height: centerSize,
+                  child: _NavCenterItem(
+                    icon: Icons.add,
+                    onTap: () => context.push(AppRoutes.addTransaction),
+                  ),
+                ),
+
+                // Grupo derecho: Metas + Cuentas
+                _NavItem(
+                  icon: Icons.person_outline,
+                  selectedIcon: Icons.person_rounded,
+                  label: l10n.appShellTabPersonal,
+                  index: 2,
+                  current: currentIndex,
+                  onTap: () => context.go(_tabs[2]),
+                ),
+                _NavItem(
+                  icon: Icons.account_balance_wallet_outlined,
+                  selectedIcon: Icons.account_balance_wallet,
+                  label: l10n.appShellTabAccounts,
+                  index: 3,
+                  current: currentIndex,
+                  onTap: () => context.go(_tabs[3]),
+                ),
+              ],
             ),
-            _NavItem(
-              icon: Icons.account_balance_wallet_outlined,
-              selectedIcon: Icons.account_balance_wallet,
-              label: l10n.appShellTabAccounts,
-              index: 3,
-              current: currentIndex,
-              onTap: () => context.go(_tabs[3]),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

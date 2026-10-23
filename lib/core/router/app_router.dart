@@ -126,14 +126,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
     redirect: (context, routerState) async {
-      final isLockRoute = routerState.matchedLocation == AppRoutes.root;
+      if (routerState.matchedLocation == AppRoutes.root) return null;
 
-      // Ya en /lock → no redirigir
-      if (isLockRoute) return null;
+      final uri = routerState.uri;
+      final location = routeLocation(uri);
+      final external = isExternalPersonalLink(uri);
+      if (external) markDeepLink();
 
-      final authenticated = ref.read(authenticationStateProvider);
-      // ✅ FIX 2: si ya autenticó en esta sesión → dejar pasar
-      if (authenticated) return null;
+      // Se le agrega un token para que Personal cambie de pestaña y de día
+      String? freshen() => external ? withFreshToken(location) : null;
+
+      if (ref.read(authenticationStateProvider)) return freshen();
 
       // Si no hay bloqueo activo → dejar pasar sin pasar por /lock
       final locked = await _isLocked();
@@ -145,7 +148,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Un enlace (widget o notificación) llegó con la app bloqueada:
       // se recuerda y se abre al desbloquear
-      handleNotificationPayload(routerState.uri.toString());
+      handleNotificationPayload(location);
       // Tiene bloqueo y no ha autenticado → ir a /lock
       return AppRoutes.root;
     },

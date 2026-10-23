@@ -167,9 +167,13 @@ class KakuCalendarWidget : AppWidgetProvider() {
     }
 
     private fun openAppTemplate(context: Context): PendingIntent {
-        val i = Intent(Intent.ACTION_VIEW, Uri.parse("kaku://app/personal")).setPackage(context.packageName)
+        // Sin datos: cada evento pone los suyos (tab=calendar&date=…)
+        val i = Intent(Intent.ACTION_VIEW).setPackage(context.packageName)
         val mutable = if (Build.VERSION.SDK_INT >= 31) PendingIntent.FLAG_MUTABLE else 0
-        return PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT or mutable)
+        return PendingIntent.getActivity(
+            context, 0, i,
+            PendingIntent.FLAG_UPDATE_CURRENT or mutable or Intent.FILL_IN_DATA,
+        )
     }
 
     // Alarma inexacta: no necesita permisos ni declaración en Play Console
