@@ -94,15 +94,8 @@ class AppDatabase extends _$AppDatabase {
           count++;
         }
       }
-      if (from < to - 2) {
+      if (from == 4 && to == 5) {
         await m.createTable(calendarEntriesTable);
-      }
-      if (from < to) {
-        await m.addColumn(
-          calendarEntriesTable,
-          calendarEntriesTable.recurrence,
-        );
-        await m.addColumn(calendarEntriesTable, calendarEntriesTable.seriesId);
         await m.createTable(monthlyLimitsTable);
       }
     },
