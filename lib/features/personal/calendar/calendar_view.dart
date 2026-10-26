@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kaku/core/database/app_database.dart';
 import 'package:kaku/core/database/daos/transactions_dao.dart';
 import 'package:kaku/core/l10n/date_context_x.dart';
 import 'package:kaku/core/models/entry_status.dart';
 import 'package:kaku/core/models/transaction_type.dart';
+import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/features/personal/calendar/month_limit_card.dart';
 import 'package:kaku/features/personal/calendar/widgets/entry_sheet.dart';
 import 'package:kaku/features/personal/calendar/widgets/entry_tile.dart';
@@ -158,7 +160,12 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
               style: ts.labelMedium,
             ),
           ),
-          for (final t in dayTxs) TransactionItem(txWithCat: t),
+          for (final t in dayTxs)
+            TransactionItem(
+              txWithCat: t,
+              onTap: () =>
+                  context.push(AppRoutes.toTransaction(t.transaction.id)),
+            ),
         ],
       ],
     );

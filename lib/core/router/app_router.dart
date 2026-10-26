@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
@@ -45,19 +46,28 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: AppRoutes.personal,
-            builder: (context, state) => PersonalScreen(
-              initialTab: state.uri.queryParameters['tab'] == 'calendar'
-                  ? 0
-                  : 1,
-              initialDay: DateTime.tryParse(
-                state.uri.queryParameters['date'] ?? '',
-              ),
-              focusToken: state.uri.queryParameters['n'],
-            ),
+            pageBuilder: (context, state) {
+              final tab = state.uri.queryParameters['tab'];
+              final initialTab = switch (tab) {
+                'goals' => 1,
+                'calendar' => 0,
+                _ => 0,
+              };
+              return NoTransitionPage(
+                key: const ValueKey('personal'),
+                child: PersonalScreen(
+                  initialTab: initialTab,
+                  initialDay: DateTime.tryParse(
+                    state.uri.queryParameters['date'] ?? '',
+                  ),
+                  focusToken: state.uri.queryParameters['n'],
+                ),
+              );
+            },
           ),
           GoRoute(
             path: AppRoutes.goals,
-            redirect: (_, _) => AppRoutes.personal,
+            redirect: (_, _) => AppRoutes.toPersonal(initialTab: 'goals'),
           ),
           GoRoute(
             path: AppRoutes.accounts,
@@ -156,6 +166,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   void onRouteChange() {
     final location = router.routerDelegate.currentConfiguration.uri.toString();
+    debugPrint('onRouteChange: $location');
     LastRouteService.save(location);
   }
 

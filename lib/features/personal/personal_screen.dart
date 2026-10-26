@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:kaku/features/personal/calendar/calendar_view.dart';
 import 'package:kaku/features/personal/goals/goals_view.dart';
 import 'package:kaku/l10n/app_localizations.dart';
@@ -31,11 +32,18 @@ class _PersonalScreenState extends ConsumerState<PersonalScreen>
   );
 
   @override
+  void initState() {
+    super.initState();
+    _tabs.addListener(_syncTabToUrl);
+  }
+
+  @override
   void didUpdateWidget(PersonalScreen old) {
     super.didUpdateWidget(old);
-    if (widget.focusToken != old.focusToken) {
+
+    // ✅ Solo reacciona a cambios de tab, NO de token
+    if (widget.initialTab != old.initialTab) {
       final target = widget.initialTab;
-      // fuera del build: animar la pestaña durante la actualización da error
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && _tabs.index != target) _tabs.animateTo(target);
       });
@@ -44,8 +52,34 @@ class _PersonalScreenState extends ConsumerState<PersonalScreen>
 
   @override
   void dispose() {
+    _tabs.removeListener(_syncTabToUrl);
     _tabs.dispose();
     super.dispose();
+  }
+
+  void _syncTabToUrl() {
+    if (_tabs.indexIsChanging) return; // solo cuando el tab ya se asentó
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final currentUri = GoRouterState.of(context).uri;
+      final currentTab = currentUri.queryParameters['tab'];
+      final newTab = _tabs.index == 0 ? 'calendar' : 'goals';
+
+      // Evita bucles, si coincide, no hace nada
+      if (currentTab == newTab) return;
+      // Mantener urls limpias: si es Calendar (default), quitar el param
+      if (newTab == 'calendar' && currentTab == null) return;
+
+      final params = Map<String, String>.from(currentUri.queryParameters);
+      debugPrint('syncTabToUrl: currentTab: $currentTab, newTab: $newTab');
+      if (newTab == 'calendar') {
+        params.remove('tab');
+      } else {
+        params['tab'] = newTab;
+      }
+      context.replace(currentUri.replace(queryParameters: params).toString());
+    });
   }
 
   @override
