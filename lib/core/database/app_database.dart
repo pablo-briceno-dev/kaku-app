@@ -44,7 +44,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 7; //! La versión que esta en producción es la 4 hasta el momento
+  int get schemaVersion => 5;
 
   // Aquí irán las migraciones cuando actualice el schema
   @override
