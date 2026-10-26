@@ -1245,6 +1245,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Ingresa tu código de descuento o acceso premium';
 
   @override
+  String get alreadyPremium => '🎉 ¡Ya eres premium!';
+
+  @override
   String get settingsTitle => 'Configuración';
 
   @override
@@ -2018,4 +2021,33 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get widgetShowAmountsSubtitle =>
       'El widget se ve en la pantalla de inicio sin desbloquear Kaku.';
+
+  @override
+  String get whatsNewTitle => 'Novedades en Kaku';
+
+  @override
+  String whatsNewVersion(String version) {
+    return 'Versión $version';
+  }
+
+  @override
+  String get whatsNewCalendar =>
+      'Agenda pagos y notas en tu calendario, día por día.';
+
+  @override
+  String get whatsNewReminders => 'Recibe un recordatorio antes de pagar.';
+
+  @override
+  String get whatsNewWidget =>
+      'Agrega el widget de calendario a tu pantalla de inicio.';
+
+  @override
+  String get whatsNewPremiumNote =>
+      'Los gastos recurrentes, el límite mensual y los recordatorios ilimitados son funciones premium.';
+
+  @override
+  String get whatsNewTry => 'Probar el calendario';
+
+  @override
+  String get whatsNewDismiss => 'Ahora no';
 }

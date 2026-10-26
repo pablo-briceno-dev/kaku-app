@@ -121,6 +121,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
+    final isPremium = ref.read(isPremiumProvider);
 
     return Scaffold(
       backgroundColor: cs.surface,
@@ -158,44 +159,54 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen>
 
                     const SizedBox(height: 32),
 
-                    // ── Precio y CTA ───────────────────────
-                    PriceCard(
-                      isPurchasing: _isPurchasing,
-                      localizedPrice: _localizedPrice,
-                      onPurchase: () => _onPurchase(l10n),
-                    ),
+                    if (!isPremium) ...[
+                      // ── Precio y CTA ───────────────────────
+                      PriceCard(
+                        isPremium: isPremium,
+                        isPurchasing: _isPurchasing,
+                        localizedPrice: _localizedPrice,
+                        onPurchase: () => _onPurchase(l10n),
+                      ),
 
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
-                    // ── Restaurar compra ───────────────────
-                    Center(
-                      child: TextButton(
-                        onPressed: () => _onRestore(l10n),
-                        child: Text(
-                          l10n.billingRestorePurchase,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: cs.onSurfaceVariant,
+                      // ── Restaurar compra ───────────────────
+                      Center(
+                        child: TextButton(
+                          onPressed: () => _onRestore(l10n),
+                          child: Text(
+                            l10n.billingRestorePurchase,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: cs.onSurfaceVariant,
+                            ),
                           ),
                         ),
                       ),
-                    ),
 
-                    // ── Código promo ───────────────────────
-                    Center(
-                      child: TextButton.icon(
-                        onPressed: _openPromoCode,
-                        icon: Icon(
-                          Icons.card_giftcard_outlined,
-                          size: 16,
-                          color: cs.primary,
-                        ),
-                        label: Text(
-                          l10n.billingCodePromo,
-                          style: TextStyle(fontSize: 13, color: cs.primary),
+                      // ── Código promo ───────────────────────
+                      Center(
+                        child: TextButton.icon(
+                          onPressed: _openPromoCode,
+                          icon: Icon(
+                            Icons.card_giftcard_outlined,
+                            size: 16,
+                            color: cs.primary,
+                          ),
+                          label: Text(
+                            l10n.billingCodePromo,
+                            style: TextStyle(fontSize: 13, color: cs.primary),
+                          ),
                         ),
                       ),
-                    ),
+                    ],
+                    if (isPremium)
+                      PriceCard(
+                        isPremium: isPremium,
+                        isPurchasing: _isPurchasing,
+                        localizedPrice: _localizedPrice,
+                        onPurchase: () => _onPurchase(l10n),
+                      ),
 
                     const SizedBox(height: 8),
 

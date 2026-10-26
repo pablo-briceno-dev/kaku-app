@@ -70,6 +70,26 @@ class _PersonalScreenState extends ConsumerState<PersonalScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      const Icon(Icons.calendar_month_outlined),
+                      const SizedBox(width: 8),
+                      Text(l10n.calendarTab),
+                    ],
+                  ),
+                  Text(
+                    l10n.calendarTabSubtitle,
+                    maxLines: 2,
+                    style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+                  ),
+                ],
+              ),
+            ),
+            Tab(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
                       const Icon(Icons.flag_outlined),
                       const SizedBox(width: 8),
                       Text(l10n.goalsTitle),
@@ -122,37 +142,17 @@ class _PersonalScreenState extends ConsumerState<PersonalScreen>
                 ],
               ),
             ),
-            Tab(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const Icon(Icons.calendar_month_outlined),
-                      const SizedBox(width: 8),
-                      Text(l10n.calendarTab),
-                    ],
-                  ),
-                  Text(
-                    l10n.calendarTabSubtitle,
-                    maxLines: 2,
-                    style: ts.bodySmall?.copyWith(color: cs.onSurfaceVariant),
-                  ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabs,
         children: [
-          const GoalsView(),
           CalendarView(
             initialDay: widget.initialDay,
             focusToken: widget.focusToken,
           ),
+          const GoalsView(),
         ],
       ),
     );

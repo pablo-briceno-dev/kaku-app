@@ -358,6 +358,7 @@
   "redeemCodeErrorAlreadyUsed": "This code has already been redeemed on this device.",
   "redeemCode": "Redeem code",
   "redeemCodeSubtitle": "Enter your discount or premium access code",
+  "alreadyPremium": "🎉 You're already premium!",
 
   "settingsTitle": "Settings",
   "appearanceTitle": "Appearance",
@@ -572,5 +573,14 @@
 
   "widgetCalendarNoEvents": "No events this day",
   "widgetShowAmountsTitle": "Show amounts in the widget",
-  "widgetShowAmountsSubtitle": "The widget is visible on the home screen without unlocking Kaku."
+  "widgetShowAmountsSubtitle": "The widget is visible on the home screen without unlocking Kaku.",
+
+  "whatsNewTitle": "What's new in Kaku",
+  "whatsNewVersion": "Version {version}",
+  "whatsNewCalendar": "Plan payments and notes in your calendar, day by day.",
+  "whatsNewReminders": "Get a reminder before you pay.",
+  "whatsNewWidget": "Add the calendar widget to your home screen.",
+  "whatsNewPremiumNote": "Recurring expenses, the monthly limit and unlimited reminders are premium features.",
+  "whatsNewTry": "Try the calendar",
+  "whatsNewDismiss": "Not now"
 }

@@ -2120,6 +2120,12 @@ abstract class AppLocalizations {
   /// **'Ingresa tu código de descuento o acceso premium'**
   String get redeemCodeSubtitle;
 
+  /// No description provided for @alreadyPremium.
+  ///
+  /// In es, this message translates to:
+  /// **'🎉 ¡Ya eres premium!'**
+  String get alreadyPremium;
+
   /// No description provided for @settingsTitle.
   ///
   /// In es, this message translates to:
@@ -3352,6 +3358,54 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'El widget se ve en la pantalla de inicio sin desbloquear Kaku.'**
   String get widgetShowAmountsSubtitle;
+
+  /// No description provided for @whatsNewTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Novedades en Kaku'**
+  String get whatsNewTitle;
+
+  /// No description provided for @whatsNewVersion.
+  ///
+  /// In es, this message translates to:
+  /// **'Versión {version}'**
+  String whatsNewVersion(String version);
+
+  /// No description provided for @whatsNewCalendar.
+  ///
+  /// In es, this message translates to:
+  /// **'Agenda pagos y notas en tu calendario, día por día.'**
+  String get whatsNewCalendar;
+
+  /// No description provided for @whatsNewReminders.
+  ///
+  /// In es, this message translates to:
+  /// **'Recibe un recordatorio antes de pagar.'**
+  String get whatsNewReminders;
+
+  /// No description provided for @whatsNewWidget.
+  ///
+  /// In es, this message translates to:
+  /// **'Agrega el widget de calendario a tu pantalla de inicio.'**
+  String get whatsNewWidget;
+
+  /// No description provided for @whatsNewPremiumNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Los gastos recurrentes, el límite mensual y los recordatorios ilimitados son funciones premium.'**
+  String get whatsNewPremiumNote;
+
+  /// No description provided for @whatsNewTry.
+  ///
+  /// In es, this message translates to:
+  /// **'Probar el calendario'**
+  String get whatsNewTry;
+
+  /// No description provided for @whatsNewDismiss.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora no'**
+  String get whatsNewDismiss;
 }
 
 class _AppLocalizationsDelegate

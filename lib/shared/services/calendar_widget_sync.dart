@@ -61,9 +61,9 @@ class CalendarWidgetSync {
   static const _monthsBack = 2;
   static const _monthsAhead = 12;
 
-  static String _2(int n) => n.toString().padLeft(2, '0');
-  static String _day(DateTime d) => '${d.year}-${_2(d.month)}-${_2(d.day)}';
-  static String _ym(DateTime d) => '${d.year}-${_2(d.month)}';
+  static String _twoFunc(int n) => n.toString().padLeft(2, '0');
+  static String _day(DateTime d) => '${d.year}-${_twoFunc(d.month)}-${_twoFunc(d.day)}';
+  static String _ym(DateTime d) => '${d.year}-${_twoFunc(d.month)}';
 
   Future<void> push() async {
     if (defaultTargetPlatform != TargetPlatform.android) return;

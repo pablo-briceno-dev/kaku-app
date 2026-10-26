@@ -612,6 +612,7 @@
   "redeemCodeErrorAlreadyUsed": "Este código ya fue canjeado en este dispositivo.",
   "redeemCode": "Canjear código",
   "redeemCodeSubtitle": "Ingresa tu código de descuento o acceso premium",
+  "alreadyPremium": "🎉 ¡Ya eres premium!",
 
   "settingsTitle": "Configuración",
   "appearanceTitle": "Apariencia",
@@ -1005,5 +1006,15 @@
 
   "widgetCalendarNoEvents": "Sin eventos este día",
   "widgetShowAmountsTitle": "Mostrar montos en el widget",
-  "widgetShowAmountsSubtitle": "El widget se ve en la pantalla de inicio sin desbloquear Kaku."
+  "widgetShowAmountsSubtitle": "El widget se ve en la pantalla de inicio sin desbloquear Kaku.",
+
+  "whatsNewTitle": "Novedades en Kaku",
+  "whatsNewVersion": "Versión {version}",
+  "@whatsNewVersion": { "placeholders": { "version": { "type": "String" } } },
+  "whatsNewCalendar": "Agenda pagos y notas en tu calendario, día por día.",
+  "whatsNewReminders": "Recibe un recordatorio antes de pagar.",
+  "whatsNewWidget": "Agrega el widget de calendario a tu pantalla de inicio.",
+  "whatsNewPremiumNote": "Los gastos recurrentes, el límite mensual y los recordatorios ilimitados son funciones premium.",
+  "whatsNewTry": "Probar el calendario",
+  "whatsNewDismiss": "Ahora no"
 }

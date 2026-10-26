@@ -47,8 +47,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: AppRoutes.personal,
             builder: (context, state) => PersonalScreen(
               initialTab: state.uri.queryParameters['tab'] == 'calendar'
-                  ? 1
-                  : 0,
+                  ? 0
+                  : 1,
               initialDay: DateTime.tryParse(
                 state.uri.queryParameters['date'] ?? '',
               ),

@@ -4,12 +4,15 @@ import 'package:go_router/go_router.dart';
 import 'package:kaku/core/router/app_routes.dart';
 import 'package:kaku/l10n/app_localizations.dart';
 import 'package:kaku/shared/providers/calendar_provider.dart';
+import 'package:kaku/shared/providers/database_provider.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
 import 'package:kaku/shared/services/last_route_service.dart';
 import 'package:kaku/shared/services/notification_navigation.dart';
 import 'package:kaku/shared/services/calendar_widget_sync.dart';
+import 'package:kaku/shared/services/whats_new_service.dart';
+import 'package:kaku/shared/widgets/whats_new_dialog.dart';
 
 class AppShell extends ConsumerStatefulWidget {
   final Widget child;
@@ -38,6 +41,7 @@ class _AppShellState extends ConsumerState<AppShell>
       _consumePendingRoute();
       ref.read(calendarControllerProvider).startupSync();
       ref.read(calendarWidgetSyncProvider).push();
+      _maybeShowWhatsNew();
     });
   }
 
@@ -58,6 +62,39 @@ class _AppShellState extends ConsumerState<AppShell>
     if (state == AppLifecycleState.resumed) {
       _onResumed();
     }
+  }
+
+  Future<void> _maybeShowWhatsNew() async {
+    await Future.delayed(
+      const Duration(milliseconds: 900),
+    ); // deja asentarse la pantalla
+    if (!mounted ||
+        pendingNotificationRoute.value != null ||
+        deepLinkWasRecent()) {
+      return;
+    }
+
+    final path = GoRouter.of(
+      context,
+    ).routerDelegate.currentConfiguration.uri.path;
+    if (path == AppRoutes.personal) {
+      await WhatsNewService.markSeen(); // ya encontró el calendario por su cuenta
+      return;
+    }
+
+    if (path != AppRoutes.dashboard) return;
+
+    final accounts = await ref.read(accountsDaoProvider).getActiveAccounts();
+    if (!mounted) return;
+    if (!await WhatsNewService.shouldShow(
+      hasExistingData: accounts.isNotEmpty,
+    )) {
+      return;
+    }
+
+    await WhatsNewService.markSeen();
+    if (!mounted) return;
+    await showWhatsNewDialog(context);
   }
 
   Future<void> _consumePendingRoute() async {

@@ -5,12 +5,14 @@ class PriceCard extends StatelessWidget {
   final bool isPurchasing;
   final String? localizedPrice;
   final VoidCallback onPurchase;
+  final bool isPremium;
 
   const PriceCard({
     super.key,
     required this.isPurchasing,
     required this.onPurchase,
     this.localizedPrice,
+    this.isPremium = false,
   });
 
   @override
@@ -89,35 +91,60 @@ class PriceCard extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // Botón de compra
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: isPurchasing ? null : onPurchase,
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+          if (!isPremium)
+            // Botón de compra
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: isPurchasing ? null : onPurchase,
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: isPurchasing
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        l10n.premiumUnlockKaku,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+              ),
+            ),
+          if (isPremium)
+            SizedBox(
+              width: double.infinity,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: cs.primary,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Text(
+                  l10n.alreadyPremium,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    color: cs.onPrimary,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
-              child: isPurchasing
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.5,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Text(
-                      l10n.premiumUnlockKaku,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
             ),
-          ),
         ],
       ),
     );

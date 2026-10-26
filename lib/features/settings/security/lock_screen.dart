@@ -78,7 +78,7 @@ class _LockScreenState extends ConsumerState<LockScreen>
       final biometricEnabled =
           await BiometricService.isEnabled(); // misma fuente que el router
       if (stale()) return;
-      if(!mounted) return;
+      if (!mounted) return;
 
       if (!pinEnabled && !biometricEnabled) {
         ref.read(authenticationStateProvider.notifier).state = true;

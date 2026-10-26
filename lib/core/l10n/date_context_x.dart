@@ -3,13 +3,13 @@ import 'package:kaku/core/date_formatter.dart';
 import 'package:kaku/l10n/app_localizations.dart';
 
 class ContextDates {
-  final BuildContext _buildContext;
+  // final BuildContext _buildContext;
   final String _localeCode;
   final AppLocalizations _l10n;
 
-  ContextDates(this._buildContext)
-    : _localeCode = Localizations.localeOf(_buildContext).languageCode,
-      _l10n = AppLocalizations.of(_buildContext)!;
+  ContextDates(BuildContext buildContext)
+    : _localeCode = Localizations.localeOf(buildContext).languageCode,
+      _l10n = AppLocalizations.of(buildContext)!;
 
   /// "20 de mayo" (es) / "May 20" (en)
   String dayMonth(DateTime date) => DateFormatter.dayMonth(date, _localeCode);
