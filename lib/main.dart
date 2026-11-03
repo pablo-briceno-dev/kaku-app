@@ -16,7 +16,7 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
 
-  await BackupService.initialize();
+  await BackupService.initialize(serverClientId: dotenv.env['GOOGLE_WEB_CLIENT_ID']);
   await NotificationService.initialize();
   await BillingService.initialize();
   await initializeDateFormatting('es');
