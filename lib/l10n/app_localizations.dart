@@ -3406,6 +3406,138 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Ahora no'**
   String get whatsNewDismiss;
+
+  /// No description provided for @onboardingCurrencyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿En qué moneda trabajas?'**
+  String get onboardingCurrencyTitle;
+
+  /// No description provided for @onboardingCurrencySubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'La usarás en toda la app para formatear tus cantidades.'**
+  String get onboardingCurrencySubtitle;
+
+  /// No description provided for @onboardingAccountTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea tu primera cuenta'**
+  String get onboardingAccountTitle;
+
+  /// No description provided for @onboardingAccountSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Aquí registrarás tus ingresos y gastos.'**
+  String get onboardingAccountSubtitle;
+
+  /// No description provided for @onboardingAccountIcon.
+  ///
+  /// In es, this message translates to:
+  /// **'Icono'**
+  String get onboardingAccountIcon;
+
+  /// No description provided for @onboardingAccountName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre de la cuenta'**
+  String get onboardingAccountName;
+
+  /// No description provided for @onboardingAccountBalance.
+  ///
+  /// In es, this message translates to:
+  /// **'Saldo inicial'**
+  String get onboardingAccountBalance;
+
+  /// No description provided for @onboardingBack.
+  ///
+  /// In es, this message translates to:
+  /// **'Atrás'**
+  String get onboardingBack;
+
+  /// No description provided for @onboardingContinue.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar'**
+  String get onboardingContinue;
+
+  /// No description provided for @onboardingStart.
+  ///
+  /// In es, this message translates to:
+  /// **'Empezar'**
+  String get onboardingStart;
+
+  /// No description provided for @settingsReplayOnboarding.
+  ///
+  /// In es, this message translates to:
+  /// **'Repetir onboarding'**
+  String get settingsReplayOnboarding;
+
+  /// No description provided for @welcomeTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Bienvenido a Kaku'**
+  String get welcomeTitle;
+
+  /// No description provided for @welcomeSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu bolsillo, bajo control'**
+  String get welcomeSubtitle;
+
+  /// No description provided for @welcomeDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Kaku (del quechua \"bolsillo\") es tu app de finanzas personales. Registra tus ingresos y gastos, controla tus presupuestos y alcanza tus metas — todo en un solo lugar, sin cuentas ni registros.'**
+  String get welcomeDescription;
+
+  /// No description provided for @welcomeFeature1Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Registra cada movimiento'**
+  String get welcomeFeature1Title;
+
+  /// No description provided for @welcomeFeature1Desc.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresos, gastos y transferencias con categorías y recibos.'**
+  String get welcomeFeature1Desc;
+
+  /// No description provided for @welcomeFeature2Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Entiende tus finanzas'**
+  String get welcomeFeature2Title;
+
+  /// No description provided for @welcomeFeature2Desc.
+  ///
+  /// In es, this message translates to:
+  /// **'Gráficas, presupuestos y estadísticas que se adaptan a tu moneda.'**
+  String get welcomeFeature2Desc;
+
+  /// No description provided for @welcomeFeature3Title.
+  ///
+  /// In es, this message translates to:
+  /// **'Privado por diseño'**
+  String get welcomeFeature3Title;
+
+  /// No description provided for @welcomeFeature3Desc.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus datos viven en tu dispositivo. Sin cuentas, sin nube obligatoria.'**
+  String get welcomeFeature3Desc;
+
+  /// No description provided for @welcomePrivacyNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Toda tu información permanece en tu dispositivo. Las copias de seguridad a Google Drive son opcionales y cifradas.'**
+  String get welcomePrivacyNote;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In es, this message translates to:
+  /// **'Saltar'**
+  String get onboardingSkip;
 }
 
 class _AppLocalizationsDelegate

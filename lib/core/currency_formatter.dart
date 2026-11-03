@@ -182,24 +182,23 @@ class _CurrencyInputFormatter extends TextInputFormatter {
     final symbol = CurrencyFormatter._symbolFor(currency);
     final withoutSym = raw.replaceAll(symbol, '').trim();
 
-    // ── 3. Detectar si el usuario escribió un separador decimal.
-    //       Aceptamos AMBOS ("." y ",") sin importar la moneda —
-    //       luego normalizamos al correcto.
-    final hasDot = withoutSym.contains('.');
-    final hasComma = withoutSym.contains(',');
-    final hasDecimalInput = _hasDecimals && (hasDot || hasComma);
-
-    // ── 4. Separar parte entera y decimal ─────────────
-    // Primero normalizamos al separador decimal de la moneda
-    // para poder hacer el split correctamente.
+    // ── 3. Normalizar al separador decimal de la moneda activa.
+    //     _normalize ya distingue miles (3+ dígitos después del último
+    //     separador) de decimal (≤2 dígitos después), así que el resultado
+    //     ya está limpio de comas/puntos de miles.
     final normalized = _normalize(withoutSym);
     final parts = normalized.split(_decimalSep);
+
+    // ── 4. ✅ hasDecimalInput se decide según la parte ya normalizada:
+    //     solo hay decimal si el split produjo 2 partes. Así, "11,1111"
+    //     → normalize → "111111" → parts.length == 1 → NO decimal.
+    final hasDecimalInput = _hasDecimals && parts.length > 1;
 
     // Parte entera: solo dígitos
     final intPart = parts[0].replaceAll(RegExp(r'[^\d]'), '');
 
     // Parte decimal: solo dígitos, máximo 2
-    final decPart = hasDecimalInput && parts.length > 1
+    final decPart = hasDecimalInput
         ? parts[1]
               .replaceAll(RegExp(r'[^\d]'), '')
               .substring(

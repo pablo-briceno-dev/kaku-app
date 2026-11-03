@@ -27,6 +27,9 @@ abstract class AppRoutes {
   // Premium
   static const String premium = '/premium';
 
+  // Onboarding
+  static const String onboarding = '/onboarding';
+
   // Helpers para construir rutas con parámetros ---
   // Uso: context.go(AppRoutes.toTransaction(42))
   static String toTransaction(int id) =>

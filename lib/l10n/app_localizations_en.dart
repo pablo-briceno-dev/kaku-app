@@ -2040,4 +2040,77 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get whatsNewDismiss => 'Not now';
+
+  @override
+  String get onboardingCurrencyTitle => 'What currency do you use?';
+
+  @override
+  String get onboardingCurrencySubtitle =>
+      'It\'ll be used across the app to format amounts.';
+
+  @override
+  String get onboardingAccountTitle => 'Create your first account';
+
+  @override
+  String get onboardingAccountSubtitle =>
+      'Here you\'ll log your income and expenses.';
+
+  @override
+  String get onboardingAccountIcon => 'Icon';
+
+  @override
+  String get onboardingAccountName => 'Account name';
+
+  @override
+  String get onboardingAccountBalance => 'Initial balance';
+
+  @override
+  String get onboardingBack => 'Back';
+
+  @override
+  String get onboardingContinue => 'Continue';
+
+  @override
+  String get onboardingStart => 'Get started';
+
+  @override
+  String get settingsReplayOnboarding => 'Replay onboarding';
+
+  @override
+  String get welcomeTitle => 'Welcome to Kaku';
+
+  @override
+  String get welcomeSubtitle => 'Your pocket, under control';
+
+  @override
+  String get welcomeDescription =>
+      'Kaku (from Quechua, \"pocket\") is your personal finance app. Track income and expenses, manage budgets, and reach your goals — all in one place, with no accounts or sign-ups.';
+
+  @override
+  String get welcomeFeature1Title => 'Log every movement';
+
+  @override
+  String get welcomeFeature1Desc =>
+      'Income, expenses, and transfers with categories and receipts.';
+
+  @override
+  String get welcomeFeature2Title => 'Understand your finances';
+
+  @override
+  String get welcomeFeature2Desc =>
+      'Charts, budgets, and stats that adapt to your currency.';
+
+  @override
+  String get welcomeFeature3Title => 'Private by design';
+
+  @override
+  String get welcomeFeature3Desc =>
+      'Your data lives on your device. No accounts, no mandatory cloud.';
+
+  @override
+  String get welcomePrivacyNote =>
+      'All your information stays on your device. Backups to Google Drive are optional and encrypted.';
+
+  @override
+  String get onboardingSkip => 'Skip';
 }

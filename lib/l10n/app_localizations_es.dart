@@ -2050,4 +2050,77 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get whatsNewDismiss => 'Ahora no';
+
+  @override
+  String get onboardingCurrencyTitle => '¿En qué moneda trabajas?';
+
+  @override
+  String get onboardingCurrencySubtitle =>
+      'La usarás en toda la app para formatear tus cantidades.';
+
+  @override
+  String get onboardingAccountTitle => 'Crea tu primera cuenta';
+
+  @override
+  String get onboardingAccountSubtitle =>
+      'Aquí registrarás tus ingresos y gastos.';
+
+  @override
+  String get onboardingAccountIcon => 'Icono';
+
+  @override
+  String get onboardingAccountName => 'Nombre de la cuenta';
+
+  @override
+  String get onboardingAccountBalance => 'Saldo inicial';
+
+  @override
+  String get onboardingBack => 'Atrás';
+
+  @override
+  String get onboardingContinue => 'Continuar';
+
+  @override
+  String get onboardingStart => 'Empezar';
+
+  @override
+  String get settingsReplayOnboarding => 'Repetir onboarding';
+
+  @override
+  String get welcomeTitle => 'Bienvenido a Kaku';
+
+  @override
+  String get welcomeSubtitle => 'Tu bolsillo, bajo control';
+
+  @override
+  String get welcomeDescription =>
+      'Kaku (del quechua \"bolsillo\") es tu app de finanzas personales. Registra tus ingresos y gastos, controla tus presupuestos y alcanza tus metas — todo en un solo lugar, sin cuentas ni registros.';
+
+  @override
+  String get welcomeFeature1Title => 'Registra cada movimiento';
+
+  @override
+  String get welcomeFeature1Desc =>
+      'Ingresos, gastos y transferencias con categorías y recibos.';
+
+  @override
+  String get welcomeFeature2Title => 'Entiende tus finanzas';
+
+  @override
+  String get welcomeFeature2Desc =>
+      'Gráficas, presupuestos y estadísticas que se adaptan a tu moneda.';
+
+  @override
+  String get welcomeFeature3Title => 'Privado por diseño';
+
+  @override
+  String get welcomeFeature3Desc =>
+      'Tus datos viven en tu dispositivo. Sin cuentas, sin nube obligatoria.';
+
+  @override
+  String get welcomePrivacyNote =>
+      'Toda tu información permanece en tu dispositivo. Las copias de seguridad a Google Drive son opcionales y cifradas.';
+
+  @override
+  String get onboardingSkip => 'Saltar';
 }

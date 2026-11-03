@@ -8,6 +8,7 @@ import 'package:kaku/features/accounts/accounts_screen.dart';
 import 'package:kaku/features/categories/categories_screen.dart';
 import 'package:kaku/features/categories/category_detail_screen.dart';
 import 'package:kaku/features/dashboard/dashboard_screen.dart';
+import 'package:kaku/features/onboarding/onboarding_screen.dart';
 import 'package:kaku/features/personal/personal_screen.dart';
 import 'package:kaku/features/premium/premium_screen.dart';
 import 'package:kaku/features/settings/budget_list_screen.dart';
@@ -17,6 +18,8 @@ import 'package:kaku/features/stats/stats_screen.dart';
 import 'package:kaku/features/transactions/add_transactions/add_transaction_screen.dart';
 import 'package:kaku/features/transactions/transaction_detail_screen.dart';
 import 'package:kaku/features/transactions/transactions_screen.dart';
+import 'package:kaku/shared/providers/database_provider.dart';
+import 'package:kaku/shared/providers/onboarding_provider.dart';
 import 'package:kaku/shared/providers/security_provider.dart';
 import 'package:kaku/shared/services/app_pin_service.dart';
 import 'package:kaku/shared/services/biometric_service.dart';
@@ -134,9 +137,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.premium,
         builder: (context, state) => const PremiumScreen(),
       ),
+      GoRoute(
+        path: AppRoutes.onboarding,
+        builder: (context, state) => OnboardingScreen(),
+      ),
     ],
     redirect: (context, routerState) async {
+      if (routerState.matchedLocation == AppRoutes.onboarding) return null;
       if (routerState.matchedLocation == AppRoutes.root) return null;
+
+      final onboardingDone = await ref.read(onboardingProvider.future);
+      final accounts = await ref.read(accountsDaoProvider).getActiveAccounts();
+      if (!onboardingDone && accounts.isEmpty) return AppRoutes.onboarding;
 
       final uri = routerState.uri;
       final location = routeLocation(uri);

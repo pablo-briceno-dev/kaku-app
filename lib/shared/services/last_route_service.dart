@@ -14,7 +14,7 @@ class LastRouteService {
   /// Pantallas que NO se restauran (formularios a medias, lock, etc.)
   static const _excluded = [
     AppRoutes.root,
-    // AppRoutes.addTransaction,
+    AppRoutes.onboarding,
     AppRoutes.premium,
   ];
 
